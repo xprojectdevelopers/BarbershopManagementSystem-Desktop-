@@ -1,0 +1,53 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net8.0-windows</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <UseWPF>true</UseWPF>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Remove="About-Our-Team-3--Streamline-Milano.png" />
+    <None Remove="Add Employee.png" />
+    <None Remove="AddEmployee.webp" />
+    <None Remove="bell-ringing.png" />
+    <None Remove="bell.png" />
+    <None Remove="crop-after.png" />
+    <None Remove="Filling-Survey-3--Streamline-Milano.png" />
+    <None Remove="folder-user.png" />
+    <None Remove="gear.png" />
+    <None Remove="headset.png" />
+    <None Remove="house.png" />
+    <None Remove="house.svg" />
+    <None Remove="Security-Vault--Streamline-Milano.png" />
+    <None Remove="wallet.png" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
+    <PackageReference Include="Supabase" Version="1.1.1" />
+    <PackageReference Include="supabase-csharp" Version="0.16.2" />
+    <PackageReference Include="Supabase.Postgrest" Version="4.1.0" />
+    <PackageReference Include="System.Configuration.ConfigurationManager" Version="9.0.8" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Resource Include="About-Our-Team-3--Streamline-Milano.png" />
+    <Resource Include="Add Employee.png" />
+    <Resource Include="AddEmployee.webp" />
+    <Resource Include="bell-ringing.png" />
+    <Resource Include="bell.png" />
+    <Resource Include="crop-after.png" />
+    <Resource Include="Filling-Survey-3--Streamline-Milano.png" />
+    <Resource Include="folder-user.png" />
+    <Resource Include="gear.png" />
+    <Resource Include="headset.png" />
+    <Resource Include="house.png" />
+    <Resource Include="house.svg" />
+    <Resource Include="Security-Vault--Streamline-Milano.png" />
+    <Resource Include="wallet.png" />
+  </ItemGroup>
+
+</Project>

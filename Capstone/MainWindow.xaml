@@ -1,0 +1,48 @@
+﻿<Window x:Class="Capstone.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:Capstone"
+        mc:Ignorable="d"
+        Title="Molave Street's Barbers - Login" Height="370" Width="480" WindowStartupLocation="CenterScreen">
+    <Grid Margin="0,0,0,-6">
+        <Label Content="MOLAVE STREET'S BARBERS" FontWeight="Bold" FontSize="20" HorizontalAlignment="Center" Margin="0,67,0,0" VerticalAlignment="Top" Height="39" Width="284"/>
+        <Label Content="Employee ID" FontSize="15" HorizontalAlignment="Left" Margin="74,125,0,0" VerticalAlignment="Top" Height="30" Width="158" FontWeight="Bold"/>
+        <Label Content="Password" FontSize="15" HorizontalAlignment="Left" Margin="74,185,0,0" VerticalAlignment="Top" Height="27" Width="158" FontWeight="Bold"/>
+
+        <!-- Employee ID TextBox with name -->
+        <TextBox x:Name="txtEmployeeId" FontSize="15" HorizontalAlignment="Center" TextWrapping="Wrap" VerticalAlignment="Top" Width="318" Margin="0,155,0,0" Height="25" Foreground="Black" Background="#FFA2A2A2"/>
+
+        <!-- Password Box with name -->
+        <PasswordBox x:Name="txtPassword" FontSize="15" HorizontalAlignment="Center" Margin="0,217,0,0" VerticalAlignment="Top" Width="318" Height="25" Background="#FFA2A2A2"/>
+
+        <!-- Single Login Button with rounded corners -->
+        <Button x:Name="btnLogin" Content="Log in" 
+                HorizontalAlignment="Center" 
+                Margin="0,261,0,0" 
+                VerticalAlignment="Top" 
+                Foreground="White" 
+                FontWeight="Bold" 
+                Width="120" 
+                Height="41" 
+                Background="#FF1F4BFF" 
+                Cursor="Hand"
+                Click="Button_Click_1">
+            <Button.Template>
+                <ControlTemplate TargetType="Button">
+                    <Border Background="{TemplateBinding Background}" 
+                            CornerRadius="20" 
+                            BorderBrush="{TemplateBinding BorderBrush}" 
+                            BorderThickness="{TemplateBinding BorderThickness}">
+                        <ContentPresenter HorizontalAlignment="Center" 
+                                          VerticalAlignment="Center"/>
+                    </Border>
+                </ControlTemplate>
+            </Button.Template>
+        </Button>
+
+        <!-- Status Label for showing login messages -->
+        <Label x:Name="lblStatus" Content="" FontSize="12" HorizontalAlignment="Center" Margin="0,310,0,0" VerticalAlignment="Top" Height="25" Width="400" Foreground="Red" HorizontalContentAlignment="Center"/>
+    </Grid>
+</Window>
