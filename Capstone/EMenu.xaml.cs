@@ -147,8 +147,8 @@ namespace Capstone
 
         private void Addemployee_Click(object sender, RoutedEventArgs e)
         {
-            Employees employeesWindow = new Employees();
-            employeesWindow.Show();
+            Testing Testing = new Testing();
+            Testing.Show();
             this.Close();
         }
 

@@ -12,6 +12,7 @@
     <None Remove="About-Our-Team-3--Streamline-Milano.png" />
     <None Remove="Add Employee.png" />
     <None Remove="AddEmployee.webp" />
+    <None Remove="arrow-left.png" />
     <None Remove="bell-ringing.png" />
     <None Remove="bell.png" />
     <None Remove="crop-after.png" />
@@ -21,7 +22,9 @@
     <None Remove="headset.png" />
     <None Remove="house.png" />
     <None Remove="house.svg" />
+    <None Remove="profile.png" />
     <None Remove="Security-Vault--Streamline-Milano.png" />
+    <None Remove="Swarm_bee_user.png" />
     <None Remove="wallet.png" />
   </ItemGroup>
 
@@ -37,6 +40,7 @@
     <Resource Include="About-Our-Team-3--Streamline-Milano.png" />
     <Resource Include="Add Employee.png" />
     <Resource Include="AddEmployee.webp" />
+    <Resource Include="arrow-left.png" />
     <Resource Include="bell-ringing.png" />
     <Resource Include="bell.png" />
     <Resource Include="crop-after.png" />
@@ -46,7 +50,9 @@
     <Resource Include="headset.png" />
     <Resource Include="house.png" />
     <Resource Include="house.svg" />
+    <Resource Include="profile.png" />
     <Resource Include="Security-Vault--Streamline-Milano.png" />
+    <Resource Include="Swarm_bee_user.png" />
     <Resource Include="wallet.png" />
   </ItemGroup>
 
