@@ -152,6 +152,13 @@ namespace Capstone
             this.Close();
         }
 
+        private void Employee_Click(object sender, RoutedEventArgs e)
+        {
+            EmployeeProfile EmployeeProfile = new EmployeeProfile();
+            EmployeeProfile.Show();
+            this.Close();
+        }
+
         // ✅ Employee model
         [Table("Register_Employees")]
         public class Employee : BaseModel
