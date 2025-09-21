@@ -9,8 +9,11 @@
         WindowState="Maximized" ResizeMode="CanResize"
         MinHeight="450" MinWidth="800">
 
+
+
     <Window.Resources>
-        
+
+
         <Style x:Key="HoverFixedSingle" TargetType="Border">
             <Setter Property="BorderBrush" Value="Transparent"/>
             <Setter Property="BorderThickness" Value="1"/>
@@ -24,7 +27,9 @@
         </Style>
     </Window.Resources>
 
-    <Grid Margin="0,0,-182,0" Height="674" VerticalAlignment="Top">
+
+    <Grid Margin="0,50,-182,0" Height="674" VerticalAlignment="Top">
+
         <!-- Profile Info -->
         <Image HorizontalAlignment="Left" Height="141" Margin="593,45,0,0"
                VerticalAlignment="Top" Width="144" Source="/crop-after.png"/>
@@ -107,6 +112,18 @@
                 <Image Margin="0,-50,250,0" Height="40" Width="40" Source="/folder-user.png"/>
             </StackPanel>
         </Border>
+        <Grid Grid.Row="0" Margin="3,-1,292,615" Height="60">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="Auto"/>
+            </Grid.ColumnDefinitions>
+
+            <!-- Notification -->
+            <Image Source="/bell.png" Width="24" Height="24" Grid.Column="1" Margin="0,0,5,0" VerticalAlignment="Center"/>
+            <!-- Settings -->
+            <Image Source="/gear.png" Width="24" Height="24" Grid.Column="2" VerticalAlignment="Center"/>
+        </Grid>
 
     </Grid>
 </Window>
