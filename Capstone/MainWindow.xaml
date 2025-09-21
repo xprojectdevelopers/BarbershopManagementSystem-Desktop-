@@ -11,13 +11,13 @@
         <Label Content="Employee ID" FontSize="15" HorizontalAlignment="Left" Margin="74,125,0,0" VerticalAlignment="Top" Height="30" Width="158" FontWeight="Bold"/>
         <Label Content="Password" FontSize="15" HorizontalAlignment="Left" Margin="74,185,0,0" VerticalAlignment="Top" Height="27" Width="158" FontWeight="Bold"/>
 
-        <!-- Employee ID TextBox with name -->
+        <!-- Employee ID TextBox-->
         <TextBox x:Name="txtEmployeeId" FontSize="15" HorizontalAlignment="Center" TextWrapping="Wrap" VerticalAlignment="Top" Width="318" Margin="0,155,0,0" Height="25" Foreground="Black" Background="#FFA2A2A2"/>
 
-        <!-- Password Box with name -->
+        <!-- Password Box-->
         <PasswordBox x:Name="txtPassword" FontSize="15" HorizontalAlignment="Center" Margin="0,217,0,0" VerticalAlignment="Top" Width="318" Height="25" Background="#FFA2A2A2"/>
 
-        <!-- Single Login Button with rounded corners -->
+        
         <Button x:Name="btnLogin" Content="Log in" 
                 HorizontalAlignment="Center" 
                 Margin="0,261,0,0" 
@@ -42,7 +42,7 @@
             </Button.Template>
         </Button>
 
-        <!-- Status Label for showing login messages -->
+        <!-- Status messages -->
         <Label x:Name="lblStatus" Content="" FontSize="12" HorizontalAlignment="Center" Margin="0,310,0,0" VerticalAlignment="Top" Height="25" Width="400" Foreground="Red" HorizontalContentAlignment="Center"/>
     </Grid>
 </Window>

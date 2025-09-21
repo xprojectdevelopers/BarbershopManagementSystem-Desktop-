@@ -184,7 +184,7 @@ namespace Capstone
             errorTextBlock.Visibility = Visibility.Visible;
         }
 
-        // Updated validation method with inline error display
+        
         private bool ValidateAllRequiredFieldsInline(Employee newEmployee)
         {
             bool isValid = true;
@@ -192,7 +192,7 @@ namespace Capstone
             // Clear all previous errors
             ClearAllValidationErrors();
 
-            // Check all required fields marked with * in the form
+            // Check all required fields marked with * 
             if (string.IsNullOrWhiteSpace(newEmployee.Fname))
             {
                 ShowValidationError(txtFullNameError, "Full Name is required");
@@ -259,7 +259,7 @@ namespace Capstone
                 isValid = false;
             }
 
-            // Role-specific validations
+            // Role Choosing
             if (!string.IsNullOrWhiteSpace(newEmployee.Role))
             {
                 if (newEmployee.Role == "Cashier")
@@ -280,7 +280,7 @@ namespace Capstone
                         isValid = false;
                     }
 
-                    // Services offered validation - only required for Barber role
+                    
                     if (string.IsNullOrWhiteSpace(newEmployee.ServicesOffered))
                     {
                         ShowValidationError(txtServicesError, "At least one service must be selected for Barber role");
@@ -310,7 +310,7 @@ namespace Capstone
             return isValid;
         }
 
-        // Updated ValidateEmployee method with inline errors
+        
         private bool ValidateEmployeeInline(Employee newEmployee)
         {
             bool isValid = true;
@@ -327,7 +327,7 @@ namespace Capstone
                 isValid = false;
             }
 
-            // Only validate password uniqueness if password is provided (for Cashier role)
+   
             if (!string.IsNullOrWhiteSpace(newEmployee.Epassword) &&
                 employees.Any(emp => emp.Epassword == newEmployee.Epassword))
             {
@@ -351,7 +351,7 @@ namespace Capstone
                 // Clear validation errors first
                 ClearAllValidationErrors();
 
-                // Create new employee object with all form data
+                
                 var newEmployee = new Employee
                 {
                     Fname = txtFullName.Text.Trim(),
@@ -359,7 +359,7 @@ namespace Capstone
                     Nickname = txtNickname.Text.Trim(),
                     Role = (cmbRole.SelectedItem as ComboBoxItem)?.Content.ToString(),
 
-                    // Add other fields from the form
+                    
                     Bdate = bdate.SelectedDate,
                     Gender = GetSelectedComboBoxValue(Gender),
                     Address = txtAddress.Text.Trim(),
@@ -372,7 +372,7 @@ namespace Capstone
                     Wsched = GetSelectedWorkSchedule()
                 };
 
-                // Set role-specific fields
+                
                 if (newEmployee.Role == "Cashier")
                 {
                     newEmployee.Epassword = txtEmployeePassword.Text.Trim();
@@ -391,14 +391,14 @@ namespace Capstone
                 bool isRequiredValid = ValidateAllRequiredFieldsInline(newEmployee);
 
                 if (!isUniqueValid || !isRequiredValid)
-                    return; // Stop execution if validation fails
+                    return; 
 
                 // Save to Supabase database
                 var result = await supabase.From<Employee>().Insert(newEmployee);
 
                 if (result != null)
                 {
-                    // Add to local collection
+                    
                     employees.Add(newEmployee);
 
                     MessageBox.Show("Employee added successfully to database!", "Success",
@@ -420,7 +420,7 @@ namespace Capstone
             }
         }
 
-        // Helper method to get selected ComboBox value
+        
         private string GetSelectedComboBoxValue(ComboBox comboBox)
         {
             if (comboBox.SelectedItem is ComboBoxItem selectedItem && selectedItem.IsEnabled)
@@ -430,7 +430,7 @@ namespace Capstone
             return null;
         }
 
-        // Helper method to get selected services
+        
         private string GetSelectedServices()
         {
             var selectedServices = new List<string>();
@@ -446,7 +446,7 @@ namespace Capstone
             return selectedServices.Count > 0 ? string.Join(", ", selectedServices) : null;
         }
 
-        // Helper method to get selected work schedule
+        
         private string GetSelectedWorkSchedule()
         {
             var selectedDays = new List<string>();
@@ -462,7 +462,7 @@ namespace Capstone
             return selectedDays.Count > 0 ? string.Join(", ", selectedDays) : null;
         }
 
-        // Updated Clear_Click method to hide validation errors
+        
         private void Clear_Click(object sender, RoutedEventArgs e)
         {
             // Clear all validation errors first

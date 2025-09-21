@@ -10,7 +10,7 @@
         MinHeight="450" MinWidth="800">
 
     <Window.Resources>
-        <!-- Hover style that mimics FixedSingle -->
+        
         <Style x:Key="HoverFixedSingle" TargetType="Border">
             <Setter Property="BorderBrush" Value="Transparent"/>
             <Setter Property="BorderThickness" Value="1"/>

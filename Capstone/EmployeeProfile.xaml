@@ -43,7 +43,7 @@
                                                        FontSize="{TemplateBinding FontSize}"
                                                        VerticalAlignment="Center"/>
 
-                                    <!-- Placeholder text when no date is selected -->
+                                    
                                     <TextBlock Grid.Column="0"
                                                x:Name="PlaceholderText"
                                                Text="{TemplateBinding Tag}"
@@ -80,12 +80,12 @@
                             </Border>
                         </Grid>
                         <ControlTemplate.Triggers>
-                            <!-- Show placeholder when no date is selected -->
+                            
                             <Trigger Property="SelectedDate" Value="{x:Null}">
                                 <Setter TargetName="PlaceholderText" Property="Visibility" Value="Visible"/>
                                 <Setter TargetName="PART_TextBox" Property="Visibility" Value="Hidden"/>
                             </Trigger>
-                            <!-- Hide placeholder when date is selected -->
+                            
                             <DataTrigger Binding="{Binding SelectedDate, RelativeSource={RelativeSource Self}}">
                                 <DataTrigger.Value>
                                     <x:Null/>
@@ -99,7 +99,7 @@
             </Setter>
         </Style>
 
-        <!-- Custom ComboBox Style (TextBox appearance) -->
+        
         <Style x:Key="TextBoxStyleComboBox" TargetType="ComboBox">
             <Setter Property="Background" Value="White"/>
             <Setter Property="BorderBrush" Value="Gray"/>
@@ -131,7 +131,7 @@
                                                       HorizontalAlignment="Left"
                                                       IsHitTestVisible="False"/>
 
-                                    <!-- Dropdown Arrow -->
+                                    
                                     <ToggleButton Grid.Column="1"
                                                   x:Name="PART_DropDownToggle"
                                                   Background="Transparent"
@@ -232,7 +232,6 @@
             <TextBox x:Name="txtFullName" HorizontalAlignment="Left" FontSize="30" Margin="250,407,0,0" Grid.Row="1" TextWrapping="Wrap" VerticalAlignment="Top" Width="465"/>
             <TextBlock x:Name="txtFullNameError" Foreground="Red" FontSize="14" Margin="250,350,0,0" Grid.Row="1" HorizontalAlignment="Left" VerticalAlignment="Top" Visibility="Collapsed"/>
 
-            <!-- Profile Image -->
             <!-- Profile Image + Upload Button -->
             <StackPanel Grid.Row="1" Orientation="Vertical" HorizontalAlignment="Left" Margin="760,301,0,-7">
                 <Image x:Name="PhotoPreview" Height="195" Width="195" Source="/profile.png" 
@@ -400,7 +399,7 @@ Grid.Row="1" VerticalAlignment="Top"/>
               VerticalAlignment="Center" VerticalContentAlignment="Center" Margin="5"/>
                 <CheckBox Content="Perm/Haircut" FontSize="20" Height="40" 
               VerticalAlignment="Center" VerticalContentAlignment="Center" Margin="5"/>
-                <!-- Placeholder instead of Massage -->
+
                 <TextBlock/>
 
                 <CheckBox Content="Hair color/Haircut" FontSize="20" Height="40" 
@@ -453,7 +452,7 @@ Grid.Row="1" VerticalAlignment="Top"/>
   VerticalAlignment="Center" VerticalContentAlignment="Center" Margin="5"/>
                 <CheckBox Content="Saturday" FontSize="20" Height="40" 
   VerticalAlignment="Center" VerticalContentAlignment="Center" Margin="5"/>
-                <!-- Placeholder instead of Highlights -->
+                
                 <TextBlock/>
             </UniformGrid>
             <TextBlock x:Name="txtWorkScheduleError" Foreground="Red" FontSize="14" Margin="279,1949,0,0" Grid.Row="1" HorizontalAlignment="Left" VerticalAlignment="Top" Visibility="Collapsed"/>

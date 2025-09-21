@@ -54,7 +54,7 @@ namespace Capstone
             await supabase.InitializeAsync();
         }
 
-        // ✅ Load employees ordered by Eid (fixed order)
+        
         private async Task LoadEmployees()
         {
             if (supabase == null) return;
@@ -73,7 +73,7 @@ namespace Capstone
             GeneratePaginationButtons();
         }
 
-        // ✅ Display employees per page (fixed 5 rows)
+        
         private void LoadPage(int pageNumber)
         {
             CurrentPage = pageNumber;
@@ -98,7 +98,7 @@ namespace Capstone
             EmployeeGrid.ItemsSource = pageData;
         }
 
-        // ✅ Generate pagination buttons
+        // Generate ng buttons
         private void GeneratePaginationButtons()
         {
             PaginationPanel.Children.Clear();
@@ -125,7 +125,7 @@ namespace Capstone
             }
         }
 
-        // ✅ Count employees for total
+        // Count employees for total
         private async Task LoadEmployeeCount()
         {
             if (supabase == null) return;

@@ -9,9 +9,6 @@ using Newtonsoft.Json.Linq;
 
 namespace Capstone
 {
-    /// <summary>
-    /// Interaction logic for MainWindow.xaml
-    /// </summary>
     public partial class MainWindow : Window
     {
         private readonly HttpClient httpClient;
@@ -42,14 +39,14 @@ namespace Capstone
 
         private async void Button_Click_1(object sender, RoutedEventArgs e)
         {
-            // Clear previous status
+            
             lblStatus.Content = "";
 
-            // Get input values
+            
             string employeeId = txtEmployeeId.Text.Trim();
             string password = txtPassword.Password;
 
-            // Debug: Show what we're trying to authenticate
+            
             System.Diagnostics.Debug.WriteLine($"Attempting login with Employee ID: {employeeId}");
 
             // Validate input
@@ -65,7 +62,7 @@ namespace Capstone
                 return;
             }
 
-            // Disable login button during authentication
+            
             btnLogin.IsEnabled = false;
             lblStatus.Content = "Logging in...";
 
@@ -100,7 +97,7 @@ namespace Capstone
                 System.Diagnostics.Debug.WriteLine($"Login error: {ex.Message}");
                 System.Diagnostics.Debug.WriteLine($"Full exception: {ex}");
 
-                // Show error to user for debugging
+                
                 MessageBox.Show($"Error details: {ex.Message}", "Debug Error");
             }
             finally
@@ -169,7 +166,7 @@ namespace Capstone
             }
         }
 
-        // Clean up HttpClient when window is closed
+        
         protected override void OnClosed(EventArgs e)
         {
             httpClient?.Dispose();
