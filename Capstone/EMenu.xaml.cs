@@ -1,10 +1,7 @@
-﻿using Supabase;
-using Supabase.Postgrest.Attributes;
+﻿using Supabase.Postgrest.Attributes;
 using Supabase.Postgrest.Models;
 using System.Collections.ObjectModel;
 using System.Configuration;
-using System.Linq;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
@@ -99,6 +96,8 @@ namespace Capstone
         }
 
         // Generate ng buttons
+        // Generate ng buttons
+        // Generate ng buttons
         private void GeneratePaginationButtons()
         {
             PaginationPanel.Children.Clear();
@@ -110,9 +109,30 @@ namespace Capstone
                     Content = i.ToString(),
                     Margin = new Thickness(5, 0, 5, 0),
                     Padding = new Thickness(10, 5, 10, 5),
-                    Background = (i == CurrentPage) ? System.Windows.Media.Brushes.Black : System.Windows.Media.Brushes.LightGray,
-                    Foreground = (i == CurrentPage) ? System.Windows.Media.Brushes.White : System.Windows.Media.Brushes.Black
+                    Foreground = System.Windows.Media.Brushes.Gray, // Default gray color
+                    FontWeight = (i == CurrentPage) ? FontWeights.Bold : FontWeights.Normal, // Bold for current page
+                    FontSize = 20,
+                    Cursor = Cursors.Hand
                 };
+
+                // Custom template to remove default hover effects
+                var template = new ControlTemplate(typeof(Button));
+                var border = new FrameworkElementFactory(typeof(Border));
+                border.SetValue(Border.BackgroundProperty, System.Windows.Media.Brushes.Transparent);
+                border.SetValue(Border.BorderThicknessProperty, new Thickness(0));
+
+                var contentPresenter = new FrameworkElementFactory(typeof(ContentPresenter));
+                contentPresenter.SetValue(ContentPresenter.HorizontalAlignmentProperty, HorizontalAlignment.Center);
+                contentPresenter.SetValue(ContentPresenter.VerticalAlignmentProperty, VerticalAlignment.Center);
+
+                border.AppendChild(contentPresenter);
+                template.VisualTree = border;
+
+                btn.Template = template;
+
+                // Add hover effect
+                btn.MouseEnter += (s, e) => btn.Foreground = System.Windows.Media.Brushes.Black;
+                btn.MouseLeave += (s, e) => btn.Foreground = System.Windows.Media.Brushes.Gray;
 
                 int pageNum = i;
                 btn.Click += (s, e) =>
@@ -169,10 +189,10 @@ namespace Capstone
             [Column("Fname")]
             public string EmployeeName { get; set; } = string.Empty;
 
-            [Column("PNumber")]
+            [Column("Cnumber")]
             public string ContactNumber { get; set; } = string.Empty;
 
-            [Column("Econtact")]
+            [Column("ECnumber")]
             public string EmergencyContact { get; set; } = string.Empty;
         }
     }

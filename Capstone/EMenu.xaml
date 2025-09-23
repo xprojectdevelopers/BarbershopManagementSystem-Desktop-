@@ -61,7 +61,7 @@
                             <Button Content="Add Employee"
                                     Padding="10,5"
                                     Margin="0,0,110,0"
-                                    Background="Black" Foreground="White"
+                                    Background="Blue" Foreground="White"
                                     FontWeight="Bold" Width="140" Height="40"
                                     Click="Addemployee_Click" Cursor="Hand">
                                 <Button.Template>
@@ -120,8 +120,8 @@
                         <DataGrid.Columns>
                             <DataGridTextColumn Header="Employee ID" Binding="{Binding EmployeeID}" Width="*"/>
                             <DataGridTextColumn Header="Employee Name" Binding="{Binding EmployeeName}" Width="*"/>
-                            <DataGridTextColumn Header="Contact number" Binding="{Binding ContactNumber}" Width="*"/>
-                            <DataGridTextColumn Header="Emergency contact" Binding="{Binding EmergencyContact}" Width="*"/>
+                            <DataGridTextColumn Header="Contact Number" Binding="{Binding ContactNumber}" Width="*"/>
+                            <DataGridTextColumn Header="Emergency Contact" Binding="{Binding EmergencyContact}" Width="*"/>
                         </DataGrid.Columns>
                     </DataGrid>
 

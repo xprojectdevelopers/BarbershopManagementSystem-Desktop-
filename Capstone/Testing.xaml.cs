@@ -2,16 +2,15 @@
 using Supabase;
 using Supabase.Postgrest.Attributes;
 using Supabase.Postgrest.Models;
-using System;
-using System.Collections.Generic;
+using System.Windows.Media;
 using System.Collections.ObjectModel;
 using System.Configuration;
-using System.Linq;
-using System.Threading.Tasks;
+using System.Text.RegularExpressions;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media.Imaging;
+using System.IO;
 
 namespace Capstone
 {
@@ -19,6 +18,9 @@ namespace Capstone
     {
         private Client supabase;
         private ObservableCollection<Employee> employees;
+        private string selectedPhotoPath = string.Empty;
+        private string photoBase64 = string.Empty;
+        private bool isSaving = false;
 
         public Testing()
         {
@@ -65,11 +67,22 @@ namespace Capstone
         {
             OpenFileDialog openFileDialog = new OpenFileDialog();
             openFileDialog.Filter = "Image files (*.png;*.jpg;*.jpeg)|*.png;*.jpg;*.jpeg";
+            openFileDialog.Title = "Select Employee Photo";
 
             if (openFileDialog.ShowDialog() == true)
             {
                 try
                 {
+                    // Validate file size (limit to 5MB)
+                    FileInfo fileInfo = new FileInfo(openFileDialog.FileName);
+                    if (fileInfo.Length > 5 * 1024 * 1024) // 5MB limit
+                    {
+                        MessageBox.Show("Photo size must be less than 5MB.", "File Too Large",
+                                      MessageBoxButton.OK, MessageBoxImage.Warning);
+                        return;
+                    }
+
+                    // Load and display image
                     BitmapImage bitmap = new BitmapImage();
                     bitmap.BeginInit();
                     bitmap.CacheOption = BitmapCacheOption.OnLoad;
@@ -77,11 +90,39 @@ namespace Capstone
                     bitmap.EndInit();
 
                     PhotoPreview.Source = bitmap;
+                    selectedPhotoPath = openFileDialog.FileName;
+
+                    // Convert to Base64 for database storage
+                    photoBase64 = ConvertImageToBase64(openFileDialog.FileName);
+
+                    // Clear any photo error messages
+                    txtPhotoError.Visibility = Visibility.Collapsed;
                 }
                 catch (Exception ex)
                 {
-                    MessageBox.Show("Failed to load image: " + ex.Message);
+                    MessageBox.Show("Failed to load image: " + ex.Message, "Error",
+                                  MessageBoxButton.OK, MessageBoxImage.Error);
+
+                    // Reset photo if failed
+                    PhotoPreview.Source = new BitmapImage(new Uri("/profile.png", UriKind.Relative));
+                    selectedPhotoPath = string.Empty;
+                    photoBase64 = string.Empty;
                 }
+            }
+        }
+
+        private string ConvertImageToBase64(string imagePath)
+        {
+            try
+            {
+                byte[] imageBytes = File.ReadAllBytes(imagePath);
+                return Convert.ToBase64String(imageBytes);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Error converting image: {ex.Message}", "Conversion Error",
+                              MessageBoxButton.OK, MessageBoxImage.Error);
+                return string.Empty;
             }
         }
 
@@ -138,28 +179,164 @@ namespace Capstone
 
                 if (role == "Cashier")
                 {
+                    // Enable password controls
                     btnGeneratePassword.IsEnabled = true;
                     txtEmployeePassword.IsEnabled = true;
 
+                    // Reset password control colors to normal
+                    btnGeneratePassword.Foreground = Brushes.Blue;
+                    txtEmployeePassword.Background = Brushes.White;
+                    txtEmployeePassword.Foreground = Brushes.Black;
+
+                    // Find and enable the password label
+                    var passwordLabel = FindVisualChild<Label>(this, "lblEmployeePassword");
+                    if (passwordLabel != null)
+                    {
+                        passwordLabel.Foreground = Brushes.Black;
+                        passwordLabel.IsEnabled = true;
+                    }
+
+                    // Disable barber-related controls
                     cmbBarberExpertise.IsEnabled = false;
                     servicesPanel.IsEnabled = false;
+
+                    // Gray out barber controls
+                    cmbBarberExpertise.Foreground = Brushes.Gray;
+
+                    // Find and gray out barber expertise label
+                    var expertiseLabel = FindVisualChild<Label>(this, "lblBarberExpertise");
+                    if (expertiseLabel != null)
+                    {
+                        expertiseLabel.Foreground = Brushes.Gray;
+                        expertiseLabel.IsEnabled = false;
+                    }
+
+                    // Find and gray out services label
+                    var servicesLabel = FindVisualChild<Label>(this, "lblServicesOffered");
+                    if (servicesLabel != null)
+                    {
+                        servicesLabel.Foreground = Brushes.Gray;
+                        servicesLabel.IsEnabled = false;
+                    }
+
+                    // Gray out all checkboxes in services panel
+                    foreach (var child in servicesPanel.Children)
+                    {
+                        if (child is CheckBox checkBox)
+                        {
+                            checkBox.Foreground = Brushes.Gray;
+                            checkBox.IsEnabled = false;
+                        }
+                    }
                 }
                 else if (role == "Barber")
                 {
+                    // Disable password controls
                     btnGeneratePassword.IsEnabled = false;
                     txtEmployeePassword.IsEnabled = false;
 
+                    // Gray out password controls
+                    btnGeneratePassword.Foreground = Brushes.Gray;
+                    txtEmployeePassword.Background = Brushes.LightGray;
+                    txtEmployeePassword.Foreground = Brushes.Gray;
+                    txtEmployeePassword.Text = string.Empty; // Clear password when switching to Barber
+
+                    // Find and gray out the password label
+                    var passwordLabel = FindVisualChild<Label>(this, "lblEmployeePassword");
+                    if (passwordLabel != null)
+                    {
+                        passwordLabel.Foreground = Brushes.Gray;
+                        passwordLabel.IsEnabled = false;
+                    }
+
+                    // Enable barber-related controls
                     cmbBarberExpertise.IsEnabled = true;
                     servicesPanel.IsEnabled = true;
+
+                    // Reset barber control colors to normal
+                    cmbBarberExpertise.Foreground = Brushes.Black;
+
+                    // Find and enable barber expertise label
+                    var expertiseLabel = FindVisualChild<Label>(this, "lblBarberExpertise");
+                    if (expertiseLabel != null)
+                    {
+                        expertiseLabel.Foreground = Brushes.Black;
+                        expertiseLabel.IsEnabled = true;
+                    }
+
+                    // Find and enable services label
+                    var servicesLabel = FindVisualChild<Label>(this, "lblServicesOffered");
+                    if (servicesLabel != null)
+                    {
+                        servicesLabel.Foreground = Brushes.Black;
+                        servicesLabel.IsEnabled = true;
+                    }
+
+                    // Enable all checkboxes in services panel
+                    foreach (var child in servicesPanel.Children)
+                    {
+                        if (child is CheckBox checkBox)
+                        {
+                            checkBox.Foreground = Brushes.Black;
+                            checkBox.IsEnabled = true;
+                        }
+                    }
+                }
+            }
+            else
+            {
+                // Disable password controls
+                btnGeneratePassword.IsEnabled = false;
+                txtEmployeePassword.IsEnabled = false;
+                btnGeneratePassword.Foreground = Brushes.Gray;
+                txtEmployeePassword.Background = Brushes.LightGray;
+                txtEmployeePassword.Foreground = Brushes.Gray;
+
+                // Disable barber controls
+                cmbBarberExpertise.IsEnabled = false;
+                servicesPanel.IsEnabled = false;
+                cmbBarberExpertise.Foreground = Brushes.Gray;
+
+                // Gray out all checkboxes
+                foreach (var child in servicesPanel.Children)
+                {
+                    if (child is CheckBox checkBox)
+                    {
+                        checkBox.Foreground = Brushes.Gray;
+                        checkBox.IsEnabled = false;
+                    }
                 }
             }
         }
 
-        // Inline Validation Methods
+        // Helper method to find child controls by name
+        private static T FindVisualChild<T>(DependencyObject parent, string childName) where T : DependencyObject
+        {
+            if (parent != null)
+            {
+                for (int i = 0; i < VisualTreeHelper.GetChildrenCount(parent); i++)
+                {
+                    var child = VisualTreeHelper.GetChild(parent, i);
+
+                    if (child != null && child is T && ((FrameworkElement)child).Name == childName)
+                    {
+                        return (T)child;
+                    }
+
+                    var childOfChild = FindVisualChild<T>(child, childName);
+                    if (childOfChild != null)
+                        return childOfChild;
+                }
+            }
+            return null;
+        }
+
+        // Clear all validation errors
         private void ClearAllValidationErrors()
         {
             // Clear all error TextBlocks visibility
             txtFullNameError.Visibility = Visibility.Collapsed;
+            txtFullNameTaken.Visibility = Visibility.Collapsed;
             txtBdateError.Visibility = Visibility.Collapsed;
             txtGenderError.Visibility = Visibility.Collapsed;
             txtAddressError.Visibility = Visibility.Collapsed;
@@ -168,14 +345,18 @@ namespace Capstone
             txtEmergencyNameError.Visibility = Visibility.Collapsed;
             txtEmergencyNumberError.Visibility = Visibility.Collapsed;
             txtEmployeeIDError.Visibility = Visibility.Collapsed;
+            txtEmployeeIDSame.Visibility = Visibility.Collapsed;
             txtRoleError.Visibility = Visibility.Collapsed;
             txtPasswordError.Visibility = Visibility.Collapsed;
+            txtPasswordSame.Visibility = Visibility.Collapsed;
             txtNicknameError.Visibility = Visibility.Collapsed;
+            txtNicknameTaken.Visibility = Visibility.Collapsed;
             txtBarberExpertiseError.Visibility = Visibility.Collapsed;
             txtServicesError.Visibility = Visibility.Collapsed;
             txtDateHiredError.Visibility = Visibility.Collapsed;
             txtEmploymentStatusError.Visibility = Visibility.Collapsed;
             txtWorkScheduleError.Visibility = Visibility.Collapsed;
+            txtPhotoError.Visibility = Visibility.Collapsed;
         }
 
         private void ShowValidationError(TextBlock errorTextBlock, string message)
@@ -184,7 +365,6 @@ namespace Capstone
             errorTextBlock.Visibility = Visibility.Visible;
         }
 
-        
         private bool ValidateAllRequiredFieldsInline(Employee newEmployee)
         {
             bool isValid = true;
@@ -192,7 +372,14 @@ namespace Capstone
             // Clear all previous errors
             ClearAllValidationErrors();
 
-            // Check all required fields marked with * 
+            // Photo validation - required field
+            if (string.IsNullOrWhiteSpace(photoBase64))
+            {
+                ShowValidationError(txtPhotoError, "Employee photo is required");
+                isValid = false;
+            }
+
+            // Check all other required fields marked with * 
             if (string.IsNullOrWhiteSpace(newEmployee.Fname))
             {
                 ShowValidationError(txtFullNameError, "Full Name is required");
@@ -222,10 +409,25 @@ namespace Capstone
                 ShowValidationError(txtContactNumberError, "Contact Number is required");
                 isValid = false;
             }
+            else if (!Regex.IsMatch(newEmployee.Cnumber, @"^[0-9]+$"))
+            {
+                ShowValidationError(txtContactNumberError, "No special character and alphabet");
+                isValid = false;
+            }
+            else if (!Regex.IsMatch(newEmployee.Cnumber, @"^[0-9]{11}$"))
+            {
+                ShowValidationError(txtContactNumberError, "Contact Number must be 11 digits only");
+                isValid = false;
+            }
 
             if (string.IsNullOrWhiteSpace(newEmployee.Email))
             {
                 ShowValidationError(txtEmailError, "Email Address is required");
+                isValid = false;
+            }
+            else if (!Regex.IsMatch(newEmployee.Email, @"^[a-zA-Z0-9._%+-]+@gmail\.com$"))
+            {
+                ShowValidationError(txtEmailError, "Email must be a valid @gmail.com address");
                 isValid = false;
             }
 
@@ -238,6 +440,16 @@ namespace Capstone
             if (string.IsNullOrWhiteSpace(newEmployee.ECnumber))
             {
                 ShowValidationError(txtEmergencyNumberError, "Emergency Contact Number is required");
+                isValid = false;
+            }
+            else if (!Regex.IsMatch(newEmployee.ECnumber, @"^[0-9]+$"))
+            {
+                ShowValidationError(txtEmergencyNumberError, "No special character and alphabet");
+                isValid = false;
+            }
+            else if (newEmployee.ECnumber.Length != 11)
+            {
+                ShowValidationError(txtEmergencyNumberError, "Emergency Contact Number must be 11 digits only");
                 isValid = false;
             }
 
@@ -259,33 +471,27 @@ namespace Capstone
                 isValid = false;
             }
 
-            // Role Choosing
-            if (!string.IsNullOrWhiteSpace(newEmployee.Role))
+            // Role-specific validations
+            if (newEmployee.Role == "Cashier")
             {
-                if (newEmployee.Role == "Cashier")
+                if (string.IsNullOrWhiteSpace(newEmployee.Epassword))
                 {
-                    // For Cashier role, password is required
-                    if (string.IsNullOrWhiteSpace(newEmployee.Epassword))
-                    {
-                        ShowValidationError(txtPasswordError, "Employee Password is required for Cashier role");
-                        isValid = false;
-                    }
+                    ShowValidationError(txtPasswordError, "Employee Password is required for Cashier role");
+                    isValid = false;
                 }
-                else if (newEmployee.Role == "Barber")
+            }
+            else if (newEmployee.Role == "Barber")
+            {
+                if (string.IsNullOrWhiteSpace(newEmployee.BarberExpertise))
                 {
-                    // For Barber role, barber expertise is required
-                    if (string.IsNullOrWhiteSpace(newEmployee.BarberExpertise))
-                    {
-                        ShowValidationError(txtBarberExpertiseError, "Barber Expertise is required for Barber role");
-                        isValid = false;
-                    }
+                    ShowValidationError(txtBarberExpertiseError, "Barber Expertise is required for Barber role");
+                    isValid = false;
+                }
 
-                    
-                    if (string.IsNullOrWhiteSpace(newEmployee.ServicesOffered))
-                    {
-                        ShowValidationError(txtServicesError, "At least one service must be selected for Barber role");
-                        isValid = false;
-                    }
+                if (string.IsNullOrWhiteSpace(newEmployee.ServicesOffered))
+                {
+                    ShowValidationError(txtServicesError, "At least one service must be selected for Barber role");
+                    isValid = false;
                 }
             }
 
@@ -310,56 +516,99 @@ namespace Capstone
             return isValid;
         }
 
-        
         private bool ValidateEmployeeInline(Employee newEmployee)
         {
             bool isValid = true;
 
-            if (employees.Any(emp => emp.Fname == newEmployee.Fname))
+            // Clear previous errors for uniqueness checks only
+            txtFullNameTaken.Visibility = Visibility.Collapsed;
+            txtEmployeeIDSame.Visibility = Visibility.Collapsed;
+            txtPasswordSame.Visibility = Visibility.Collapsed;
+            txtNicknameTaken.Visibility = Visibility.Collapsed;
+
+            // Validate Full Name uniqueness
+            if (!string.IsNullOrWhiteSpace(newEmployee.Fname) &&
+                employees.Any(emp => emp.Fname.Equals(newEmployee.Fname, StringComparison.OrdinalIgnoreCase)))
             {
-                ShowValidationError(txtFullNameError, "Full name already exists");
+                ShowValidationError(txtFullNameTaken, "Full name already exists. Please enter a different one.");
                 isValid = false;
             }
 
-            if (employees.Any(emp => emp.Eid == newEmployee.Eid))
+            // Validate Employee ID uniqueness
+            if (!string.IsNullOrWhiteSpace(newEmployee.Eid) &&
+                employees.Any(emp => emp.Eid == newEmployee.Eid))
             {
-                ShowValidationError(txtEmployeeIDError, "Employee ID must be unique");
+                ShowValidationError(txtEmployeeIDSame, "Employee ID must be unique.");
                 isValid = false;
             }
 
-   
-            if (!string.IsNullOrWhiteSpace(newEmployee.Epassword) &&
+            // Validate Password uniqueness (only if password is provided and role is Cashier)
+            if (newEmployee.Role == "Cashier" && !string.IsNullOrWhiteSpace(newEmployee.Epassword) &&
                 employees.Any(emp => emp.Epassword == newEmployee.Epassword))
             {
-                ShowValidationError(txtPasswordError, "Password already in use");
+                ShowValidationError(txtPasswordSame, "Password already in use. Please choose another.");
                 isValid = false;
             }
 
-            if (employees.Any(emp => emp.Nickname == newEmployee.Nickname))
+            // Validate Nickname uniqueness
+            if (!string.IsNullOrWhiteSpace(newEmployee.Nickname) &&
+                employees.Any(emp => emp.Nickname.Equals(newEmployee.Nickname, StringComparison.OrdinalIgnoreCase)))
             {
-                ShowValidationError(txtNicknameError, "Nickname already taken");
+                ShowValidationError(txtNicknameTaken, "Employee nickname is already taken.");
                 isValid = false;
             }
 
             return isValid;
         }
 
+        private void ClearRequiredFieldValidationErrors()
+        {
+            // Clear required field error TextBlocks visibility
+            txtFullNameError.Visibility = Visibility.Collapsed;
+            txtBdateError.Visibility = Visibility.Collapsed;
+            txtGenderError.Visibility = Visibility.Collapsed;
+            txtAddressError.Visibility = Visibility.Collapsed;
+            txtContactNumberError.Visibility = Visibility.Collapsed;
+            txtEmailError.Visibility = Visibility.Collapsed;
+            txtEmergencyNameError.Visibility = Visibility.Collapsed;
+            txtEmergencyNumberError.Visibility = Visibility.Collapsed;
+            txtEmployeeIDError.Visibility = Visibility.Collapsed;
+            txtRoleError.Visibility = Visibility.Collapsed;
+            txtPasswordError.Visibility = Visibility.Collapsed;
+            txtNicknameError.Visibility = Visibility.Collapsed;
+            txtBarberExpertiseError.Visibility = Visibility.Collapsed;
+            txtServicesError.Visibility = Visibility.Collapsed;
+            txtDateHiredError.Visibility = Visibility.Collapsed;
+            txtEmploymentStatusError.Visibility = Visibility.Collapsed;
+            txtWorkScheduleError.Visibility = Visibility.Collapsed;
+            txtPhotoError.Visibility = Visibility.Collapsed;
+        }
+
         private async void SaveEmployee_Click(object sender, RoutedEventArgs e)
         {
+            // Prevent double-clicking
+            if (isSaving)
+                return;
+
             try
             {
-                // Clear validation errors first
-                ClearAllValidationErrors();
+                // Set saving flag and disable button
+                isSaving = true;
+                Button saveButton = (Button)sender;
+                saveButton.IsEnabled = false;
+                saveButton.Content = "Saving..."; // Visual feedback
 
-                
+                // Only clear required field validation errors, not uniqueness errors
+                ClearRequiredFieldValidationErrors();
+
                 var newEmployee = new Employee
                 {
                     Fname = txtFullName.Text.Trim(),
                     Eid = txtEmployeeID.Text.Trim(),
                     Nickname = txtNickname.Text.Trim(),
                     Role = (cmbRole.SelectedItem as ComboBoxItem)?.Content.ToString(),
+                    Photo = photoBase64,
 
-                    
                     Bdate = bdate.SelectedDate,
                     Gender = GetSelectedComboBoxValue(Gender),
                     Address = txtAddress.Text.Trim(),
@@ -372,7 +621,6 @@ namespace Capstone
                     Wsched = GetSelectedWorkSchedule()
                 };
 
-                
                 if (newEmployee.Role == "Cashier")
                 {
                     newEmployee.Epassword = txtEmployeePassword.Text.Trim();
@@ -386,23 +634,32 @@ namespace Capstone
                     newEmployee.ServicesOffered = GetSelectedServices();
                 }
 
-                // Validate with inline error display
-                bool isUniqueValid = ValidateEmployeeInline(newEmployee);
+                // Validate required fields first
                 bool isRequiredValid = ValidateAllRequiredFieldsInline(newEmployee);
 
+                // Then validate uniqueness (this will clear and show uniqueness errors)
+                bool isUniqueValid = ValidateEmployeeInline(newEmployee);
+
                 if (!isUniqueValid || !isRequiredValid)
-                    return; 
+                {
+                    // Re-enable button if validation fails
+                    saveButton.IsEnabled = true;
+                    saveButton.Content = "Add Employee";
+                    isSaving = false;
+                    return;
+                }
 
                 // Save to Supabase database
                 var result = await supabase.From<Employee>().Insert(newEmployee);
 
-                if (result != null)
+                if (result != null && result.Models.Count > 0)
                 {
-                    
-                    employees.Add(newEmployee);
+                    // Add to local collection only once
+                    employees.Add(result.Models[0]);
 
-                    MessageBox.Show("Employee added successfully to database!", "Success",
-                                  MessageBoxButton.OK, MessageBoxImage.Information);
+                    // Show success window only once
+                    succesfull successWindow = new succesfull();
+                    successWindow.ShowDialog();
 
                     // Clear the form after successful save
                     Clear_Click(sender, e);
@@ -418,9 +675,16 @@ namespace Capstone
                 MessageBox.Show($"Error saving employee: {ex.Message}", "Database Error",
                               MessageBoxButton.OK, MessageBoxImage.Error);
             }
+            finally
+            {
+                // Always re-enable button and reset flag
+                isSaving = false;
+                Button saveButton = (Button)sender;
+                saveButton.IsEnabled = true;
+                saveButton.Content = "Add Employee";
+            }
         }
 
-        
         private string GetSelectedComboBoxValue(ComboBox comboBox)
         {
             if (comboBox.SelectedItem is ComboBoxItem selectedItem && selectedItem.IsEnabled)
@@ -430,7 +694,6 @@ namespace Capstone
             return null;
         }
 
-        
         private string GetSelectedServices()
         {
             var selectedServices = new List<string>();
@@ -446,7 +709,6 @@ namespace Capstone
             return selectedServices.Count > 0 ? string.Join(", ", selectedServices) : null;
         }
 
-        
         private string GetSelectedWorkSchedule()
         {
             var selectedDays = new List<string>();
@@ -462,7 +724,6 @@ namespace Capstone
             return selectedDays.Count > 0 ? string.Join(", ", selectedDays) : null;
         }
 
-        
         private void Clear_Click(object sender, RoutedEventArgs e)
         {
             // Clear all validation errors first
@@ -491,6 +752,8 @@ namespace Capstone
 
             // ===== Image =====
             PhotoPreview.Source = new BitmapImage(new Uri("/profile.png", UriKind.Relative));
+            selectedPhotoPath = string.Empty;
+            photoBase64 = string.Empty;
 
             // ===== Services offered =====
             foreach (var child in servicesPanel.Children)
@@ -557,6 +820,9 @@ namespace Capstone
 
             [Column("Wsched")]
             public string Wsched { get; set; }
+
+            [Column("Photo")]
+            public string Photo { get; set; } // Base64 string
         }
     }
 }

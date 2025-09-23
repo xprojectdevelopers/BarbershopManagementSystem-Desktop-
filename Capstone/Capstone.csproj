@@ -22,6 +22,7 @@
     <None Remove="headset.png" />
     <None Remove="house.png" />
     <None Remove="house.svg" />
+    <None Remove="PopSuccessfull.jpg" />
     <None Remove="profile.png" />
     <None Remove="Security-Vault--Streamline-Milano.png" />
     <None Remove="Swarm_bee_user.png" />
@@ -50,6 +51,7 @@
     <Resource Include="headset.png" />
     <Resource Include="house.png" />
     <Resource Include="house.svg" />
+    <Resource Include="PopSuccessfull.jpg" />
     <Resource Include="profile.png" />
     <Resource Include="Security-Vault--Streamline-Milano.png" />
     <Resource Include="Swarm_bee_user.png" />

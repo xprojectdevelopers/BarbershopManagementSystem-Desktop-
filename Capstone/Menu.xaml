@@ -120,9 +120,9 @@
             </Grid.ColumnDefinitions>
 
             <!-- Notification -->
-            <Image Source="/bell.png" Width="24" Height="24" Grid.Column="1" Margin="0,0,5,0" VerticalAlignment="Center"/>
+            <Image Source="/bell.png" Width="30" Height="30" Grid.Column="1" Margin="0,0,5,0" VerticalAlignment="Center"/>
             <!-- Settings -->
-            <Image Source="/gear.png" Width="24" Height="24" Grid.Column="2" VerticalAlignment="Center"/>
+            <Image Source="/gear.png" Width="30" Height="30" Grid.Column="2" VerticalAlignment="Center"/>
         </Grid>
 
     </Grid>

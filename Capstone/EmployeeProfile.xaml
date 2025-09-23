@@ -203,14 +203,14 @@
                 <!-- Back -->
                 <StackPanel Orientation="Horizontal" Grid.Column="0" VerticalAlignment="Center"
                 MouseLeftButtonUp="Home_Click" Cursor="Hand" Margin="47,0,0,0">
-                    <Image Source="/arrow-left.png" Width="24" Height="24"/>
-                    <Label Content="Back" FontWeight="Bold" FontSize="16" VerticalAlignment="Center" Margin="5,0,0,0"/>
+                    <Image Source="/arrow-left.png" Width="30" Height="30"/>
+                    <Label Content="Back" FontWeight="Bold" FontSize="20" VerticalAlignment="Center" Margin="5,0,0,0"/>
                 </StackPanel>
 
                 <!-- Notification -->
-                <Image Source="/bell.png" Width="24" Height="24" Grid.Column="1" Margin="0,0,5,0" VerticalAlignment="Center"/>
+                <Image Source="/bell.png" Width="30" Height="30" Grid.Column="1" Margin="0,0,5,0" VerticalAlignment="Center"/>
                 <!-- Settings -->
-                <Image Source="/gear.png" Width="24" Height="24" Grid.Column="2" VerticalAlignment="Center"/>
+                <Image Source="/gear.png" Width="30" Height="30" Grid.Column="2" VerticalAlignment="Center"/>
             </Grid>
 
 
