@@ -1,4 +1,6 @@
-﻿using System.Windows;
+﻿using System.Globalization;
+using System.Windows;
+using System.Windows.Data;
 
 namespace Capstone
 {
@@ -7,6 +9,29 @@ namespace Capstone
         public Menu()
         {
             InitializeComponent();
+        }
+
+        public class ComparisonConverter : IValueConverter
+        {
+            private static ComparisonConverter _instance;
+            public static ComparisonConverter Instance => _instance ??= new ComparisonConverter();
+
+            public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+            {
+                if (value is double actualValue && parameter is string parameterString)
+                {
+                    if (double.TryParse(parameterString, out double threshold))
+                    {
+                        return actualValue < threshold;
+                    }
+                }
+                return false;
+            }
+
+            public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+            {
+                throw new NotImplementedException();
+            }
         }
 
 

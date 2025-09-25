@@ -5,125 +5,336 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Capstone"
         mc:Ignorable="d"
-        Title="Window1" Height="694" Width="1380"
-        WindowState="Maximized" ResizeMode="CanResize"
-        MinHeight="450" MinWidth="800">
-
-
+        Title="Dashboard" Height="700" Width="1200"
+        WindowState="Maximized"
+        MinWidth="400"
+        MinHeight="400"
+        ResizeMode="CanResizeWithGrip">
 
     <Window.Resources>
-
-
-        <Style x:Key="HoverFixedSingle" TargetType="Border">
-            <Setter Property="BorderBrush" Value="Transparent"/>
+        <!-- Responsive card style -->
+        <Style x:Key="MenuCard" TargetType="Border">
             <Setter Property="BorderThickness" Value="1"/>
-            <Setter Property="CornerRadius" Value="0"/>
+            <Setter Property="CornerRadius" Value="8"/>
+            <Setter Property="Padding" Value="20"/>
+            <Setter Property="Margin" Value="10"/>
+            <Setter Property="Cursor" Value="Hand"/>
             <Style.Triggers>
                 <Trigger Property="IsMouseOver" Value="True">
+                    <Setter Property="Background" Value="White"/>
                     <Setter Property="BorderBrush" Value="Black"/>
-                    <Setter Property="BorderThickness" Value="1"/>
+                    <Setter Property="Effect">
+                        <Setter.Value>
+                            <DropShadowEffect ShadowDepth="2" BlurRadius="8" Opacity="0.2"/>
+                        </Setter.Value>
+                    </Setter>
                 </Trigger>
             </Style.Triggers>
         </Style>
+
+        <!-- Icon style -->
+        <Style x:Key="MenuIcon" TargetType="Image">
+            <Setter Property="Width" Value="40"/>
+            <Setter Property="Height" Value="40"/>
+            <Setter Property="HorizontalAlignment" Value="Left"/>
+            <Setter Property="VerticalAlignment" Value="Top"/>
+        </Style>
+
+        <!-- Description -->
+        <Style x:Key="MenuTitle" TargetType="TextBlock">
+            <Setter Property="FontSize" Value="18"/>
+            <Setter Property="FontWeight" Value="SemiBold"/>
+            <Setter Property="Foreground" Value="#333333"/>
+            <Setter Property="Margin" Value="0,5,0,5"/>
+        </Style>
+
+        <!-- Description Text -->
+        <Style x:Key="MenuSubtitle" TargetType="TextBlock">
+            <Setter Property="FontSize" Value="13"/>
+            <Setter Property="Foreground" Value="#757575"/>
+            <Setter Property="TextWrapping" Value="Wrap"/>
+        </Style>
+
+        <!-- Profile styles -->
+        <Style x:Key="ProfileImage" TargetType="Border">
+            <Setter Property="Width" Value="120"/>
+            <Setter Property="Height" Value="120"/>
+            <Setter Property="CornerRadius" Value="60"/>
+            <Setter Property="Background" Value="Black"/>
+            <Setter Property="HorizontalAlignment" Value="Center"/>
+        </Style>
+
+        <!-- Responsive profile text styles -->
+        <Style x:Key="ResponsiveProfileName" TargetType="TextBlock">
+            <Setter Property="FontSize" Value="28"/>
+            <Setter Property="FontWeight" Value="Bold"/>
+            <Setter Property="HorizontalAlignment" Value="Center"/>
+            <Setter Property="Margin" Value="0,15,0,5"/>
+            <Setter Property="Foreground" Value="#333333"/>
+            <Setter Property="TextWrapping" Value="Wrap"/>
+        </Style>
+
+        <Style x:Key="ResponsiveProfileRole" TargetType="TextBlock">
+            <Setter Property="FontSize" Value="16"/>
+            <Setter Property="HorizontalAlignment" Value="Center"/>
+            <Setter Property="Foreground" Value="#757575"/>
+            <Setter Property="Margin" Value="0,0,0,5"/>
+        </Style>
+
+        <Style x:Key="ResponsiveProfileLink" TargetType="TextBlock">
+            <Setter Property="FontSize" Value="14"/>
+            <Setter Property="HorizontalAlignment" Value="Center"/>
+            <Setter Property="Foreground" Value="#0056FF"/>
+            <Setter Property="FontWeight" Value="SemiBold"/>
+            <Setter Property="TextDecorations" Value="Underline"/>
+            <Setter Property="Cursor" Value="Hand"/>
+        </Style>
+
+        <!-- Responsive button style for notification and settings -->
+        <Style x:Key="ResponsiveButton" TargetType="Button">
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Padding" Value="12"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="HorizontalAlignment" Value="Center"/>
+            <Setter Property="VerticalAlignment" Value="Center"/>
+            <Setter Property="MinWidth" Value="40"/>
+            <Setter Property="MinHeight" Value="40"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border Background="{TemplateBinding Background}" 
+                                BorderBrush="{TemplateBinding BorderBrush}"
+                                BorderThickness="{TemplateBinding BorderThickness}"
+                                Padding="{TemplateBinding Padding}"
+                                CornerRadius="20">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter Property="Background" Value="#F5F5F5"/>
+                            </Trigger>
+                            <Trigger Property="IsPressed" Value="True">
+                                <Setter Property="Background" Value="#E0E0E0"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <!-- Simple icon style for top bar (no converter needed) -->
+        <Style x:Key="TopBarIcon" TargetType="Image">
+            <Setter Property="Width" Value="24"/>
+            <Setter Property="Height" Value="24"/>
+        </Style>
     </Window.Resources>
 
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="60"/>
+            <!-- Top bar -->
+            <RowDefinition Height="*"/>
+            <!-- Main content -->
+        </Grid.RowDefinitions>
 
-    <Grid Margin="0,50,-182,0" Height="674" VerticalAlignment="Top">
+        <!-- Top Navigation Bar -->
+        <Border Grid.Row="1" BorderThickness="0,0,0,1" Margin="0,4,0,560">
+            <Grid Margin="20,0">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
 
-        <!-- Profile Info -->
-        <Image HorizontalAlignment="Left" Height="141" Margin="593,45,0,0"
-               VerticalAlignment="Top" Width="144" Source="/crop-after.png"/>
-        <Label Content="Admin" HorizontalAlignment="Left" Margin="643,232,0,0"
-               VerticalAlignment="Top" Width="60" Height="27"/>
-        <Label Content="My Account" FontSize="15" HorizontalAlignment="Left"
-               Margin="616,246,0,0" VerticalAlignment="Top"
-               Foreground="#FF0056FF" FontWeight="Bold"/>
-        <Label Content="Emiliano C. Doro" FontSize="30"
-               HorizontalAlignment="Left" Margin="541,191,0,0"
-               VerticalAlignment="Top" Width="246" FontWeight="Bold"/>
+                <!-- Notification Icon -->
+                <Button Grid.Column="1" 
+                       Margin="0,0,0,0" 
+                       Style="{StaticResource ResponsiveButton}"
+                       ToolTip="Notifications">
+                    <Image Source="bell.png" Style="{StaticResource TopBarIcon}"/>
+                </Button>
 
-        <!-- Appointments -->
-        <Border Style="{StaticResource HoverFixedSingle}"
-                Margin="88,329,0,0"
-                HorizontalAlignment="Left"
-                VerticalAlignment="Top">
-            <StackPanel Width="320" Height="80">
-                <Label FontSize="18" Margin="60,10,0,0">Appointments</Label>
-                <Label FontSize="13" Margin="60,-5,0,0" Foreground="#FF757575">
-                    Manage bookings, schedules, approvals.
-                </Label>
-                <Image Margin="0,-50,250,0" Height="40" Width="40" Source="/bell-ringing.png"/>
-            </StackPanel>
+                <!-- Settings Icon -->
+                <Button Grid.Column="2"  
+                       Margin="0,0,70,0" 
+                       Style="{StaticResource ResponsiveButton}"
+                       ToolTip="Settings">
+                    <Image Source="gear.png" Style="{StaticResource TopBarIcon}"/>
+                </Button>
+            </Grid>
         </Border>
 
-        <!-- Payroll -->
-        <Border Style="{StaticResource HoverFixedSingle}"
-                Margin="88,446,0,0"
-                HorizontalAlignment="Left"
-                VerticalAlignment="Top">
-            <StackPanel Width="320" Height="80">
-                <Label FontSize="18" Margin="60,10,0,0">Payroll</Label>
-                <Label FontSize="13" Margin="60,-5,0,0" Foreground="#FF757575">
-                    Handle salaries and staff compensation.
-                </Label>
-                <Image Margin="0,-50,250,0" Height="40" Width="40" Source="/wallet.png"/>
-            </StackPanel>
-        </Border>
+        <!-- Main Content Area -->
+        <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto">
+            <Grid Margin="20">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <!-- Profile section -->
+                    <RowDefinition Height="40"/>
+                    <!-- Spacer -->
+                    <RowDefinition Height="Auto"/>
+                    <!-- Menu cards -->
+                </Grid.RowDefinitions>
 
-        <!-- Customers -->
-        <Border Style="{StaticResource HoverFixedSingle}"
-                Margin="504,327,0,0"
-                HorizontalAlignment="Left"
-                VerticalAlignment="Top">
-            <StackPanel Width="320" Height="84">
-                <Label FontSize="18" Margin="60,10,0,0">Customers</Label>
-                <Label FontSize="13" Margin="60,-5,0,0" Foreground="#FF757575">
-                    Maintain client records and contact details.
-                </Label>
-                <Image Margin="0,-50,250,0" Height="40" Width="40" Source="/headset.png"/>
-            </StackPanel>
-        </Border>
+                <!-- Profile Section -->
+                <Grid Grid.Row="0" HorizontalAlignment="Center" Margin="0,20,0,0">
+                    <Viewbox Stretch="Uniform" MaxWidth="350" MaxHeight="300" StretchDirection="DownOnly">
+                        <StackPanel Orientation="Vertical">
+                            <!-- Profile Image Container -->
+                            <Border Width="120" Height="120" 
+                                    CornerRadius="60"
+                                    Background="Black" 
+                                    HorizontalAlignment="Center"
+                                    Margin="0,0,0,15">
+                                <Image Source="crop-after.png" Stretch="UniformToFill">
+                                    <Image.Clip>
+                                        <EllipseGeometry Center="60,60" RadiusX="60" RadiusY="60"/>
+                                    </Image.Clip>
+                                </Image>
+                            </Border>
 
-        <!-- Inventory -->
-        <Border Style="{StaticResource HoverFixedSingle}"
-                Margin="504,444,0,0"
-                HorizontalAlignment="Left"
-                VerticalAlignment="Top">
-            <StackPanel Width="320" Height="84">
-                <Label FontSize="18" Margin="60,10,0,0">Inventory</Label>
-                <Label FontSize="13" Margin="60,-5,0,0" Foreground="#FF757575">
-                    Maintain client records and control details.
-                </Label>
-                <Image Margin="0,-50,250,0" Height="40" Width="40" Source="/bell-ringing.png"/>
-            </StackPanel>
-        </Border>
+                            <!-- Profile Info -->
+                            <StackPanel>
+                                <TextBlock Text="Emiliano C. Doro" 
+                                          Style="{StaticResource ResponsiveProfileName}"/>
+                                <TextBlock Text="Admin" 
+                                          Style="{StaticResource ResponsiveProfileRole}"/>
+                                <TextBlock Text="My Account" 
+                                          Style="{StaticResource ResponsiveProfileLink}"/>
+                            </StackPanel>
+                        </StackPanel>
+                    </Viewbox>
+                </Grid>
 
-        <!-- Employees -->
-        <Border Style="{StaticResource HoverFixedSingle}"
-        Margin="946,329,0,0"
-        HorizontalAlignment="Left"
-        VerticalAlignment="Top"
-        MouseLeftButtonDown="Employees_Click">
-            <StackPanel Width="320" Height="84">
-                <Label FontSize="18" Margin="60,10,0,0">Employees</Label>
-                <Label FontSize="13" Margin="60,-5,0,0" Foreground="#FF757575">
-                    Team profiles, roles, permission.
-                </Label>
-                <Image Margin="0,-50,250,0" Height="40" Width="40" Source="/folder-user.png"/>
-            </StackPanel>
-        </Border>
-        <Grid Grid.Row="0" Margin="3,-1,292,615" Height="60">
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="*"/>
-                <ColumnDefinition Width="Auto"/>
-                <ColumnDefinition Width="Auto"/>
-            </Grid.ColumnDefinitions>
+                <!-- Menu Cards Section -->
+                <Grid Grid.Row="2" Margin="55,20,55,20">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                    </Grid.RowDefinitions>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
 
-            <!-- Notification -->
-            <Image Source="/bell.png" Width="30" Height="30" Grid.Column="1" Margin="0,0,5,0" VerticalAlignment="Center"/>
-            <!-- Settings -->
-            <Image Source="/gear.png" Width="30" Height="30" Grid.Column="2" VerticalAlignment="Center"/>
-        </Grid>
+                    <!-- First Row Cards -->
+                    <!-- Appointments Card -->
+                    <Border Grid.Row="0" Grid.Column="0" Style="{StaticResource MenuCard}">
+                        <Grid>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="*"/>
+                            </Grid.RowDefinitions>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto"/>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
 
+                            <Image Grid.Row="0" Grid.Column="0" Source="bell-ringing.png" 
+                                  Style="{StaticResource MenuIcon}" Margin="0,0,15,0"/>
+                            <StackPanel Grid.Row="0" Grid.Column="1" Grid.RowSpan="2" VerticalAlignment="Center">
+                                <TextBlock Text="Appointments" Style="{StaticResource MenuTitle}"/>
+                                <TextBlock Text="Manage bookings, schedules, approvals." 
+                                          Style="{StaticResource MenuSubtitle}"/>
+                            </StackPanel>
+                        </Grid>
+                    </Border>
+
+                    <!-- Customers Card -->
+                    <Border Grid.Row="0" Grid.Column="1" Style="{StaticResource MenuCard}">
+                        <Grid>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="*"/>
+                            </Grid.RowDefinitions>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto"/>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
+
+                            <Image Grid.Row="0" Grid.Column="0" Source="headset.png" 
+                                  Style="{StaticResource MenuIcon}" Margin="0,0,15,0"/>
+                            <StackPanel Grid.Row="0" Grid.Column="1" Grid.RowSpan="2" VerticalAlignment="Center">
+                                <TextBlock Text="Customers" Style="{StaticResource MenuTitle}"/>
+                                <TextBlock Text="Maintain client records and contact details." 
+                                          Style="{StaticResource MenuSubtitle}"/>
+                            </StackPanel>
+                        </Grid>
+                    </Border>
+
+                    <!-- Employees Card -->
+                    <Border Grid.Row="0" Grid.Column="2" Style="{StaticResource MenuCard}"
+                           MouseLeftButtonDown="Employees_Click">
+                        <Grid>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="*"/>
+                            </Grid.RowDefinitions>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto"/>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
+
+                            <Image Grid.Row="0" Grid.Column="0" Source="folder-user.png" 
+                                  Style="{StaticResource MenuIcon}" Margin="0,0,15,0"/>
+                            <StackPanel Grid.Row="0" Grid.Column="1" Grid.RowSpan="2" VerticalAlignment="Center">
+                                <TextBlock Text="Employees" Style="{StaticResource MenuTitle}"/>
+                                <TextBlock Text="Team profiles, roles, permissions." 
+                                          Style="{StaticResource MenuSubtitle}"/>
+                            </StackPanel>
+                        </Grid>
+                    </Border>
+
+                    <!-- Second Row Cards -->
+                    <!-- Payroll Card -->
+                    <Border Grid.Row="1" Grid.Column="0" Style="{StaticResource MenuCard}">
+                        <Grid>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="*"/>
+                            </Grid.RowDefinitions>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto"/>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
+
+                            <Image Grid.Row="0" Grid.Column="0" Source="wallet.png" 
+                                  Style="{StaticResource MenuIcon}" Margin="0,0,15,0"/>
+                            <StackPanel Grid.Row="0" Grid.Column="1" Grid.RowSpan="2" VerticalAlignment="Center">
+                                <TextBlock Text="Payroll" Style="{StaticResource MenuTitle}"/>
+                                <TextBlock Text="Handle salaries and staff compensation." 
+                                          Style="{StaticResource MenuSubtitle}"/>
+                            </StackPanel>
+                        </Grid>
+                    </Border>
+
+                    <!-- Inventory Card -->
+                    <Border Grid.Row="1" Grid.Column="1" Style="{StaticResource MenuCard}">
+                        <Grid>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="*"/>
+                            </Grid.RowDefinitions>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto"/>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
+
+                            <Image Grid.Row="0" Grid.Column="0" Source="bell-ringing.png" 
+                                  Style="{StaticResource MenuIcon}" Margin="0,0,15,0"/>
+                            <StackPanel Grid.Row="0" Grid.Column="1" Grid.RowSpan="2" VerticalAlignment="Center">
+                                <TextBlock Text="Inventory" Style="{StaticResource MenuTitle}"/>
+                                <TextBlock Text="Maintain stock records and control details." 
+                                      Style="{StaticResource MenuSubtitle}"/>
+                            </StackPanel>
+                        </Grid>
+                    </Border>
+
+           
+                </Grid>
+            </Grid>
+        </ScrollViewer>
     </Grid>
 </Window>

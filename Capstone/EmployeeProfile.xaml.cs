@@ -14,7 +14,7 @@ namespace Capstone
     public partial class EmployeeProfile : Window
     {
         private Client supabase;
-        private ObservableCollection<Employee> employees;
+        private ObservableCollection<BarbershopManagementSystem> employees;
 
         public EmployeeProfile()
         {
@@ -40,10 +40,10 @@ namespace Capstone
         {
             await InitializeSupabaseAsync();
 
-            employees = new ObservableCollection<Employee>();
+            employees = new ObservableCollection<BarbershopManagementSystem>();
 
             // Fetch data from Supabase
-            var result = await supabase.From<Employee>().Get();
+            var result = await supabase.From<BarbershopManagementSystem>().Get();
             foreach (var emp in result.Models)
             {
                 employees.Add(emp);
@@ -108,16 +108,16 @@ namespace Capstone
             }
         }
 
-        [Table("Register_Employees")] // pangalan ng table sa Supabase
-        public class Employee : BaseModel
+        [Table("Add_Employee")] // pangalan ng table sa Supabase
+        public class BarbershopManagementSystem : BaseModel
         {
             [PrimaryKey("id", false)]
             public int Id { get; set; }
 
-            [Column("Fname")]
+            [Column("Full_Name")]
             public string Fname { get; set; }
 
-            [Column("Bdate")]
+            [Column("Birthdate")]
             public DateTime? Bdate { get; set; }
 
             [Column("Gender")]
@@ -126,43 +126,43 @@ namespace Capstone
             [Column("Address")]
             public string Address { get; set; }
 
-            [Column("Cnumber")]
+            [Column("Contact_Number")]
             public string Cnumber { get; set; }
 
             [Column("Email")]
             public string Email { get; set; }
 
-            [Column("ECname")]
+            [Column("EContact_Name")]
             public string ECname { get; set; }
 
-            [Column("ECnumber")]
+            [Column("EContact_Number")]
             public string ECnumber { get; set; }
 
-            [Column("Eid")]
+            [Column("Employee_ID")]
             public string Eid { get; set; }
 
-            [Column("Erole")]
+            [Column("Employee_Role")]
             public string Role { get; set; }
 
-            [Column("Epassword")]
+            [Column("Employee_Password")]
             public string Epassword { get; set; }
 
-            [Column("Enickname")]
+            [Column("Employee_Nickname")]
             public string Nickname { get; set; }
 
-            [Column("Bexpert")]
+            [Column("Barber_Expert")]
             public string BarberExpertise { get; set; }
 
-            [Column("Soffered")]
+            [Column("Service_Offered")]
             public string ServicesOffered { get; set; }
 
-            [Column("Dhired")]
+            [Column("Date_Hired")]
             public DateTime? DateHired { get; set; }
 
-            [Column("Estatus")]
+            [Column("Employee_Status")]
             public string Estatus { get; set; }
 
-            [Column("Wsched")]
+            [Column("Work_Sched")]
             public string Wsched { get; set; }
         }
     }

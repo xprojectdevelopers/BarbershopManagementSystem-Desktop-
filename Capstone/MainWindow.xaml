@@ -5,44 +5,130 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Capstone"
         mc:Ignorable="d"
-        Title="Molave Street's Barbers - Login" Height="370" Width="480" WindowStartupLocation="CenterScreen">
-    <Grid Margin="0,0,0,-6">
-        <Label Content="MOLAVE STREET'S BARBERS" FontWeight="Bold" FontSize="20" HorizontalAlignment="Center" Margin="0,67,0,0" VerticalAlignment="Top" Height="39" Width="284"/>
-        <Label Content="Employee ID" FontSize="15" HorizontalAlignment="Left" Margin="74,125,0,0" VerticalAlignment="Top" Height="30" Width="158" FontWeight="Bold"/>
-        <Label Content="Password" FontSize="15" HorizontalAlignment="Left" Margin="74,185,0,0" VerticalAlignment="Top" Height="27" Width="158" FontWeight="Bold"/>
+        Title="Molave Street's Barbers - Login" 
+        Height="375" 
+        Width="500" 
+        MinWidth="400"
+        MinHeight="400"
+        ResizeMode="CanResizeWithGrip"
+        WindowStartupLocation="CenterScreen">
 
-        <!-- Employee ID TextBox-->
-        <TextBox x:Name="txtEmployeeId" FontSize="15" HorizontalAlignment="Center" TextWrapping="Wrap" VerticalAlignment="Top" Width="318" Margin="0,155,0,0" Height="25" Foreground="Black" Background="#FFA2A2A2"/>
+    <Window.Resources>
+        <BooleanToVisibilityConverter x:Key="BooleanToVisibility"/>
 
-        <!-- Password Box-->
-        <PasswordBox x:Name="txtPassword" FontSize="15" HorizontalAlignment="Center" Margin="0,217,0,0" VerticalAlignment="Top" Width="318" Height="25" Background="#FFA2A2A2"/>
+        <!-- Define styles for responsive design -->
+        <Style x:Key="TitleStyle" TargetType="TextBlock">
+            <Setter Property="FontWeight" Value="Bold"/>
+            <Setter Property="FontSize" Value="24"/>
+            <Setter Property="HorizontalAlignment" Value="Center"/>
+            <Setter Property="TextAlignment" Value="Center"/>
+            <Setter Property="Foreground" Value="#FF1F4BFF"/>
+            <Setter Property="Margin" Value="20,0"/>
+        </Style>
 
-        
-        <Button x:Name="btnLogin" Content="Log in" 
-                HorizontalAlignment="Center" 
-                Margin="0,261,0,0" 
-                VerticalAlignment="Top" 
-                Foreground="White" 
-                FontWeight="Bold" 
-                Width="120" 
-                Height="41" 
-                Background="#FF1F4BFF" 
-                Cursor="Hand"
-                Click="Button_Click_1">
-            <Button.Template>
-                <ControlTemplate TargetType="Button">
-                    <Border Background="{TemplateBinding Background}" 
-                            CornerRadius="20" 
-                            BorderBrush="{TemplateBinding BorderBrush}" 
-                            BorderThickness="{TemplateBinding BorderThickness}">
-                        <ContentPresenter HorizontalAlignment="Center" 
-                                          VerticalAlignment="Center"/>
-                    </Border>
-                </ControlTemplate>
-            </Button.Template>
-        </Button>
+        <Style x:Key="LabelStyle" TargetType="Label">
+            <Setter Property="FontSize" Value="14"/>
+            <Setter Property="FontWeight" Value="SemiBold"/>
+            <Setter Property="Foreground" Value="#FF333333"/>
+            <Setter Property="Margin" Value="0,0,0,5"/>
+        </Style>
 
-        <!-- Status messages -->
-        <Label x:Name="lblStatus" Content="" FontSize="12" HorizontalAlignment="Center" Margin="0,310,0,0" VerticalAlignment="Top" Height="25" Width="400" Foreground="Red" HorizontalContentAlignment="Center"/>
-    </Grid>
+        <Style x:Key="InputStyle" TargetType="Control">
+            <Setter Property="FontSize" Value="14"/>
+            <Setter Property="Height" Value="35"/>
+            <Setter Property="Background" Value="#E8E9EB"/>
+            <Setter Property="BorderBrush" Value="#FFCCCCCC"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="Padding" Value="10,0"/>
+        </Style>
+
+        <Style x:Key="LoginButtonStyle" TargetType="Button">
+            <Setter Property="Background" Value="#FF1F4BFF"/>
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="FontSize" Value="16"/>
+            <Setter Property="Height" Value="45"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border Background="{TemplateBinding Background}" 
+                                CornerRadius="25" 
+                                BorderBrush="{TemplateBinding BorderBrush}" 
+                                BorderThickness="{TemplateBinding BorderThickness}">
+                            <ContentPresenter HorizontalAlignment="Center" 
+                                              VerticalAlignment="Center"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter Property="Background" Value="#FF0D3CE6"/>
+                            </Trigger>
+                            <Trigger Property="IsPressed" Value="True">
+                                <Setter Property="Background" Value="#FF092BB8"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+    </Window.Resources>
+
+    <!-- Main Container with responsive layout -->
+    <Border Background="White" CornerRadius="10" BorderBrush="white" BorderThickness="1" Height="400" VerticalAlignment="Center">
+        <Grid Margin="20">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
+
+            <!-- Header Section -->
+            <StackPanel Grid.Row="0" Margin="4,39,-4,21">
+                <TextBlock Text="MOLAVE STREET'S BARBERS" 
+                           FontSize="15"
+                           Foreground="Black"
+                           Style="{StaticResource TitleStyle}"/>
+
+            </StackPanel>
+
+            <!-- Login Form Section -->
+            <StackPanel Grid.Row="1" MaxWidth="350" HorizontalAlignment="Center">
+                <!-- Employee ID Section -->
+                <!-- Employee ID Section -->
+                <!-- Employee ID Section -->
+                <Label Content="Employee ID" Margin="-5,0,0,0" Style="{StaticResource LabelStyle}"/>
+                <TextBox x:Name="txtEmployeeId" 
+                         Style="{StaticResource InputStyle}"
+                         Margin="0,0,0,20"
+                         FontSize="23"/>
+
+                <!-- Password Section -->
+                <Label Content="Password" Margin="-5,0,0,0" Style="{StaticResource LabelStyle}"/>
+                <PasswordBox x:Name="txtPassword" 
+                             Height="35"
+                             FontSize="20"
+                             Background="#E8E9EB"
+                             BorderBrush="#E8E9EB"
+                             BorderThickness="1"
+                             Padding="10,0"
+                             Margin="0,0,0,30" Width="278"/>
+
+                <!-- Login Button -->
+                <Button x:Name="btnLogin" 
+                        Content="Log In" 
+                        Style="{StaticResource LoginButtonStyle}"
+                        Click="Button_Click_1"
+                        Background="black"
+                        Margin="0,0,0,20" Width="132"/>
+
+                <!-- Status Message -->
+                <Label x:Name="lblStatus" 
+                       Content="" 
+                       FontSize="12" 
+                       Foreground="#FFDC3545"
+                       HorizontalContentAlignment="Center"
+                       Margin="0,-20,0,0"/>
+            </StackPanel>
+
+        </Grid>
+    </Border>
 </Window>

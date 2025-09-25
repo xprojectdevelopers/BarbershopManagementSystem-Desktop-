@@ -11,6 +11,7 @@
         ResizeMode="CanResize" Height="2580">
 
     <Window.Resources>
+       
 
         <Style x:Key="TextBoxStyleDatePicker" TargetType="DatePicker">
             <Setter Property="Background" Value="White"/>
@@ -252,7 +253,7 @@
                         VerticalAlignment="Top" 
                         Width="250"
                         Style="{StaticResource TextBoxStyleDatePicker}"
-                        Tag="Select Birth Date" Height="49"/>
+                        Tag="Select Birth Date" Height="49" />
             <TextBlock x:Name="txtBdateError" Foreground="Red" FontSize="14" Margin="255,465,0,0" Grid.Row="1" HorizontalAlignment="Left" VerticalAlignment="Top" Visibility="Collapsed"/>
 
             <!-- Gender -->

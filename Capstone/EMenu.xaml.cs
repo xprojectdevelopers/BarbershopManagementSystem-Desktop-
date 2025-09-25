@@ -12,7 +12,7 @@ namespace Capstone
     public partial class EMenu : Window
     {
         private Supabase.Client? supabase;
-        private ObservableCollection<Employee> employees = new ObservableCollection<Employee>();
+        private ObservableCollection<BarbershopManagementSystem> employees = new ObservableCollection<BarbershopManagementSystem>();
 
         private int CurrentPage = 1;
         private int PageSize = 5; // 5 employees per page
@@ -51,17 +51,17 @@ namespace Capstone
             await supabase.InitializeAsync();
         }
 
-        
+
         private async Task LoadEmployees()
         {
             if (supabase == null) return;
 
             var result = await supabase
-                .From<Employee>()
+                .From<BarbershopManagementSystem>()
                 .Order(x => x.EmployeeID, Ordering.Ascending) // always in registration order
                 .Get();
 
-            employees = new ObservableCollection<Employee>(result.Models);
+            employees = new ObservableCollection<BarbershopManagementSystem>(result.Models);
 
             // compute total pages
             TotalPages = (int)Math.Ceiling(employees.Count / (double)PageSize);
@@ -70,7 +70,7 @@ namespace Capstone
             GeneratePaginationButtons();
         }
 
-        
+
         private void LoadPage(int pageNumber)
         {
             CurrentPage = pageNumber;
@@ -83,11 +83,12 @@ namespace Capstone
             // Add blank rows if kulang sa PageSize
             while (pageData.Count < PageSize)
             {
-                pageData.Add(new Employee
+                pageData.Add(new BarbershopManagementSystem
                 {
-                    EmployeeID = "", 
+                    EmployeeID = "",
                     EmployeeName = "",
                     ContactNumber = "",
+                    EmergencyContactName = "",
                     EmergencyContact = ""
                 });
             }
@@ -95,8 +96,7 @@ namespace Capstone
             EmployeeGrid.ItemsSource = pageData;
         }
 
-        // Generate ng buttons
-        // Generate ng buttons
+
         // Generate ng buttons
         private void GeneratePaginationButtons()
         {
@@ -151,7 +151,7 @@ namespace Capstone
             if (supabase == null) return;
 
             var result = await supabase
-                .From<Employee>()
+                .From<BarbershopManagementSystem>()
                 .Get();
 
             int total = result.Models.Count;
@@ -180,20 +180,41 @@ namespace Capstone
         }
 
         // ✅ Employee model
-        [Table("Register_Employees")]
-        public class Employee : BaseModel
+        [Table("Add_Employee")]
+        public class BarbershopManagementSystem : BaseModel
         {
-            [PrimaryKey("Eid", false)]
+            [PrimaryKey("Employee_ID", false)]
             public string EmployeeID { get; set; } = string.Empty;
 
-            [Column("Fname")]
+            [Column("Full_Name")]
             public string EmployeeName { get; set; } = string.Empty;
 
-            [Column("Cnumber")]
+            [Column("Contact_Number")]
             public string ContactNumber { get; set; } = string.Empty;
 
-            [Column("ECnumber")]
+            [Column("EContact_Name")]
+            public string EmergencyContactName { get; set; } = string.Empty;
+
+            [Column("EContact_Number")]
             public string EmergencyContact { get; set; } = string.Empty;
+
+            // Computed property for displaying emergency contact in the format "Name - Number"
+            public string EmergencyContactDisplay
+            {
+                get
+                {
+                    if (string.IsNullOrEmpty(EmergencyContactName) && string.IsNullOrEmpty(EmergencyContact))
+                        return "";
+
+                    if (string.IsNullOrEmpty(EmergencyContactName))
+                        return EmergencyContact;
+
+                    if (string.IsNullOrEmpty(EmergencyContact))
+                        return EmergencyContactName;
+
+                    return $"{EmergencyContactName} - {EmergencyContact}";
+                }
+            }
         }
     }
 }

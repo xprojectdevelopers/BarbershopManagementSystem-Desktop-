@@ -111,7 +111,7 @@ namespace Capstone
             try
             {
                 // Test query to confirm connection
-                string testQuery = $"{supabaseUrl}/rest/v1/Employees_Login?select=emID";
+                string testQuery = $"{supabaseUrl}/rest/v1/Admin_Account?select=Admin_Login";
 
                 System.Diagnostics.Debug.WriteLine($"Testing connection to: {testQuery}");
 
@@ -131,7 +131,7 @@ namespace Capstone
                 System.Diagnostics.Debug.WriteLine($"Available employees: {testContent}");
 
                 // Actual authentication query
-                string query = $"{supabaseUrl}/rest/v1/Employees_Login?emID=eq.{employeeId}&empassword=eq.{password}&select=*";
+                string query = $"{supabaseUrl}/rest/v1/Admin_Account?Admin_Login=eq.{employeeId}&Admin_Password=eq.{password}&select=*";
                 System.Diagnostics.Debug.WriteLine($"Auth query: {query}");
 
                 HttpResponseMessage response = await httpClient.GetAsync(query);
