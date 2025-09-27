@@ -333,7 +333,8 @@ Height="40"
 Margin="845,1149,0,0"
 HorizontalAlignment="Left"
 VerticalAlignment="Top" Grid.Row="1"
-Foreground="Blue">
+Foreground="Blue"
+Click="btnGeneratePassword_Click">
                 <Button.Template>
                     <ControlTemplate TargetType="Button">
                         <Border Background="white" 
@@ -458,44 +459,48 @@ Grid.Row="1" VerticalAlignment="Top"/>
             <TextBlock x:Name="txtWorkScheduleError" Foreground="Red" FontSize="14" Margin="279,1949,0,0" Grid.Row="1" HorizontalAlignment="Left" VerticalAlignment="Top" Visibility="Collapsed"/>
 
             <Button Content="Delete"
-        Width="240"
-        Height="60"
-        Margin="435,2071,0,0"
-        HorizontalAlignment="Left"
-        VerticalAlignment="Top" Grid.Row="1"
-        Foreground="White" FontSize="20" FontWeight="Bold">
+    Width="240"
+    Height="60"
+    Margin="435,2071,0,0"
+    HorizontalAlignment="Left"
+    VerticalAlignment="Top" Grid.Row="1"
+    Foreground="White" FontSize="20" FontWeight="Bold"
+    Click="Delete_Click">
                 <Button.Template>
                     <ControlTemplate TargetType="Button">
                         <Border Background="Black" 
-                    CornerRadius="30" 
-                    BorderBrush="Black" 
-                    BorderThickness="1">
+                CornerRadius="30" 
+                BorderBrush="Black" 
+                BorderThickness="1">
                             <ContentPresenter HorizontalAlignment="Center"
-                                  VerticalAlignment="Center"
-                                  RecognizesAccessKey="True"
-                                  TextBlock.Foreground="White"/>
+                      VerticalAlignment="Center"
+                      RecognizesAccessKey="True"
+                      TextBlock.Foreground="White"/>
                         </Border>
                     </ControlTemplate>
                 </Button.Template>
             </Button>
 
+
+
             <Button Content="Update"
-        Width="240"
-        Height="60"
-        Margin="705,2066,0,0"
-        HorizontalAlignment="Left"
-        VerticalAlignment="Top" Grid.Row="1"
-        Foreground="White" FontSize="20" FontWeight="Bold">
+    Width="240"
+    Height="60"
+    Margin="705,2066,0,0"
+    HorizontalAlignment="Left"
+    VerticalAlignment="Top" Grid.Row="1"
+    Foreground="White" FontSize="20" FontWeight="Bold"
+    Click="Update_Click">
                 <Button.Template>
                     <ControlTemplate TargetType="Button">
                         <Border Background="Blue" 
-                    CornerRadius="30" 
-                    BorderBrush="Blue" 
-                    BorderThickness="1">
+                CornerRadius="30" 
+                BorderBrush="Blue" 
+                BorderThickness="1">
                             <ContentPresenter HorizontalAlignment="Center"
-                                  VerticalAlignment="Center"
-                                  RecognizesAccessKey="True"
-                                  TextBlock.Foreground="White"/>
+                      VerticalAlignment="Center"
+                      RecognizesAccessKey="True"
+                      TextBlock.Foreground="White"/>
                         </Border>
                     </ControlTemplate>
                 </Button.Template>
