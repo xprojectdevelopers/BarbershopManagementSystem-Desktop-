@@ -8,10 +8,10 @@
         Title="Testing" 
         Width="1424" 
         WindowState="Maximized"
-        ResizeMode="CanResize" Height="2580">
+        ResizeMode="CanResize" Height="2280">
 
     <Window.Resources>
-       
+
 
         <Style x:Key="TextBoxStyleDatePicker" TargetType="DatePicker">
             <Setter Property="Background" Value="White"/>
@@ -187,7 +187,7 @@
     </Window.Resources>
 
     <ScrollViewer VerticalScrollBarVisibility="Auto">
-        <Grid Height="2498">
+        <Grid Height="2150">
             <Grid.RowDefinitions>
                 <RowDefinition Height="auto"/>
                 <RowDefinition Height="auto"/>
@@ -222,7 +222,15 @@
            Margin="100,20,0,720" 
            Grid.Row="1"/>
 
-            <Border BorderBrush="Black" BorderThickness="1" Padding="20" CornerRadius="8" Margin="105,51,95,685" Grid.Row="1">
+            <Border BorderBrush="Black" BorderThickness="1" Padding="20" CornerRadius="8" Margin="105,51,95,731" Grid.Row="1" RenderTransformOrigin="0.5,0.5">
+                <Border.RenderTransform>
+                    <TransformGroup>
+                        <ScaleTransform/>
+                        <SkewTransform AngleX="-0.185"/>
+                        <RotateTransform/>
+                        <TranslateTransform X="-2.997"/>
+                    </TransformGroup>
+                </Border.RenderTransform>
 
             </Border>
 
@@ -361,7 +369,7 @@ Foreground="Blue">
             <TextBlock x:Name="txtNicknameError" Foreground="Red" FontSize="14" Margin="255,1308,0,0" Grid.Row="1" HorizontalAlignment="Left" VerticalAlignment="Top" Visibility="Collapsed"/>
             <TextBlock x:Name="txtNicknameTaken" Foreground="Red" FontSize="14" Margin="255,1308,0,0" Grid.Row="1" HorizontalAlignment="Left" VerticalAlignment="Top" Visibility="Collapsed"/>
 
-            <Label Content="Barber Expertise *" x:Name="lblBarberExpertise" FontSize="20" HorizontalAlignment="Left" Margin="730,1230,0,0" 
+            <Label Content="Barber Expertise *" x:Name="lblBarberExpertise" FontSize="20" HorizontalAlignment="Left" Margin="720,1230,0,0" 
 Grid.Row="1" VerticalAlignment="Top"/>
             <ComboBox x:Name="cmbBarberExpertise" HorizontalAlignment="Left"  Margin="720,1267,0,0" Grid.Row="1" VerticalAlignment="Top" 
    Width="350" Height="45" FontSize="16" SelectedIndex="-1"
@@ -376,70 +384,22 @@ Grid.Row="1" VerticalAlignment="Top"/>
                 <ComboBoxItem>Perm</ComboBoxItem>
                 <ComboBoxItem>Rebond</ComboBoxItem>
             </ComboBox>
-            <TextBlock x:Name="txtBarberExpertiseError" Foreground="Red" FontSize="14" Margin="735,1315,0,0" Grid.Row="1" HorizontalAlignment="Left" VerticalAlignment="Top" Visibility="Collapsed"/>
+            <TextBlock x:Name="txtBarberExpertiseError" Foreground="Red" FontSize="14" Margin="720,1315,0,0" Grid.Row="1" HorizontalAlignment="Left" VerticalAlignment="Top" Visibility="Collapsed"/>
 
-
-            <Label Content="Services offered *" x:Name="lblServicesOffered" FontSize="20" HorizontalAlignment="Left" Margin="255,1345,0,0" Grid.Row="1" VerticalAlignment="Top"/>
-            <UniformGrid x:Name="servicesPanel" Grid.Row="1" Margin="255,1387,0,1349" 
-             Rows="5" Columns="3" HorizontalAlignment="Left" Width="695">
-                <CheckBox Content="Haircut" FontSize="20" Height="40" 
-              VerticalAlignment="Center" VerticalContentAlignment="Center" Margin="5,0,5,0"/>
-                <CheckBox Content="Highlights/Haircut" FontSize="20" Height="40" 
-              VerticalAlignment="Center" VerticalContentAlignment="Center" Margin="5"/>
-                <CheckBox Content="Rebond/LongHair" FontSize="20" Height="40" 
-              VerticalAlignment="Center" VerticalContentAlignment="Center" Margin="5"/>
-
-                <CheckBox Content="Haircut/Wash" FontSize="20" Height="40" 
-              VerticalAlignment="Center" VerticalContentAlignment="Center" Margin="5"/>
-                <CheckBox Content="Balayage/Haircut" FontSize="20" Height="40" 
-              VerticalAlignment="Center" VerticalContentAlignment="Center" Margin="5"/>
-                <CheckBox Content="Braids" FontSize="20" Height="40" 
-              VerticalAlignment="Center" VerticalContentAlignment="Center" Margin="5"/>
-
-                <CheckBox Content="Haircut/Hot Towel" FontSize="20" Height="40" 
-              VerticalAlignment="Center" VerticalContentAlignment="Center" Margin="5"/>
-                <CheckBox Content="Bleaching/ Haircut" FontSize="20" Height="40" 
-              VerticalAlignment="Center" VerticalContentAlignment="Center" Margin="5"/>
-
-                <TextBlock/>
-
-                <CheckBox Content="Hairdye/Haircut" FontSize="20" Height="40" 
-              VerticalAlignment="Center" VerticalContentAlignment="Center" Margin="5"/>
-                <CheckBox Content="Perm/Haircut" FontSize="20" Height="40" 
-              VerticalAlignment="Center" VerticalContentAlignment="Center" Margin="5"/>
-
-                <TextBlock RenderTransformOrigin="0.5,0.5">
-                    <TextBlock.RenderTransform>
-                        <TransformGroup>
-                            <ScaleTransform/>
-                            <SkewTransform/>
-                            <RotateTransform Angle="0.207"/>
-                            <TranslateTransform/>
-                        </TransformGroup>
-                    </TextBlock.RenderTransform>
-                </TextBlock>
-
-                <CheckBox Content="Hair color/Haircut" FontSize="20" Height="40" 
-              VerticalAlignment="Center" VerticalContentAlignment="Center" Margin="5"/>
-                <CheckBox Content="Rebond/Short Hair" FontSize="20" Height="40" 
-              VerticalAlignment="Center" VerticalContentAlignment="Center" Margin="5"/>
-            </UniformGrid>
-            <TextBlock x:Name="txtServicesError" Foreground="Red" FontSize="14" Margin="255,1640,0,0" Grid.Row="1" HorizontalAlignment="Left" VerticalAlignment="Top" Visibility="Collapsed"/>
-
-            <Label Content="Date Hired *" FontSize="20" HorizontalAlignment="Left" Margin="255,1670,0,0" Grid.Row="1" VerticalAlignment="Top"/>
+            <Label Content="Date Hired *" FontSize="20" HorizontalAlignment="Left" Margin="255,1350,0,0" Grid.Row="1" VerticalAlignment="Top"/>
             <DatePicker HorizontalAlignment="Left" x:Name="dateHiredPicker"
-                        Margin="255,1710,0,0" 
+                        Margin="255,1390,0,0" 
                         Grid.Row="1" 
                         VerticalAlignment="Top" 
                         Width="430"
                         Style="{StaticResource TextBoxStyleDatePicker}"
                         Tag="Select Date Hired"/>
-            <TextBlock x:Name="txtDateHiredError" Foreground="Red" FontSize="14" Margin="255,1755,0,0" Grid.Row="1" HorizontalAlignment="Left" VerticalAlignment="Top" Visibility="Collapsed"/>
+            <TextBlock x:Name="txtDateHiredError" Foreground="Red" FontSize="14" Margin="255,1430,0,0" Grid.Row="1" HorizontalAlignment="Left" VerticalAlignment="Top" Visibility="Collapsed"/>
 
-            <Label Content="Employment Status *" FontSize="20" HorizontalAlignment="Left" Margin="730,1670,0,0" 
+            <Label Content="Employment Status *" FontSize="20" HorizontalAlignment="Left" Margin="730,1350,0,0" 
 Grid.Row="1" VerticalAlignment="Top"/>
 
-            <ComboBox x:Name="cmbEmploymentStatus" HorizontalAlignment="Left" Margin="730,1710,0,0" Grid.Row="1" VerticalAlignment="Top" 
+            <ComboBox x:Name="cmbEmploymentStatus" HorizontalAlignment="Left" Margin="730,1390,0,0" Grid.Row="1" VerticalAlignment="Top" 
    Width="335" Height="40" FontSize="16" SelectedIndex="-1"
    Style="{StaticResource TextBoxStyleComboBox}">
                 <ComboBoxItem IsEnabled="False" IsSelected="True" Foreground="Gray">Select Employment Status</ComboBoxItem>
@@ -447,10 +407,10 @@ Grid.Row="1" VerticalAlignment="Top"/>
                 <ComboBoxItem>Part-time</ComboBoxItem>
                 <ComboBoxItem>On-call</ComboBoxItem>
             </ComboBox>
-            <TextBlock x:Name="txtEmploymentStatusError" Foreground="Red" FontSize="14" Margin="730,1755,0,0" Grid.Row="1" HorizontalAlignment="Left" VerticalAlignment="Top" Visibility="Collapsed"/>
+            <TextBlock x:Name="txtEmploymentStatusError" Foreground="Red" FontSize="14" Margin="730,1430,0,0" Grid.Row="1" HorizontalAlignment="Left" VerticalAlignment="Top" Visibility="Collapsed"/>
 
-            <Label Content="Work Schedule *" FontSize="20" HorizontalAlignment="Left" Margin="255,1786,0,0" Grid.Row="1" VerticalAlignment="Top"/>
-            <UniformGrid x:Name="workSchedulePanel" Grid.Row="1" Margin="255,1825,0,899" 
+            <Label Content="Work Schedule *" FontSize="20" HorizontalAlignment="Left" Margin="255,1465,0,0" Grid.Row="1" VerticalAlignment="Top"/>
+            <UniformGrid x:Name="workSchedulePanel" Grid.Row="1" Margin="255,1505,0,899" 
  Rows="5" Columns="3" HorizontalAlignment="Left" Width="691">
                 <CheckBox Content="Monday" FontSize="20" Height="40" 
   VerticalAlignment="Center" VerticalContentAlignment="Center" Margin="5"/>
@@ -472,12 +432,12 @@ Grid.Row="1" VerticalAlignment="Top"/>
 
                 <TextBlock/>
             </UniformGrid>
-            <TextBlock x:Name="txtWorkScheduleError" Foreground="Red" FontSize="14" Margin="255,1980,0,0" Grid.Row="1" HorizontalAlignment="Left" VerticalAlignment="Top" Visibility="Collapsed"/>
+            <TextBlock x:Name="txtWorkScheduleError" Foreground="Red" FontSize="14" Margin="255,1650,0,0" Grid.Row="1" HorizontalAlignment="Left" VerticalAlignment="Top" Visibility="Collapsed"/>
 
             <Button Content="Clear"
         Width="240"
         Height="60"
-        Margin="435,2071,0,0"
+        Margin="435,1750,0,0"
         HorizontalAlignment="Left"
         VerticalAlignment="Top" Grid.Row="1"
         Foreground="White" FontSize="20" FontWeight="Bold" Click="Clear_Click" >
@@ -499,7 +459,7 @@ Grid.Row="1" VerticalAlignment="Top"/>
             <Button Content="Add Employee" Click="SaveEmployee_Click"
         Width="240"
         Height="60"
-        Margin="705,2071,0,0"
+        Margin="705,1750,0,0"
         HorizontalAlignment="Left"
         VerticalAlignment="Top" Grid.Row="1"
         Foreground="White" FontSize="20" FontWeight="Bold">

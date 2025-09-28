@@ -157,7 +157,7 @@ namespace Capstone
                 }
             }
 
-            string employeeId = $"MBS-{currentYear}-{nextNumber:D3}";
+            string employeeId = $"MBS-{currentYear}-{nextNumber:D4}";
             txtEmployeeID.Text = employeeId;
         }
 
@@ -192,6 +192,7 @@ namespace Capstone
                     btnGeneratePassword.Foreground = Brushes.Blue;
                     txtEmployeePassword.Background = Brushes.White;
                     txtEmployeePassword.Foreground = Brushes.Black;
+                    cmbBarberExpertise.SelectedIndex = -1;
 
                     // Find and enable the password label
                     var passwordLabel = FindVisualChild<Label>(this, "lblEmployeePassword");
@@ -203,7 +204,6 @@ namespace Capstone
 
                     // Disable barber-related controls
                     cmbBarberExpertise.IsEnabled = false;
-                    servicesPanel.IsEnabled = false;
 
                     // Gray out barber controls
                     cmbBarberExpertise.Foreground = Brushes.Gray;
@@ -224,15 +224,6 @@ namespace Capstone
                         servicesLabel.IsEnabled = false;
                     }
 
-                    // Gray out all checkboxes in services panel
-                    foreach (var child in servicesPanel.Children)
-                    {
-                        if (child is CheckBox checkBox)
-                        {
-                            checkBox.Foreground = Brushes.Gray;
-                            checkBox.IsEnabled = false;
-                        }
-                    }
                 }
                 else if (role == "Barber")
                 {
@@ -256,8 +247,7 @@ namespace Capstone
 
                     // Enable barber-related controls
                     cmbBarberExpertise.IsEnabled = true;
-                    servicesPanel.IsEnabled = true;
-
+                    
                     // Reset barber control colors to normal
                     cmbBarberExpertise.Foreground = Brushes.Black;
 
@@ -276,16 +266,6 @@ namespace Capstone
                         servicesLabel.Foreground = Brushes.Black;
                         servicesLabel.IsEnabled = true;
                     }
-
-                    // Enable all checkboxes in services panel
-                    foreach (var child in servicesPanel.Children)
-                    {
-                        if (child is CheckBox checkBox)
-                        {
-                            checkBox.Foreground = Brushes.Black;
-                            checkBox.IsEnabled = true;
-                        }
-                    }
                 }
             }
             else
@@ -299,18 +279,8 @@ namespace Capstone
 
                 // Disable barber controls
                 cmbBarberExpertise.IsEnabled = false;
-                servicesPanel.IsEnabled = false;
                 cmbBarberExpertise.Foreground = Brushes.Gray;
 
-                // Gray out all checkboxes
-                foreach (var child in servicesPanel.Children)
-                {
-                    if (child is CheckBox checkBox)
-                    {
-                        checkBox.Foreground = Brushes.Gray;
-                        checkBox.IsEnabled = false;
-                    }
-                }
             }
         }
 
@@ -357,7 +327,6 @@ namespace Capstone
             txtNicknameError.Visibility = Visibility.Collapsed;
             txtNicknameTaken.Visibility = Visibility.Collapsed;
             txtBarberExpertiseError.Visibility = Visibility.Collapsed;
-            txtServicesError.Visibility = Visibility.Collapsed;
             txtDateHiredError.Visibility = Visibility.Collapsed;
             txtEmploymentStatusError.Visibility = Visibility.Collapsed;
             txtWorkScheduleError.Visibility = Visibility.Collapsed;
@@ -491,12 +460,7 @@ namespace Capstone
                 {
                     ShowValidationError(txtBarberExpertiseError, "Barber Expertise is required for Barber role");
                     isValid = false;
-                }
 
-                if (string.IsNullOrWhiteSpace(newEmployee.ServicesOffered))
-                {
-                    ShowValidationError(txtServicesError, "At least one service must be selected for Barber role");
-                    isValid = false;
                 }
             }
 
@@ -582,7 +546,6 @@ namespace Capstone
             txtPasswordError.Visibility = Visibility.Collapsed;
             txtNicknameError.Visibility = Visibility.Collapsed;
             txtBarberExpertiseError.Visibility = Visibility.Collapsed;
-            txtServicesError.Visibility = Visibility.Collapsed;
             txtDateHiredError.Visibility = Visibility.Collapsed;
             txtEmploymentStatusError.Visibility = Visibility.Collapsed;
             txtWorkScheduleError.Visibility = Visibility.Collapsed;
@@ -601,7 +564,6 @@ namespace Capstone
                 isSaving = true;
                 Button saveButton = (Button)sender;
                 saveButton.IsEnabled = false;
-                saveButton.Content = "Saving..."; // Visual feedback
 
                 // Only clear required field validation errors, not uniqueness errors
                 ClearRequiredFieldValidationErrors();
@@ -630,13 +592,11 @@ namespace Capstone
                 {
                     newEmployee.Epassword = txtEmployeePassword.Text.Trim();
                     newEmployee.BarberExpertise = null;
-                    newEmployee.ServicesOffered = null;
                 }
                 else if (newEmployee.Role == "Barber")
                 {
                     newEmployee.BarberExpertise = GetSelectedComboBoxValue(cmbBarberExpertise);
                     newEmployee.Epassword = null;
-                    newEmployee.ServicesOffered = GetSelectedServices();
                 }
 
                 // Validate required fields first
@@ -699,20 +659,7 @@ namespace Capstone
             return null;
         }
 
-        private string GetSelectedServices()
-        {
-            var selectedServices = new List<string>();
-
-            foreach (var child in servicesPanel.Children)
-            {
-                if (child is CheckBox checkBox && checkBox.IsChecked == true)
-                {
-                    selectedServices.Add(checkBox.Content.ToString());
-                }
-            }
-
-            return selectedServices.Count > 0 ? string.Join(", ", selectedServices) : null;
-        }
+        
 
         private string GetSelectedWorkSchedule()
         {
@@ -760,9 +707,7 @@ namespace Capstone
             selectedPhotoPath = string.Empty;
             photoBase64 = string.Empty;
 
-            // ===== Services offered =====
-            foreach (var child in servicesPanel.Children)
-                if (child is CheckBox cb) cb.IsChecked = false;
+           
 
             // ===== Work schedule =====
             foreach (var child in workSchedulePanel.Children)
@@ -813,9 +758,6 @@ namespace Capstone
 
             [Column("Barber_Expert")]
             public string BarberExpertise { get; set; }
-
-            [Column("Service_Offered")]
-            public string ServicesOffered { get; set; }
 
             [Column("Date_Hired")]
             public DateTime? DateHired { get; set; }

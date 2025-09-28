@@ -98,6 +98,9 @@ namespace Capstone
                 return;
             }
 
+            // Clear Employee ID validation error when search is performed with valid ID
+            txtEmployeeIDError.Visibility = Visibility.Collapsed;
+
             try
             {
                 var result = await supabase
@@ -112,7 +115,8 @@ namespace Capstone
                 }
                 else
                 {
-                    MessageBox.Show($"No employee found with ID: {employeeId}", "Employee Not Found", MessageBoxButton.OK, MessageBoxImage.Information);
+                    notfound notfound = new notfound();
+                    notfound.ShowDialog();
                     ClearForm();
                 }
             }
@@ -120,6 +124,44 @@ namespace Capstone
             {
                 MessageBox.Show($"Error searching for employee: {ex.Message}", "Search Error", MessageBoxButton.OK, MessageBoxImage.Error);
             }
+        }
+
+        private bool ValidateEmployeeInlineForUpdate(BarbershopManagementSystem newEmployee, string currentEmployeeId)
+        {
+            bool isValid = true;
+
+            // Clear previous errors for uniqueness checks only
+            txtFullNameTaken.Visibility = Visibility.Collapsed;
+            txtPasswordSame.Visibility = Visibility.Collapsed;
+            txtNicknameTaken.Visibility = Visibility.Collapsed;
+
+            // Validate Full Name uniqueness (exclude current employee)
+            if (!string.IsNullOrWhiteSpace(newEmployee.Fname) &&
+                employees.Any(emp => emp.Eid != currentEmployeeId &&
+                                   emp.Fname.Equals(newEmployee.Fname, StringComparison.OrdinalIgnoreCase)))
+            {
+                ShowError(txtFullNameTaken, "Full name already exists. Please enter a different one.");
+                isValid = false;
+            }
+
+            // Validate Password uniqueness (only if password is provided and role is Cashier, exclude current employee)
+            if (newEmployee.Role == "Cashier" && !string.IsNullOrWhiteSpace(newEmployee.Epassword) &&
+                employees.Any(emp => emp.Eid != currentEmployeeId && emp.Epassword == newEmployee.Epassword))
+            {
+                ShowError(txtPasswordSame, "Password already in use. Please choose another.");
+                isValid = false;
+            }
+
+            // Validate Nickname uniqueness (exclude current employee)
+            if (!string.IsNullOrWhiteSpace(newEmployee.Nickname) &&
+                employees.Any(emp => emp.Eid != currentEmployeeId &&
+                                   emp.Nickname.Equals(newEmployee.Nickname, StringComparison.OrdinalIgnoreCase)))
+            {
+                ShowError(txtNicknameTaken, "Employee nickname is already taken.");
+                isValid = false;
+            }
+
+            return isValid;
         }
 
         private void PopulateForm(BarbershopManagementSystem employee)
@@ -142,7 +184,6 @@ namespace Capstone
             txtNickname.Text = employee.Nickname ?? "";
 
             SetComboBoxSelection(cmbBarberExpertise, employee.BarberExpertise);
-            SetCheckBoxes(servicesPanel, employee.ServicesOffered);
 
             dateHiredPicker.SelectedDate = employee.DateHired;
             SetComboBoxSelection(cmbEmploymentStatus, employee.Estatus);
@@ -280,6 +321,7 @@ namespace Capstone
 
         private void ClearForm()
         {
+            txtEmployeeIDError.Text = string.Empty;
             txtFullName.Clear();
             bdate.SelectedDate = null;
             Gender.SelectedIndex = -1;
@@ -296,7 +338,6 @@ namespace Capstone
             dateHiredPicker.SelectedDate = null;
             cmbEmploymentStatus.SelectedIndex = -1;
 
-            ClearCheckBoxes(servicesPanel);
             ClearCheckBoxes(workSchedulePanel);
 
             PhotoPreview.Source = new BitmapImage(new Uri("/profile.png", UriKind.Relative));
@@ -331,6 +372,7 @@ namespace Capstone
                     btnGeneratePassword.Foreground = Brushes.Blue;
                     txtEmployeePassword.Background = Brushes.White;
                     txtEmployeePassword.Foreground = Brushes.Black;
+                    cmbBarberExpertise.SelectedIndex = -1;
 
                     // Find and enable the password label
                     var passwordLabel = FindVisualChild<Label>(this, "lblEmployeePassword");
@@ -342,7 +384,6 @@ namespace Capstone
 
                     // Disable barber-related controls
                     cmbBarberExpertise.IsEnabled = false;
-                    servicesPanel.IsEnabled = false;
 
                     // Gray out barber controls
                     cmbBarberExpertise.Foreground = Brushes.Gray;
@@ -364,21 +405,6 @@ namespace Capstone
 
                     }
 
-                    cmbBarberExpertise.SelectedIndex = -1;
-                    foreach (var child in servicesPanel.Children)
-                        if (child is CheckBox cb) cb.IsChecked = false;
-
-                    // Gray out all checkboxes in services panel
-                    foreach (var child in servicesPanel.Children)
-                    {
-                        if (child is CheckBox checkBox)
-                        {
-                            checkBox.Foreground = Brushes.Gray;
-                            checkBox.IsEnabled = false;
-
-                            
-                        }
-                    }
                 }
                 else if (role == "Barber")
                 {
@@ -402,7 +428,6 @@ namespace Capstone
 
                     // Enable barber-related controls
                     cmbBarberExpertise.IsEnabled = true;
-                    servicesPanel.IsEnabled = true;
 
                     // Reset barber control colors to normal
                     cmbBarberExpertise.Foreground = Brushes.Black;
@@ -423,15 +448,6 @@ namespace Capstone
                         servicesLabel.IsEnabled = true;
                     }
 
-                    // Enable all checkboxes in services panel
-                    foreach (var child in servicesPanel.Children)
-                    {
-                        if (child is CheckBox checkBox)
-                        {
-                            checkBox.Foreground = Brushes.Black;
-                            checkBox.IsEnabled = true;
-                        }
-                    }
                 }
             }
             else
@@ -445,22 +461,8 @@ namespace Capstone
 
                 // Disable barber controls
                 cmbBarberExpertise.IsEnabled = false;
-                servicesPanel.IsEnabled = false;
                 cmbBarberExpertise.Foreground = Brushes.Gray;
-
-
                 txtEmployeePassword.Text = string.Empty;
-
-                // Gray out all checkboxes
-                foreach (var child in servicesPanel.Children)
-                {
-                    if (child is CheckBox checkBox)
-                    {
-                        checkBox.Foreground = Brushes.Gray;
-                        checkBox.IsEnabled = false;
-
-                    }
-                }
             }
         }
 
@@ -490,21 +492,21 @@ namespace Capstone
 
         private async void Delete_Click(object sender, RoutedEventArgs e)
         {
-            string employeeId = txtEmployeeID.Text.Trim();
-
-            if (string.IsNullOrEmpty(employeeId))
+            // Validate Employee ID first
+            if (!ValidateEmployeeId())
             {
                 MessageBox.Show("Please search for an employee first before deleting.", "Delete Error", MessageBoxButton.OK, MessageBoxImage.Warning);
                 return;
             }
 
-            MessageBoxResult result = MessageBox.Show(
-                $"Are you sure you want to delete employee with ID: {employeeId}?\n\nThis action cannot be undone.",
-                "Confirm Delete",
-                MessageBoxButton.YesNo,
-                MessageBoxImage.Question);
+            string employeeId = txtEmployeeID.Text.Trim();
 
-            if (result == MessageBoxResult.Yes)
+            // Show custom delete confirmation dialog
+            delete deleteDialog = new delete();
+            bool? result = deleteDialog.ShowDialog();
+
+            // If user clicked "Yes" (dialog result is true)
+            if (result == true)
             {
                 try
                 {
@@ -546,17 +548,19 @@ namespace Capstone
 
         private async void Update_Click(object sender, RoutedEventArgs e)
         {
-            string employeeId = txtEmployeeID.Text.Trim();
-
-            if (string.IsNullOrEmpty(employeeId))
+            // Validate Employee ID first
+            if (!ValidateEmployeeId())
             {
                 MessageBox.Show("Please search for an employee first before updating.", "Update Error", MessageBoxButton.OK, MessageBoxImage.Warning);
                 return;
             }
 
+            string employeeId = txtEmployeeID.Text.Trim();
+
+            // Then validate all other required fields
             if (!ValidateForm())
             {
-                MessageBox.Show("Please fill in all required fields correctly.", "Validation Error", MessageBoxButton.OK, MessageBoxImage.Warning);
+                MessageBox.Show("Please fill in all required fields correctly. Check the highlighted error messages for details.", "Validation Error", MessageBoxButton.OK, MessageBoxImage.Warning);
                 return;
             }
 
@@ -571,7 +575,23 @@ namespace Capstone
                 {
                     var employee = existingEmployee.Models.First();
 
-                    // Update employee data with form values
+                    // Create a temporary employee object with the new data for duplicate validation
+                    var tempEmployee = new BarbershopManagementSystem
+                    {
+                        Fname = txtFullName.Text.Trim(),
+                        Role = GetComboBoxSelectedValue(cmbRole),
+                        Epassword = txtEmployeePassword.Text.Trim(),
+                        Nickname = txtNickname.Text.Trim()
+                    };
+
+                    // Check for duplicates (excluding the current employee)
+                    if (!ValidateEmployeeInlineForUpdate(tempEmployee, employeeId))
+                    {
+                        MessageBox.Show("Validation failed. Please check the highlighted error messages for duplicate information.", "Duplicate Data Error", MessageBoxButton.OK, MessageBoxImage.Warning);
+                        return;
+                    }
+
+                    // If validation passes, proceed with update
                     employee.Fname = txtFullName.Text.Trim();
                     employee.Bdate = bdate.SelectedDate;
                     employee.Gender = GetComboBoxSelectedValue(Gender);
@@ -581,10 +601,30 @@ namespace Capstone
                     employee.ECname = txtEmergencyName.Text.Trim();
                     employee.ECnumber = txtEmergencyNumber.Text.Trim();
                     employee.Role = GetComboBoxSelectedValue(cmbRole);
-                    employee.Epassword = txtEmployeePassword.Text.Trim();
+
+                    // Handle password based on role
+                    string selectedRole = GetComboBoxSelectedValue(cmbRole);
+                    if (selectedRole == "Cashier")
+                    {
+                        employee.Epassword = txtEmployeePassword.Text.Trim();
+                    }
+                    else if (selectedRole == "Barber")
+                    {
+                        employee.Epassword = string.Empty; // Clear password for barbers
+                    }
+
                     employee.Nickname = txtNickname.Text.Trim();
-                    employee.BarberExpertise = GetComboBoxSelectedValue(cmbBarberExpertise);
-                    employee.ServicesOffered = GetSelectedCheckBoxes(servicesPanel);
+
+                    // Handle barber-specific fields
+                    if (selectedRole == "Barber")
+                    {
+                        employee.BarberExpertise = GetComboBoxSelectedValue(cmbBarberExpertise);
+                    }
+                    else if (selectedRole == "Cashier")
+                    {
+                        employee.BarberExpertise = string.Empty;
+                    }
+
                     employee.DateHired = dateHiredPicker.SelectedDate;
                     employee.Estatus = GetComboBoxSelectedValue(cmbEmploymentStatus);
                     employee.Wsched = GetSelectedCheckBoxes(workSchedulePanel);
@@ -594,8 +634,6 @@ namespace Capstone
                     {
                         employee.PhotoPath = currentPhotoPath;
                     }
-                    // If no photo was changed, keep the existing photo path
-                    // employee.PhotoPath remains unchanged
 
                     // Update in Supabase
                     var updatedEmployee = await supabase
@@ -613,7 +651,6 @@ namespace Capstone
                         .Set(x => x.Epassword, employee.Epassword)
                         .Set(x => x.Nickname, employee.Nickname)
                         .Set(x => x.BarberExpertise, employee.BarberExpertise)
-                        .Set(x => x.ServicesOffered, employee.ServicesOffered)
                         .Set(x => x.DateHired, employee.DateHired)
                         .Set(x => x.Estatus, employee.Estatus)
                         .Set(x => x.Wsched, employee.Wsched)
@@ -672,66 +709,87 @@ namespace Capstone
             return string.Join(", ", selectedItems);
         }
 
-        private bool ValidateForm()
+        private bool ValidateEmployeeId()
         {
-            bool isValid = true;
-            HideAllErrorMessages();
+            // Hide the error message first
+            txtEmployeeIDError.Visibility = Visibility.Collapsed;
 
-            if (string.IsNullOrWhiteSpace(txtFullName.Text))
+            if (string.IsNullOrWhiteSpace(txtEmployeeID.Text))
             {
-                ShowError(txtFullNameError, "Full name is required");
-                isValid = false;
+                ShowError(txtEmployeeIDError, "Employee ID is required");
+                return false;
             }
+            return true;
+        }
 
-            if (!bdate.SelectedDate.HasValue)
-            {
-                ShowError(txtBdateError, "Birthdate is required");
-                isValid = false;
-            }
+        private bool ValidateForm()
+{
+    bool isValid = true;
+    HideAllErrorMessages();
 
-            if (Gender.SelectedIndex <= 0)
-            {
-                ShowError(txtGenderError, "Gender is required");
-                isValid = false;
-            }
+    // Basic personal information validation
+    if (string.IsNullOrWhiteSpace(txtFullName.Text))
+    {
+        ShowError(txtFullNameError, "Full name is required");
+        isValid = false;
+    }
 
-            if (string.IsNullOrWhiteSpace(txtAddress.Text))
-            {
-                ShowError(txtAddressError, "Address is required");
-                isValid = false;
-            }
+    if (!bdate.SelectedDate.HasValue)
+    {
+        ShowError(txtBdateError, "Birthdate is required");
+        isValid = false;
+    }
 
-            if (string.IsNullOrWhiteSpace(txtContactNumber.Text))
-            {
-                ShowError(txtContactNumberError, "Contact number is required");
-                isValid = false;
-            }
+    if (Gender.SelectedIndex <= 0)
+    {
+        ShowError(txtGenderError, "Gender is required");
+        isValid = false;
+    }
 
-            if (string.IsNullOrWhiteSpace(txtEmail.Text))
-            {
-                ShowError(txtEmailError, "Email is required");
-                isValid = false;
-            }
+    if (string.IsNullOrWhiteSpace(txtAddress.Text))
+    {
+        ShowError(txtAddressError, "Address is required");
+        isValid = false;
+    }
 
-            if (string.IsNullOrWhiteSpace(txtEmergencyName.Text))
-            {
-                ShowError(txtEmergencyNameError, "Emergency contact name is required");
-                isValid = false;
-            }
+    if (string.IsNullOrWhiteSpace(txtContactNumber.Text))
+    {
+        ShowError(txtContactNumberError, "Contact number is required");
+        isValid = false;
+    }
 
-            if (string.IsNullOrWhiteSpace(txtEmergencyNumber.Text))
-            {
-                ShowError(txtEmergencyNumberError, "Emergency contact number is required");
-                isValid = false;
-            }
+    if (string.IsNullOrWhiteSpace(txtEmail.Text))
+    {
+        ShowError(txtEmailError, "Email is required");
+        isValid = false;
+    }
 
-            if (cmbRole.SelectedIndex < 0)
-            {
-                ShowError(txtRoleError, "Employee role is required");
-                isValid = false;
-            }
+    if (string.IsNullOrWhiteSpace(txtEmergencyName.Text))
+    {
+        ShowError(txtEmergencyNameError, "Emergency contact name is required");
+        isValid = false;
+    }
 
-            if (cmbRole.SelectedItem is ComboBoxItem roleItem && roleItem.Content.ToString() == "Cashier")
+    if (string.IsNullOrWhiteSpace(txtEmergencyNumber.Text))
+    {
+        ShowError(txtEmergencyNumberError, "Emergency contact number is required");
+        isValid = false;
+    }
+
+    // Employment information validation
+    if (cmbRole.SelectedIndex < 0)
+    {
+        ShowError(txtRoleError, "Employee role is required");
+        isValid = false;
+    }
+    else
+    {
+        // Role-specific validation
+        if (cmbRole.SelectedItem is ComboBoxItem roleItem)
+        {
+            string selectedRole = roleItem.Content.ToString();
+
+            if (selectedRole == "Cashier")
             {
                 if (string.IsNullOrWhiteSpace(txtEmployeePassword.Text))
                 {
@@ -739,27 +797,55 @@ namespace Capstone
                     isValid = false;
                 }
             }
-
-            if (string.IsNullOrWhiteSpace(txtNickname.Text))
+            else if (selectedRole == "Barber")
             {
-                ShowError(txtNicknameError, "Nickname is required");
-                isValid = false;
+                // Validate barber expertise
+                if (cmbBarberExpertise.SelectedIndex <= 0)
+                {
+                    ShowError(txtBarberExpertiseError, "Barber expertise is required for Barber role");
+                    isValid = false;
+                }
             }
-
-            if (!dateHiredPicker.SelectedDate.HasValue)
-            {
-                ShowError(txtDateHiredError, "Date hired is required");
-                isValid = false;
-            }
-
-            if (cmbEmploymentStatus.SelectedIndex <= 0)
-            {
-                ShowError(txtEmploymentStatusError, "Employment status is required");
-                isValid = false;
-            }
-
-            return isValid;
         }
+    }
+
+    if (string.IsNullOrWhiteSpace(txtNickname.Text))
+    {
+        ShowError(txtNicknameError, "Nickname is required");
+        isValid = false;
+    }
+
+    if (!dateHiredPicker.SelectedDate.HasValue)
+    {
+        ShowError(txtDateHiredError, "Date hired is required");
+        isValid = false;
+    }
+
+    if (cmbEmploymentStatus.SelectedIndex <= 0)
+    {
+        ShowError(txtEmploymentStatusError, "Employment status is required");
+        isValid = false;
+    }
+
+    // Validate work schedule - at least one day must be selected
+    bool hasSelectedDay = false;
+    foreach (var child in workSchedulePanel.Children)
+    {
+        if (child is CheckBox checkBox && checkBox.IsChecked == true)
+        {
+            hasSelectedDay = true;
+            break;
+        }
+    }
+
+    if (!hasSelectedDay)
+    {
+        ShowError(txtWorkScheduleError, "At least one work day must be selected");
+        isValid = false;
+    }
+
+    return isValid;
+}
 
         private void ShowError(TextBlock errorTextBlock, string message)
         {
@@ -769,6 +855,8 @@ namespace Capstone
 
         private void HideAllErrorMessages()
         {
+            // Basic field validation errors
+            txtEmployeeIDError.Visibility = Visibility.Collapsed;
             txtFullNameError.Visibility = Visibility.Collapsed;
             txtBdateError.Visibility = Visibility.Collapsed;
             txtGenderError.Visibility = Visibility.Collapsed;
@@ -783,6 +871,12 @@ namespace Capstone
             txtBarberExpertiseError.Visibility = Visibility.Collapsed;
             txtDateHiredError.Visibility = Visibility.Collapsed;
             txtEmploymentStatusError.Visibility = Visibility.Collapsed;
+            txtWorkScheduleError.Visibility = Visibility.Collapsed;
+
+            // Duplicate validation errors
+            txtFullNameTaken.Visibility = Visibility.Collapsed;
+            txtPasswordSame.Visibility = Visibility.Collapsed;
+            txtNicknameTaken.Visibility = Visibility.Collapsed;
         }
 
         [Table("Add_Employee")]
@@ -829,9 +923,6 @@ namespace Capstone
 
             [Column("Barber_Expert")]
             public string BarberExpertise { get; set; }
-
-            [Column("Service_Offered")]
-            public string ServicesOffered { get; set; }
 
             [Column("Date_Hired")]
             public DateTime? DateHired { get; set; }

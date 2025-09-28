@@ -22,9 +22,12 @@
     <None Remove="headset.png" />
     <None Remove="house.png" />
     <None Remove="house.svg" />
+    <None Remove="marketing-target.png" />
+    <None Remove="Phone-Hotspot-1--Streamline-Milano.png" />
     <None Remove="PopSuccessfull.jpg" />
     <None Remove="profile.png" />
     <None Remove="Security-Vault--Streamline-Milano.png" />
+    <None Remove="slang-to-the-moon.png" />
     <None Remove="Swarm_bee_user.png" />
     <None Remove="wallet.png" />
   </ItemGroup>
@@ -51,9 +54,12 @@
     <Resource Include="headset.png" />
     <Resource Include="house.png" />
     <Resource Include="house.svg" />
+    <Resource Include="marketing-target.png" />
+    <Resource Include="Phone-Hotspot-1--Streamline-Milano.png" />
     <Resource Include="PopSuccessfull.jpg" />
     <Resource Include="profile.png" />
     <Resource Include="Security-Vault--Streamline-Milano.png" />
+    <Resource Include="slang-to-the-moon.png" />
     <Resource Include="Swarm_bee_user.png" />
     <Resource Include="wallet.png" />
   </ItemGroup>
