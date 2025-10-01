@@ -87,6 +87,7 @@ namespace Capstone
                 {
                     EmployeeID = "",
                     EmployeeName = "",
+                    EmployeeRole = "",
                     ContactNumber = "",
                     EmergencyContactName = "",
                     EmergencyContact = ""
@@ -188,6 +189,9 @@ namespace Capstone
 
             [Column("Full_Name")]
             public string EmployeeName { get; set; } = string.Empty;
+
+            [Column("Employee_Role")]
+            public string EmployeeRole { get; set; } = string.Empty;
 
             [Column("Contact_Number")]
             public string ContactNumber { get; set; } = string.Empty;

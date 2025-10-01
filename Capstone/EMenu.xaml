@@ -120,6 +120,7 @@
                         <DataGrid.Columns>
                             <DataGridTextColumn Header="Employee ID" Binding="{Binding EmployeeID}" Width="*"/>
                             <DataGridTextColumn Header="Employee Name" Binding="{Binding EmployeeName}" Width="*"/>
+                            <DataGridTextColumn Header="Employee Role" Binding="{Binding EmployeeRole}" Width="*"/>
                             <DataGridTextColumn Header="Contact Number" Binding="{Binding ContactNumber}" Width="*"/>
                             <DataGridTextColumn Header="Emergency Contact" Binding="{Binding EmergencyContactDisplay}" Width="*"/>
                         </DataGrid.Columns>

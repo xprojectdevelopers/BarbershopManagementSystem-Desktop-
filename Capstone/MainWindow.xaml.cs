@@ -39,14 +39,11 @@ namespace Capstone
 
         private async void Button_Click_1(object sender, RoutedEventArgs e)
         {
-            
             lblStatus.Content = "";
 
-            
             string employeeId = txtEmployeeId.Text.Trim();
             string password = txtPassword.Password;
 
-            
             System.Diagnostics.Debug.WriteLine($"Attempting login with Employee ID: {employeeId}");
 
             // Validate input
@@ -62,20 +59,20 @@ namespace Capstone
                 return;
             }
 
-            
             btnLogin.IsEnabled = false;
             lblStatus.Content = "Logging in...";
 
             try
             {
-                bool isAuthenticated = await AuthenticateUser(employeeId, password);
+                // Try to authenticate as Admin first, then as Employee
+                var (isAuthenticated, userType) = await AuthenticateUser(employeeId, password);
 
                 if (isAuthenticated)
                 {
-                    lblStatus.Content = "Login successful!";
+                    lblStatus.Content = $"Login successful as {userType}!";
                     lblStatus.Foreground = System.Windows.Media.Brushes.Green;
 
-                    // Wait a moment then open Window1
+                    // Wait a moment then open Menu window
                     await Task.Delay(1000);
                     Menu Menu = new Menu();
                     Menu.Show();
@@ -97,7 +94,6 @@ namespace Capstone
                 System.Diagnostics.Debug.WriteLine($"Login error: {ex.Message}");
                 System.Diagnostics.Debug.WriteLine($"Full exception: {ex}");
 
-                
                 MessageBox.Show($"Error details: {ex.Message}", "Debug Error");
             }
             finally
@@ -106,67 +102,67 @@ namespace Capstone
             }
         }
 
-        private async Task<bool> AuthenticateUser(string employeeId, string password)
+        private async Task<(bool isAuthenticated, string userType)> AuthenticateUser(string employeeId, string password)
         {
             try
             {
-                // Test query to confirm connection
-                string testQuery = $"{supabaseUrl}/rest/v1/Admin_Account?select=Admin_Login";
+                // First, try to authenticate as Admin
+                System.Diagnostics.Debug.WriteLine("Checking Admin_Account table...");
+                string adminQuery = $"{supabaseUrl}/rest/v1/Admin_Account?Admin_Login=eq.{employeeId}&Admin_Password=eq.{password}&select=*";
 
-                System.Diagnostics.Debug.WriteLine($"Testing connection to: {testQuery}");
+                HttpResponseMessage adminResponse = await httpClient.GetAsync(adminQuery);
 
-                HttpResponseMessage testResponse = await httpClient.GetAsync(testQuery);
-                System.Diagnostics.Debug.WriteLine($"Test response status: {testResponse.StatusCode}");
-
-                if (!testResponse.IsSuccessStatusCode)
+                if (adminResponse.IsSuccessStatusCode)
                 {
-                    string errorContent = await testResponse.Content.ReadAsStringAsync();
-                    System.Diagnostics.Debug.WriteLine($"Test error content: {errorContent}");
+                    string adminContent = await adminResponse.Content.ReadAsStringAsync();
+                    System.Diagnostics.Debug.WriteLine($"Admin response: {adminContent}");
 
-                    MessageBox.Show($"Database connection failed:\nStatus: {testResponse.StatusCode}\nError: {errorContent}", "Connection Error");
-                    return false;
+                    JArray adminUsers = JArray.Parse(adminContent);
+
+                    if (adminUsers.Count > 0)
+                    {
+                        System.Diagnostics.Debug.WriteLine("Admin login successful!");
+                        return (true, "Admin");
+                    }
                 }
 
-                string testContent = await testResponse.Content.ReadAsStringAsync();
-                System.Diagnostics.Debug.WriteLine($"Available employees: {testContent}");
+                // If not found in Admin, try Employee table
+                System.Diagnostics.Debug.WriteLine("Checking Add_Employee table...");
+                string employeeQuery = $"{supabaseUrl}/rest/v1/Add_Employee?Employee_ID=eq.{employeeId}&Employee_Password=eq.{password}&select=*";
 
-                // Actual authentication query
-                string query = $"{supabaseUrl}/rest/v1/Admin_Account?Admin_Login=eq.{employeeId}&Admin_Password=eq.{password}&select=*";
-                System.Diagnostics.Debug.WriteLine($"Auth query: {query}");
+                HttpResponseMessage employeeResponse = await httpClient.GetAsync(employeeQuery);
 
-                HttpResponseMessage response = await httpClient.GetAsync(query);
-                System.Diagnostics.Debug.WriteLine($"Auth response status: {response.StatusCode}");
-
-                if (response.IsSuccessStatusCode)
+                if (employeeResponse.IsSuccessStatusCode)
                 {
-                    string responseContent = await response.Content.ReadAsStringAsync();
-                    System.Diagnostics.Debug.WriteLine($"Auth response content: {responseContent}");
+                    string employeeContent = await employeeResponse.Content.ReadAsStringAsync();
+                    System.Diagnostics.Debug.WriteLine($"Employee response: {employeeContent}");
 
-                    JArray users = JArray.Parse(responseContent);
-                    System.Diagnostics.Debug.WriteLine($"Number of matching users: {users.Count}");
+                    JArray employeeUsers = JArray.Parse(employeeContent);
 
-                    // If we get any results, authentication is successful
-                    return users.Count > 0;
+                    if (employeeUsers.Count > 0)
+                    {
+                        System.Diagnostics.Debug.WriteLine("Employee login successful!");
+                        return (true, "Employee");
+                    }
                 }
                 else
                 {
-                    string errorContent = await response.Content.ReadAsStringAsync();
-                    System.Diagnostics.Debug.WriteLine($"Auth HTTP Error: {response.StatusCode} - {response.ReasonPhrase}");
-                    System.Diagnostics.Debug.WriteLine($"Error content: {errorContent}");
-
-                    MessageBox.Show($"Authentication failed:\nStatus: {response.StatusCode}\nError: {errorContent}", "Auth Error");
-                    return false;
+                    string errorContent = await employeeResponse.Content.ReadAsStringAsync();
+                    System.Diagnostics.Debug.WriteLine($"Employee table error: {employeeResponse.StatusCode} - {errorContent}");
                 }
+
+                // No match found in either table
+                System.Diagnostics.Debug.WriteLine("No matching credentials found in either table");
+                return (false, null);
             }
             catch (Exception ex)
             {
                 System.Diagnostics.Debug.WriteLine($"Authentication exception: {ex.Message}");
                 System.Diagnostics.Debug.WriteLine($"Full exception: {ex}");
-                throw; // Re-throw to be handled by calling method
+                throw;
             }
         }
 
-        
         protected override void OnClosed(EventArgs e)
         {
             httpClient?.Dispose();

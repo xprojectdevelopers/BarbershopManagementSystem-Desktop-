@@ -94,7 +94,7 @@ namespace Capstone
 
             if (string.IsNullOrEmpty(employeeId))
             {
-                MessageBox.Show("Please enter an Employee ID to search.", "Search Error", MessageBoxButton.OK, MessageBoxImage.Warning);
+                ShowError(txtEmployeeIDError, "Employee ID is required");
                 return;
             }
 
@@ -112,9 +112,12 @@ namespace Capstone
                 {
                     var employee = result.Models.First();
                     PopulateForm(employee);
+                    HideAllErrorMessages();
                 }
                 else
                 {
+                    // Hide all validation errors before showing not found dialog
+                    HideAllErrorMessages();
                     notfound notfound = new notfound();
                     notfound.ShowDialog();
                     ClearForm();
@@ -492,75 +495,69 @@ namespace Capstone
 
         private async void Delete_Click(object sender, RoutedEventArgs e)
         {
-            // Validate Employee ID first
-            if (!ValidateEmployeeId())
+            string employeeId = txtEmployeeID.Text.Trim();
+
+            // Check if Employee ID is empty
+            if (string.IsNullOrEmpty(employeeId))
             {
-                MessageBox.Show("Please search for an employee first before deleting.", "Delete Error", MessageBoxButton.OK, MessageBoxImage.Warning);
+                ShowError(txtEmployeeIDError, "Employee ID is required");
                 return;
             }
 
-            string employeeId = txtEmployeeID.Text.Trim();
-
-            // Show custom delete confirmation dialog
-            delete deleteDialog = new delete();
-            bool? result = deleteDialog.ShowDialog();
-
-            // If user clicked "Yes" (dialog result is true)
-            if (result == true)
+            try
             {
-                try
+                var employeeToDelete = await supabase
+                    .From<BarbershopManagementSystem>()
+                    .Where(x => x.Eid == employeeId)
+                    .Get();
+                if (employeeToDelete.Models.Count == 0)
                 {
-                    var employeeToDelete = await supabase
+                    HideAllErrorMessages();
+                    notfound notfound = new notfound();
+                    notfound.ShowDialog();
+                    ClearForm();
+                    return;
+                }
+
+                // Show delete confirmation
+                delete deleteDialog = new delete();
+                bool? result = deleteDialog.ShowDialog();
+
+                if (result == true)
+                {
+                    var employee = employeeToDelete.Models.First();
+
+                    await supabase
                         .From<BarbershopManagementSystem>()
-                        .Where(x => x.Eid == employeeId)
-                        .Get();
+                        .Where(x => x.Id == employee.Id)
+                        .Delete();
 
-                    if (employeeToDelete.Models.Count > 0)
+                    var localEmployee = employees.FirstOrDefault(e => e.Eid == employeeId);
+                    if (localEmployee != null)
                     {
-                        var employee = employeeToDelete.Models.First();
-
-                        await supabase
-                            .From<BarbershopManagementSystem>()
-                            .Where(x => x.Id == employee.Id)
-                            .Delete();
-
-                        var localEmployee = employees.FirstOrDefault(e => e.Eid == employeeId);
-                        if (localEmployee != null)
-                        {
-                            employees.Remove(localEmployee);
-                        }
-
-                        DeleteSuccessfull DeleteSuccessfull = new DeleteSuccessfull();
-                        DeleteSuccessfull.ShowDialog();
-                        ClearForm();
+                        employees.Remove(localEmployee);
                     }
-                    else
-                    {
-                        MessageBox.Show($"Employee with ID {employeeId} not found.", "Delete Error", MessageBoxButton.OK, MessageBoxImage.Error);
-                    }
+
+                    HideAllErrorMessages();
+                    DeleteSuccessfull DeleteSuccessfull = new DeleteSuccessfull();
+                    DeleteSuccessfull.ShowDialog();
+                    ClearForm();
                 }
-                catch (Exception ex)
-                {
-                    MessageBox.Show($"Error deleting employee: {ex.Message}", "Delete Error", MessageBoxButton.OK, MessageBoxImage.Error);
-                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Error deleting employee: {ex.Message}", "Delete Error", MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
 
+
         private async void Update_Click(object sender, RoutedEventArgs e)
         {
-            // Validate Employee ID first
-            if (!ValidateEmployeeId())
-            {
-                MessageBox.Show("Please search for an employee first before updating.", "Update Error", MessageBoxButton.OK, MessageBoxImage.Warning);
-                return;
-            }
-
             string employeeId = txtEmployeeID.Text.Trim();
 
-            // Then validate all other required fields
-            if (!ValidateForm())
+            if (string.IsNullOrEmpty(employeeId))
             {
-                MessageBox.Show("Please fill in all required fields correctly. Check the highlighted error messages for details.", "Validation Error", MessageBoxButton.OK, MessageBoxImage.Warning);
+                ShowError(txtEmployeeIDError, "Employee ID is required");
                 return;
             }
 
@@ -571,117 +568,117 @@ namespace Capstone
                     .Where(x => x.Eid == employeeId)
                     .Get();
 
-                if (existingEmployee.Models.Count > 0)
+                // Check if employee exists - this should be after querying
+                if (existingEmployee.Models.Count == 0)
                 {
-                    var employee = existingEmployee.Models.First();
-
-                    // Create a temporary employee object with the new data for duplicate validation
-                    var tempEmployee = new BarbershopManagementSystem
-                    {
-                        Fname = txtFullName.Text.Trim(),
-                        Role = GetComboBoxSelectedValue(cmbRole),
-                        Epassword = txtEmployeePassword.Text.Trim(),
-                        Nickname = txtNickname.Text.Trim()
-                    };
-
-                    // Check for duplicates (excluding the current employee)
-                    if (!ValidateEmployeeInlineForUpdate(tempEmployee, employeeId))
-                    {
-                        MessageBox.Show("Validation failed. Please check the highlighted error messages for duplicate information.", "Duplicate Data Error", MessageBoxButton.OK, MessageBoxImage.Warning);
-                        return;
-                    }
-
-                    // If validation passes, proceed with update
-                    employee.Fname = txtFullName.Text.Trim();
-                    employee.Bdate = bdate.SelectedDate;
-                    employee.Gender = GetComboBoxSelectedValue(Gender);
-                    employee.Address = txtAddress.Text.Trim();
-                    employee.Cnumber = txtContactNumber.Text.Trim();
-                    employee.Email = txtEmail.Text.Trim();
-                    employee.ECname = txtEmergencyName.Text.Trim();
-                    employee.ECnumber = txtEmergencyNumber.Text.Trim();
-                    employee.Role = GetComboBoxSelectedValue(cmbRole);
-
-                    // Handle password based on role
-                    string selectedRole = GetComboBoxSelectedValue(cmbRole);
-                    if (selectedRole == "Cashier")
-                    {
-                        employee.Epassword = txtEmployeePassword.Text.Trim();
-                    }
-                    else if (selectedRole == "Barber")
-                    {
-                        employee.Epassword = string.Empty; // Clear password for barbers
-                    }
-
-                    employee.Nickname = txtNickname.Text.Trim();
-
-                    // Handle barber-specific fields
-                    if (selectedRole == "Barber")
-                    {
-                        employee.BarberExpertise = GetComboBoxSelectedValue(cmbBarberExpertise);
-                    }
-                    else if (selectedRole == "Cashier")
-                    {
-                        employee.BarberExpertise = string.Empty;
-                    }
-
-                    employee.DateHired = dateHiredPicker.SelectedDate;
-                    employee.Estatus = GetComboBoxSelectedValue(cmbEmploymentStatus);
-                    employee.Wsched = GetSelectedCheckBoxes(workSchedulePanel);
-
-                    // Handle photo update - Update photo path if photo was changed
-                    if (isPhotoChanged && !string.IsNullOrEmpty(currentPhotoPath))
-                    {
-                        employee.PhotoPath = currentPhotoPath;
-                    }
-
-                    // Update in Supabase
-                    var updatedEmployee = await supabase
-                        .From<BarbershopManagementSystem>()
-                        .Where(x => x.Id == employee.Id)
-                        .Set(x => x.Fname, employee.Fname)
-                        .Set(x => x.Bdate, employee.Bdate)
-                        .Set(x => x.Gender, employee.Gender)
-                        .Set(x => x.Address, employee.Address)
-                        .Set(x => x.Cnumber, employee.Cnumber)
-                        .Set(x => x.Email, employee.Email)
-                        .Set(x => x.ECname, employee.ECname)
-                        .Set(x => x.ECnumber, employee.ECnumber)
-                        .Set(x => x.Role, employee.Role)
-                        .Set(x => x.Epassword, employee.Epassword)
-                        .Set(x => x.Nickname, employee.Nickname)
-                        .Set(x => x.BarberExpertise, employee.BarberExpertise)
-                        .Set(x => x.DateHired, employee.DateHired)
-                        .Set(x => x.Estatus, employee.Estatus)
-                        .Set(x => x.Wsched, employee.Wsched)
-                        .Set(x => x.PhotoPath, employee.PhotoPath)
-                        .Update();
-
-                    // Update local collection
-                    var localEmployee = employees.FirstOrDefault(e => e.Eid == employeeId);
-                    if (localEmployee != null)
-                    {
-                        var index = employees.IndexOf(localEmployee);
-                        employees[index] = employee;
-                    }
-
-                    // Reset photo changed flag after successful update
-                    isPhotoChanged = false;
-
-                    // Show success window
-                    UpdateSuccessful UpdateSuccessful = new UpdateSuccessful();
-                    UpdateSuccessful.ShowDialog();
+                    HideAllErrorMessages();
+                    notfound notfound = new notfound();
+                    notfound.ShowDialog();
+                    ClearForm();
+                    return;
                 }
-                else
+
+                var employee = existingEmployee.Models.First();
+
+                // Validate all required fields first
+                if (!ValidateForm())
                 {
-                    MessageBox.Show($"Employee with ID {employeeId} not found.", "Update Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                    return;
                 }
+
+                var tempEmployee = new BarbershopManagementSystem
+                {
+                    Fname = txtFullName.Text.Trim(),
+                    Role = GetComboBoxSelectedValue(cmbRole),
+                    Epassword = txtEmployeePassword.Text.Trim(),
+                    Nickname = txtNickname.Text.Trim()
+                };
+
+                // Then validate for duplicates
+                if (!ValidateEmployeeInlineForUpdate(tempEmployee, employeeId))
+                {
+                    return;
+                }
+
+                employee.Fname = txtFullName.Text.Trim();
+                employee.Bdate = bdate.SelectedDate;
+                employee.Gender = GetComboBoxSelectedValue(Gender);
+                employee.Address = txtAddress.Text.Trim();
+                employee.Cnumber = txtContactNumber.Text.Trim();
+                employee.Email = txtEmail.Text.Trim();
+                employee.ECname = txtEmergencyName.Text.Trim();
+                employee.ECnumber = txtEmergencyNumber.Text.Trim();
+                employee.Role = GetComboBoxSelectedValue(cmbRole);
+
+                string selectedRole = GetComboBoxSelectedValue(cmbRole);
+                if (selectedRole == "Cashier")
+                {
+                    employee.Epassword = txtEmployeePassword.Text.Trim();
+                }
+                else if (selectedRole == "Barber")
+                {
+                    employee.Epassword = string.Empty;
+                }
+
+                employee.Nickname = txtNickname.Text.Trim();
+
+                if (selectedRole == "Barber")
+                {
+                    employee.BarberExpertise = GetComboBoxSelectedValue(cmbBarberExpertise);
+                }
+                else if (selectedRole == "Cashier")
+                {
+                    employee.BarberExpertise = string.Empty;
+                }
+
+                employee.DateHired = dateHiredPicker.SelectedDate;
+                employee.Estatus = GetComboBoxSelectedValue(cmbEmploymentStatus);
+                employee.Wsched = GetSelectedCheckBoxes(workSchedulePanel);
+
+                if (isPhotoChanged && !string.IsNullOrEmpty(currentPhotoPath))
+                {
+                    employee.PhotoPath = currentPhotoPath;
+                }
+
+                await supabase
+                    .From<BarbershopManagementSystem>()
+                    .Where(x => x.Id == employee.Id)
+                    .Set(x => x.Fname, employee.Fname)
+                    .Set(x => x.Bdate, employee.Bdate)
+                    .Set(x => x.Gender, employee.Gender)
+                    .Set(x => x.Address, employee.Address)
+                    .Set(x => x.Cnumber, employee.Cnumber)
+                    .Set(x => x.Email, employee.Email)
+                    .Set(x => x.ECname, employee.ECname)
+                    .Set(x => x.ECnumber, employee.ECnumber)
+                    .Set(x => x.Role, employee.Role)
+                    .Set(x => x.Epassword, employee.Epassword)
+                    .Set(x => x.Nickname, employee.Nickname)
+                    .Set(x => x.BarberExpertise, employee.BarberExpertise)
+                    .Set(x => x.DateHired, employee.DateHired)
+                    .Set(x => x.Estatus, employee.Estatus)
+                    .Set(x => x.Wsched, employee.Wsched)
+                    .Set(x => x.PhotoPath, employee.PhotoPath)
+                    .Update();
+
+                var localEmployee = employees.FirstOrDefault(e => e.Eid == employeeId);
+                if (localEmployee != null)
+                {
+                    var index = employees.IndexOf(localEmployee);
+                    employees[index] = employee;
+                }
+
+                isPhotoChanged = false;
+
+                UpdateSuccessful UpdateSuccessful = new UpdateSuccessful();
+                UpdateSuccessful.ShowDialog();
             }
             catch (Exception ex)
             {
                 MessageBox.Show($"Error updating employee: {ex.Message}", "Update Error", MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
+
 
         private string GetComboBoxSelectedValue(ComboBox comboBox)
         {

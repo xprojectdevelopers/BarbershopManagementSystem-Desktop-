@@ -136,7 +136,7 @@ namespace Capstone
             string currentYear = DateTime.Now.Year.ToString();
 
             var yearEmployees = employees
-                .Where(emp => emp.Eid.StartsWith($"MBS-{currentYear}"))
+                .Where(emp => emp.Eid.StartsWith($"MSB-{currentYear}"))
                 .ToList();
 
             int nextNumber = 1;
@@ -157,7 +157,7 @@ namespace Capstone
                 }
             }
 
-            string employeeId = $"MBS-{currentYear}-{nextNumber:D4}";
+            string employeeId = $"MSB-{currentYear}-{nextNumber:D4}";
             txtEmployeeID.Text = employeeId;
         }
 
