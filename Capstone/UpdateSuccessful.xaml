@@ -14,7 +14,7 @@
             <Label Content="Change to employee" FontSize="20" Margin="105,204,-31,66" FontWeight="Bold"/>
 
         </Border>
-        <Image HorizontalAlignment="Left" Height="170" Margin="160,79,0,0" VerticalAlignment="Top" Width="200" Source="/PopSuccessfull.jpg"/>
+        <Image HorizontalAlignment="Left" Height="170" Margin="160,79,0,0" VerticalAlignment="Top" Width="200" Source="/Pop out image/slang-to-the-moon.png"/>
         <TextBlock HorizontalAlignment="Left" FontSize="20" Margin="130,292,0,0" TextWrapping="Wrap" Text="record have been applied." VerticalAlignment="Top" FontWeight="Bold"/>
 
         <Button Content="Continue"

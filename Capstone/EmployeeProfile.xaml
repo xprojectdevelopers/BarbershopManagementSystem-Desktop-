@@ -203,14 +203,14 @@
                 <!-- Back -->
                 <StackPanel Orientation="Horizontal" Grid.Column="0" VerticalAlignment="Center"
                 MouseLeftButtonUp="Home_Click" Cursor="Hand" Margin="47,0,0,0">
-                    <Image Source="/arrow-left.png" Width="30" Height="30"/>
+                    <Image Source="/Icon/arrow-left.png" Width="30" Height="30"/>
                     <Label Content="Back" FontWeight="Bold" FontSize="20" VerticalAlignment="Center" Margin="5,0,0,0"/>
                 </StackPanel>
 
                 <!-- Notification -->
-                <Image Source="/bell.png" Width="30" Height="30" Grid.Column="1" Margin="0,0,5,0" VerticalAlignment="Center"/>
+                <Image Source="/Icon/bell.png" Width="30" Height="30" Grid.Column="1" Margin="0,0,5,0" VerticalAlignment="Center"/>
                 <!-- Settings -->
-                <Image Source="/gear.png" Width="30" Height="30" Grid.Column="2" VerticalAlignment="Center"/>
+                <Image Source="/Icon/gear.png" Width="30" Height="30" Grid.Column="2" VerticalAlignment="Center"/>
             </Grid>
 
 
@@ -235,7 +235,7 @@
             
             <!-- Profile Image + Upload Button -->
             <StackPanel Grid.Row="1" Orientation="Vertical" HorizontalAlignment="Left" Margin="760,301,0,-7">
-                <Image x:Name="PhotoPreview" Height="195" Width="195" Source="/profile.png" 
+                <Image x:Name="PhotoPreview" Height="195" Width="195" Source="/Icon/profile.png" 
            Stretch="UniformToFill" Margin="0,0,0,10"/>
                 <Button Content="Upload Photo" Background="white" Padding="15,8" Click="UploadPhoto_Click" Width="295" Height="50"/>
                 <TextBlock x:Name="txtPhotoError" Foreground="Red" FontSize="14" 

@@ -9,13 +9,13 @@ using Newtonsoft.Json.Linq;
 
 namespace Capstone
 {
-    public partial class MainWindow : Window
+    public partial class LoginForm : Window
     {
         private readonly HttpClient httpClient;
         private readonly string supabaseUrl;
         private readonly string supabaseKey;
 
-        public MainWindow()
+        public LoginForm()
         {
             InitializeComponent();
             httpClient = new HttpClient();

@@ -9,27 +9,8 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <None Remove="About-Our-Team-3--Streamline-Milano.png" />
-    <None Remove="Add Employee.png" />
-    <None Remove="AddEmployee.webp" />
-    <None Remove="arrow-left.png" />
-    <None Remove="bell-ringing.png" />
-    <None Remove="bell.png" />
-    <None Remove="crop-after.png" />
-    <None Remove="Filling-Survey-3--Streamline-Milano.png" />
-    <None Remove="folder-user.png" />
-    <None Remove="gear.png" />
-    <None Remove="headset.png" />
-    <None Remove="house.png" />
-    <None Remove="house.svg" />
-    <None Remove="marketing-target.png" />
-    <None Remove="Phone-Hotspot-1--Streamline-Milano.png" />
-    <None Remove="PopSuccessfull.jpg" />
-    <None Remove="profile.png" />
     <None Remove="Security-Vault--Streamline-Milano.png" />
-    <None Remove="slang-to-the-moon.png" />
     <None Remove="Swarm_bee_user.png" />
-    <None Remove="wallet.png" />
   </ItemGroup>
 
   <ItemGroup>
@@ -41,27 +22,24 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Resource Include="About-Our-Team-3--Streamline-Milano.png" />
-    <Resource Include="Add Employee.png" />
-    <Resource Include="AddEmployee.webp" />
-    <Resource Include="arrow-left.png" />
-    <Resource Include="bell-ringing.png" />
-    <Resource Include="bell.png" />
-    <Resource Include="crop-after.png" />
-    <Resource Include="Filling-Survey-3--Streamline-Milano.png" />
-    <Resource Include="folder-user.png" />
-    <Resource Include="gear.png" />
-    <Resource Include="headset.png" />
-    <Resource Include="house.png" />
-    <Resource Include="house.svg" />
-    <Resource Include="marketing-target.png" />
-    <Resource Include="Phone-Hotspot-1--Streamline-Milano.png" />
-    <Resource Include="PopSuccessfull.jpg" />
-    <Resource Include="profile.png" />
-    <Resource Include="Security-Vault--Streamline-Milano.png" />
-    <Resource Include="slang-to-the-moon.png" />
-    <Resource Include="Swarm_bee_user.png" />
-    <Resource Include="wallet.png" />
+    <Resource Include="Icon\About-Our-Team-3--Streamline-Milano.png" />
+    <Resource Include="Icon\Add Employee.png" />
+    <Resource Include="Icon\arrow-left.png" />
+    <Resource Include="Icon\bell-ringing.png" />
+    <Resource Include="Icon\bell.png" />
+    <Resource Include="Icon\Filling-Survey-3--Streamline-Milano.png" />
+    <Resource Include="Icon\folder-user.png" />
+    <Resource Include="Icon\gear.png" />
+    <Resource Include="Icon\headset.png" />
+    <Resource Include="Icon\house.png" />
+    <Resource Include="Icon\house.svg" />
+    <Resource Include="Pop out image\marketing-target.png" />
+    <Resource Include="Pop out image\Phone-Hotspot-1--Streamline-Milano.png" />
+    <Resource Include="Icon\profile.png" />
+    <Resource Include="Icon\Security-Vault--Streamline-Milano.png" />
+    <Resource Include="Pop out image\slang-to-the-moon.png" />
+    <Resource Include="Icon\Swarm_bee_user.png" />
+    <Resource Include="Icon\wallet.png" />
   </ItemGroup>
 
 </Project>

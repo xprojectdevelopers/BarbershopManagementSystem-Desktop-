@@ -20,24 +20,27 @@
             <!-- Header Section -->
             <Grid Margin="0,0,0,20">
                 <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto"/>
                     <ColumnDefinition Width="*"/>
                     <ColumnDefinition Width="Auto"/>
                     <ColumnDefinition Width="Auto"/>
                 </Grid.ColumnDefinitions>
 
-                <!-- Home -->
+                <!-- Home - on the left side -->
                 <StackPanel Orientation="Horizontal" Grid.Column="0" VerticalAlignment="Center"
-            MouseLeftButtonUp="Home_Click" Cursor="Hand">
-                    <Image Source="/house.png" Width="30" Height="30"/>
+                    MouseLeftButtonUp="Home_Click" Cursor="Hand" Margin="0,0,15,0">
+                    <Image Source="/Icon/house.png" Width="30" Height="30"/>
                     <Label Content="Home" FontWeight="Bold" FontSize="20" VerticalAlignment="Center" Margin="5,0,0,0"/>
                 </StackPanel>
 
+                <!-- Empty space in middle -->
+                <StackPanel Grid.Column="1"/>
 
                 <!-- Notification -->
-                <Image Source="/bell.png" Width="30" Height="30" Grid.Column="1" Margin="0,0,15,0" VerticalAlignment="Center"/>
+                <Image Source="/Icon/bell.png" Width="30" Height="30" Grid.Column="2" Margin="0,0,15,0" VerticalAlignment="Center"/>
 
                 <!-- Settings -->
-                <Image Source="/gear.png" Width="30" Height="30" Grid.Column="2" VerticalAlignment="Center"/>
+                <Image Source="/Icon/gear.png" Width="30" Height="30" Grid.Column="3" VerticalAlignment="Center"/>
             </Grid>
 
             <!-- Page Title -->
@@ -53,17 +56,21 @@
 
                 <!-- New Employee Card -->
                 <Border Grid.Column="0" BorderBrush="#000" BorderThickness="1" CornerRadius="8" Padding="15" Margin="5">
-                    <DockPanel>
-                        <StackPanel DockPanel.Dock="Left" Width="250">
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="Auto"/>
+                        </Grid.ColumnDefinitions>
+                        <StackPanel Grid.Column="0" VerticalAlignment="Center">
                             <TextBlock Text="New Employee" FontSize="24" FontWeight="Bold"/>
                             <TextBlock Text="Register a new staff in Molave Street's Barbers."
-                                       FontSize="14" Foreground="Gray" Margin="0,5,0,15"/>
+                       FontSize="14" Foreground="Gray" Margin="0,5,0,15" TextWrapping="Wrap"/>
                             <Button Content="Add Employee"
-                                    Padding="10,5"
-                                    Margin="0,0,110,0"
-                                    Background="Blue" Foreground="White"
-                                    FontWeight="Bold" Width="140" Height="40"
-                                    Click="Addemployee_Click" Cursor="Hand">
+                    Padding="10,5"
+                    Background="Blue" Foreground="White"
+                    FontWeight="Bold" Width="140" Height="40"
+                    HorizontalAlignment="Left"
+                    Click="Addemployee_Click" Cursor="Hand">
                                 <Button.Template>
                                     <ControlTemplate TargetType="Button">
                                         <Border Background="{TemplateBinding Background}" CornerRadius="15" Padding="{TemplateBinding Padding}">
@@ -73,8 +80,15 @@
                                 </Button.Template>
                             </Button>
                         </StackPanel>
-                        <Image Source="/AddEmployee.webp" Width="120" Height="120" DockPanel.Dock="Right"/>
-                    </DockPanel>
+                        <Image Grid.Column="1" 
+               Source="Icon/Add Employee.png" 
+               Width="120" 
+               Height="120" 
+               Stretch="Fill"
+               VerticalAlignment="Center"
+               HorizontalAlignment="Right"
+               Margin="10,0,0,0"/>
+                    </Grid>
                 </Border>
 
                 <!-- Total Employees Card -->
@@ -99,7 +113,7 @@
             <!-- Employee Table -->
             <Border BorderBrush="Black" BorderThickness="1" Padding="20" CornerRadius="8" Margin="0,0,0,20">
                 <StackPanel>
-                    <TextBlock Text="Molave Street’s Barbers Employees"
+                    <TextBlock Text="Molave Street's Barbers Employees"
                    FontSize="20" FontWeight="Bold"
                    HorizontalAlignment="Center" Margin="0,0,0,20"/>
                     <DataGrid x:Name="EmployeeGrid" AutoGenerateColumns="False"
@@ -138,11 +152,11 @@
                 <!-- Employees Profile -->
                 <Border BorderBrush="#000" BorderThickness="1" CornerRadius="8" Padding="15" Margin="5">
                     <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
-                        <Image Source="/About-Our-Team-3--Streamline-Milano.png" Width="120" Height="100"/>
+                        <Image Source="Icon/Diverse.png" Stretch="Uniform" Width="120" Height="100"/>
                         <Button Content="Employees Profile"
-                                Background="Black" Foreground="White"
-                                FontWeight="Bold" Height="40" Width="160" Margin="0,10,0,0"
-                                Click="Employee_Click" Cursor="Hand">
+                Background="Black" Foreground="White"
+                FontWeight="Bold" Height="40" Width="160" Margin="0,10,0,0"
+                Click="Employee_Click" Cursor="Hand">
                             <Button.Template>
                                 <ControlTemplate TargetType="Button">
                                     <Border Background="{TemplateBinding Background}" CornerRadius="15">
@@ -157,10 +171,11 @@
                 <!-- Payroll History -->
                 <Border BorderBrush="#000" BorderThickness="1" CornerRadius="8" Padding="15" Margin="5">
                     <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
-                        <Image Source="/Security-Vault--Streamline-Milano.png" Width="120" Height="100"/>
+                        <Image Source="Icon/Tax.png" Stretch="Uniform" Width="120" Height="100"/>
                         <Button Content="Payroll History"
-                                Background="Black" Foreground="White"
-                                FontWeight="Bold" Height="40" Width="160" Margin="0,10,0,0">
+                Background="Black" Foreground="White"
+                FontWeight="Bold" Height="40" Width="160" Margin="0,10,0,0"
+                Click="PayrollHistory_Click" Cursor="Hand">
                             <Button.Template>
                                 <ControlTemplate TargetType="Button">
                                     <Border Background="{TemplateBinding Background}" CornerRadius="15">
@@ -175,10 +190,11 @@
                 <!-- Attendance Report -->
                 <Border BorderBrush="#000" BorderThickness="1" CornerRadius="8" Padding="15" Margin="5">
                     <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
-                        <Image Source="/Filling-Survey-3--Streamline-Milano.png" Width="120" Height="100"/>
+                        <Image Source="Icon/Time.png" Stretch="Uniform" Width="120" Height="100"/>
                         <Button Content="Attendance Report"
-                                Background="Black" Foreground="White"
-                                FontWeight="Bold" Height="40" Width="160" Margin="0,10,0,0">
+                Background="Black" Foreground="White"
+                FontWeight="Bold" Height="40" Width="160" Margin="0,10,0,0"
+                Click="AttendanceReport_Click" Cursor="Hand">
                             <Button.Template>
                                 <ControlTemplate TargetType="Button">
                                     <Border Background="{TemplateBinding Background}" CornerRadius="15">

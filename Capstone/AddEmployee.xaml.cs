@@ -17,7 +17,7 @@ using System.Windows.Data;
 
 namespace Capstone
 {
-    public partial class Testing : Window
+    public partial class AddEmployee : Window
     {
         private Client supabase;
         private ObservableCollection<BarbershopManagementSystem> employees;
@@ -25,7 +25,7 @@ namespace Capstone
         private string photoBase64 = string.Empty;
         private bool isSaving = false;
 
-        public Testing()
+        public AddEmployee()
         {
             InitializeComponent();
             Loaded += async (s, e) => await InitializeData(); // Initialize when window is loaded
@@ -703,7 +703,7 @@ namespace Capstone
             cmbEmploymentStatus.SelectedIndex = -1;
 
             // ===== Image =====
-            PhotoPreview.Source = new BitmapImage(new Uri("/profile.png", UriKind.Relative));
+            PhotoPreview.Source = new BitmapImage(new Uri("/Icon/profile.png", UriKind.Relative));
             selectedPhotoPath = string.Empty;
             photoBase64 = string.Empty;
 

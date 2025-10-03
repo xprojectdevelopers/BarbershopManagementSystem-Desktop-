@@ -12,6 +12,8 @@
         ResizeMode="CanResizeWithGrip">
 
     <Window.Resources>
+        
+        
         <!-- Responsive card style -->
         <Style x:Key="MenuCard" TargetType="Border">
             <Setter Property="BorderThickness" Value="1"/>
@@ -112,17 +114,16 @@
                         </Border>
                         <ControlTemplate.Triggers>
                             <Trigger Property="IsMouseOver" Value="True">
-                                <Setter Property="Background" Value="#F5F5F5"/>
+                                <Setter Property="Background" Value="Transparent"/>
                             </Trigger>
                             <Trigger Property="IsPressed" Value="True">
-                                <Setter Property="Background" Value="#E0E0E0"/>
+                                <Setter Property="Background" Value="Transparent"/>
                             </Trigger>
                         </ControlTemplate.Triggers>
                     </ControlTemplate>
                 </Setter.Value>
             </Setter>
         </Style>
-
         <!-- Simple icon style for top bar (no converter needed) -->
         <Style x:Key="TopBarIcon" TargetType="Image">
             <Setter Property="Width" Value="24"/>
@@ -138,35 +139,10 @@
             <!-- Main content -->
         </Grid.RowDefinitions>
 
-        <!-- Top Navigation Bar -->
-        <Border Grid.Row="1" BorderThickness="0,0,0,1" Margin="0,4,0,560">
-            <Grid Margin="20,0">
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="*"/>
-                    <ColumnDefinition Width="Auto"/>
-                    <ColumnDefinition Width="Auto"/>
-                </Grid.ColumnDefinitions>
 
-                <!-- Notification Icon -->
-                <Button Grid.Column="1" 
-                       Margin="0,0,0,0" 
-                       Style="{StaticResource ResponsiveButton}"
-                       ToolTip="Notifications">
-                    <Image Source="bell.png" Style="{StaticResource TopBarIcon}"/>
-                </Button>
-
-                <!-- Settings Icon -->
-                <Button Grid.Column="2"  
-                       Margin="0,0,70,0" 
-                       Style="{StaticResource ResponsiveButton}"
-                       ToolTip="Settings">
-                    <Image Source="gear.png" Style="{StaticResource TopBarIcon}"/>
-                </Button>
-            </Grid>
-        </Border>
 
         <!-- Main Content Area -->
-        <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto">
+        <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto" Margin="-5,39,5,21" Grid.RowSpan="2">
             <Grid Margin="20">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto"/>
@@ -177,21 +153,50 @@
                     <!-- Menu cards -->
                 </Grid.RowDefinitions>
 
+                <!-- Top Navigation Bar - Fixed positioning -->
+                <Border Grid.Row="0" 
+                        Height="60"
+                        VerticalAlignment="Top">
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="Auto"/>
+                        </Grid.ColumnDefinitions>
+
+                        <!-- Notification Icon -->
+                        <Button Grid.Column="1" 
+                                Margin="0,0,-20,0" 
+                                Style="{StaticResource ResponsiveButton}"
+                                ToolTip="Notifications">
+                            <Image Source="/Icon/bell.png" Style="{StaticResource TopBarIcon}"/>
+                        </Button>
+
+                        <!-- Settings Icon -->
+                        <Button Grid.Column="2"  
+                                Margin="0,0,50,0" 
+                                Style="{StaticResource ResponsiveButton}"
+                                ToolTip="Settings">
+                            <Image Source="/Icon/gear.png" Style="{StaticResource TopBarIcon}"/>
+                        </Button>
+                    </Grid>
+                </Border>
+
                 <!-- Profile Section -->
                 <Grid Grid.Row="0" HorizontalAlignment="Center" Margin="0,20,0,0">
                     <Viewbox Stretch="Uniform" MaxWidth="350" MaxHeight="300" StretchDirection="DownOnly">
                         <StackPanel Orientation="Vertical">
                             <!-- Profile Image Container -->
                             <Border Width="120" Height="120" 
-                                    CornerRadius="60"
-                                    Background="Black" 
-                                    HorizontalAlignment="Center"
-                                    Margin="0,0,0,15">
-                                <Image Source="crop-after.png" Stretch="UniformToFill">
-                                    <Image.Clip>
-                                        <EllipseGeometry Center="60,60" RadiusX="60" RadiusY="60"/>
-                                    </Image.Clip>
-                                </Image>
+                                CornerRadius="60"
+                                Background="LightGray" 
+                                HorizontalAlignment="Center"
+                                Margin="0,0,0,15"
+                                ClipToBounds="True">
+                                <Image Source="/Icon/profile.png" 
+                                Stretch="UniformToFill"
+                                VerticalAlignment="Center"
+                                HorizontalAlignment="Center"/>
                             </Border>
 
                             <!-- Profile Info -->
@@ -232,7 +237,7 @@
                                 <ColumnDefinition Width="*"/>
                             </Grid.ColumnDefinitions>
 
-                            <Image Grid.Row="0" Grid.Column="0" Source="bell-ringing.png" 
+                            <Image Grid.Row="0" Grid.Column="0" Source="/Icon/bell-ringing.png" 
                                   Style="{StaticResource MenuIcon}" Margin="0,0,15,0"/>
                             <StackPanel Grid.Row="0" Grid.Column="1" Grid.RowSpan="2" VerticalAlignment="Center">
                                 <TextBlock Text="Appointments" Style="{StaticResource MenuTitle}"/>
@@ -254,7 +259,7 @@
                                 <ColumnDefinition Width="*"/>
                             </Grid.ColumnDefinitions>
 
-                            <Image Grid.Row="0" Grid.Column="0" Source="headset.png" 
+                            <Image Grid.Row="0" Grid.Column="0" Source="/Icon/headset.png" 
                                   Style="{StaticResource MenuIcon}" Margin="0,0,15,0"/>
                             <StackPanel Grid.Row="0" Grid.Column="1" Grid.RowSpan="2" VerticalAlignment="Center">
                                 <TextBlock Text="Customers" Style="{StaticResource MenuTitle}"/>
@@ -277,7 +282,7 @@
                                 <ColumnDefinition Width="*"/>
                             </Grid.ColumnDefinitions>
 
-                            <Image Grid.Row="0" Grid.Column="0" Source="folder-user.png" 
+                            <Image Grid.Row="0" Grid.Column="0" Source="/Icon/folder-user.png" 
                                   Style="{StaticResource MenuIcon}" Margin="0,0,15,0"/>
                             <StackPanel Grid.Row="0" Grid.Column="1" Grid.RowSpan="2" VerticalAlignment="Center">
                                 <TextBlock Text="Employees" Style="{StaticResource MenuTitle}"/>
@@ -300,7 +305,7 @@
                                 <ColumnDefinition Width="*"/>
                             </Grid.ColumnDefinitions>
 
-                            <Image Grid.Row="0" Grid.Column="0" Source="wallet.png" 
+                            <Image Grid.Row="0" Grid.Column="0" Source="/Icon/wallet.png" 
                                   Style="{StaticResource MenuIcon}" Margin="0,0,15,0"/>
                             <StackPanel Grid.Row="0" Grid.Column="1" Grid.RowSpan="2" VerticalAlignment="Center">
                                 <TextBlock Text="Payroll" Style="{StaticResource MenuTitle}"/>
@@ -322,7 +327,7 @@
                                 <ColumnDefinition Width="*"/>
                             </Grid.ColumnDefinitions>
 
-                            <Image Grid.Row="0" Grid.Column="0" Source="bell-ringing.png" 
+                            <Image Grid.Row="0" Grid.Column="0" Source="/Icon/bell-ringing.png" 
                                   Style="{StaticResource MenuIcon}" Margin="0,0,15,0"/>
                             <StackPanel Grid.Row="0" Grid.Column="1" Grid.RowSpan="2" VerticalAlignment="Center">
                                 <TextBlock Text="Inventory" Style="{StaticResource MenuTitle}"/>
@@ -332,7 +337,7 @@
                         </Grid>
                     </Border>
 
-           
+
                 </Grid>
             </Grid>
         </ScrollViewer>

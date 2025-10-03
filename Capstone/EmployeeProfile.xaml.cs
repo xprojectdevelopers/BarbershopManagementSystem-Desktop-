@@ -343,7 +343,7 @@ namespace Capstone
 
             ClearCheckBoxes(workSchedulePanel);
 
-            PhotoPreview.Source = new BitmapImage(new Uri("/profile.png", UriKind.Relative));
+            PhotoPreview.Source = new BitmapImage(new Uri("/Icon/profile.png", UriKind.Relative));
             currentPhotoPath = null;
             isPhotoChanged = false;
         }

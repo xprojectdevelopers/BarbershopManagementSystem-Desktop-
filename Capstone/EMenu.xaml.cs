@@ -166,10 +166,24 @@ namespace Capstone
             this.Close();
         }
 
+        private void PayrollHistory_Click(object sender, RoutedEventArgs e)
+        {
+            PayrollHistory PayrollHistory = new PayrollHistory();
+            PayrollHistory.Show();
+            this.Close();
+        }
+
+        private void AttendanceReport_Click(object sender, RoutedEventArgs e)
+        {
+            AttendanceReport AttendanceReport = new AttendanceReport();
+            AttendanceReport.Show();
+            this.Close();
+        }
+
         private void Addemployee_Click(object sender, RoutedEventArgs e)
         {
-            Testing Testing = new Testing();
-            Testing.Show();
+            AddEmployee AddEmployee = new AddEmployee();
+            AddEmployee.Show();
             this.Close();
         }
 
