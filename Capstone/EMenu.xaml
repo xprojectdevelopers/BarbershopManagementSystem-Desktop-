@@ -44,7 +44,7 @@
             </Grid>
 
             <!-- Page Title -->
-            <Label Content="Employees" FontSize="22" FontWeight="Bold" Margin="0,0,0,15"/>
+            <Label Content="Employees" FontSize="20" FontWeight="Bold" Margin="0,0,0,15"/>
 
             <!-- Top Cards -->
             <Grid Margin="0,0,0,20">
@@ -152,7 +152,7 @@
                 <!-- Employees Profile -->
                 <Border BorderBrush="#000" BorderThickness="1" CornerRadius="8" Padding="15" Margin="5">
                     <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
-                        <Image Source="Icon/Diverse.png" Stretch="Uniform" Width="120" Height="100"/>
+                        <Image Source="/Icon/Diverse-Team-1--Streamline-Milano (1).png" Stretch="Uniform" Width="120" Height="100"/>
                         <Button Content="Employees Profile"
                 Background="Black" Foreground="White"
                 FontWeight="Bold" Height="40" Width="160" Margin="0,10,0,0"
@@ -171,7 +171,7 @@
                 <!-- Payroll History -->
                 <Border BorderBrush="#000" BorderThickness="1" CornerRadius="8" Padding="15" Margin="5">
                     <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
-                        <Image Source="Icon/Tax.png" Stretch="Uniform" Width="120" Height="100"/>
+                        <Image Source="/Icon/Paying-Taxes-1--Streamline-Milano.png" Stretch="Uniform" Width="120" Height="100"/>
                         <Button Content="Payroll History"
                 Background="Black" Foreground="White"
                 FontWeight="Bold" Height="40" Width="160" Margin="0,10,0,0"
@@ -190,7 +190,7 @@
                 <!-- Attendance Report -->
                 <Border BorderBrush="#000" BorderThickness="1" CornerRadius="8" Padding="15" Margin="5">
                     <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
-                        <Image Source="Icon/Time.png" Stretch="Uniform" Width="120" Height="100"/>
+                        <Image Source="/Icon/Being-Productive-4--Streamline-Milano.png" Stretch="Uniform" Width="120" Height="100"/>
                         <Button Content="Attendance Report"
                 Background="Black" Foreground="White"
                 FontWeight="Bold" Height="40" Width="160" Margin="0,10,0,0"

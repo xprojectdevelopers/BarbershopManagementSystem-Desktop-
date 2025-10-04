@@ -12,7 +12,7 @@
 
     <Grid>
         <!-- Page Title -->
-        <Label Content="Advance Report" FontSize="22" FontWeight="Bold" Margin="65,100,0,15"/>
+        <Label Content="Advance Report" FontSize="20" FontWeight="Bold" Margin="65,100,0,15"/>
 
         <!-- Header Section -->
         <Grid Height="50" VerticalAlignment="Top" Margin="0,30,0,0">

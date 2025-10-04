@@ -294,7 +294,8 @@
 
                     <!-- Second Row Cards -->
                     <!-- Payroll Card -->
-                    <Border Grid.Row="1" Grid.Column="0" Style="{StaticResource MenuCard}">
+                    <Border Grid.Row="1" Grid.Column="0" Style="{StaticResource MenuCard}"
+                            MouseLeftButtonDown="Payroll_Click">
                         <Grid>
                             <Grid.RowDefinitions>
                                 <RowDefinition Height="Auto"/>

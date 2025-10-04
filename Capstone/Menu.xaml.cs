@@ -41,5 +41,12 @@ namespace Capstone
             EMenu.Show();
             this.Hide();
         }
+
+        private void Payroll_Click(object sender, System.Windows.Input.MouseButtonEventArgs e)
+        {
+            Payroll Payroll = new Payroll();
+            Payroll.Show();
+            this.Hide();
+        }
     }
 }

@@ -9,7 +9,14 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="Being-Productive-4--Streamline-Milano.png" />
+    <None Remove="Diverse-Team-1--Streamline-Milano %281%29.png" />
+    <None Remove="export %281%29.png" />
+    <None Remove="magnifying-glass.png" />
+    <None Remove="Paying-Taxes-1--Streamline-Milano.png" />
+    <None Remove="quotes-fill.png" />
     <None Remove="Security-Vault--Streamline-Milano.png" />
+    <None Remove="stack-of-money.png" />
     <None Remove="Swarm_bee_user.png" />
   </ItemGroup>
 
@@ -22,6 +29,9 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Resource Include="Icon\export %281%29.png" />
+    <Resource Include="Icon\Being-Productive-4--Streamline-Milano.png" />
+    <Resource Include="Icon\Diverse-Team-1--Streamline-Milano %281%29.png" />
     <Resource Include="Icon\About-Our-Team-3--Streamline-Milano.png" />
     <Resource Include="Icon\Add Employee.png" />
     <Resource Include="Icon\arrow-left.png" />
@@ -33,6 +43,8 @@
     <Resource Include="Icon\headset.png" />
     <Resource Include="Icon\house.png" />
     <Resource Include="Icon\house.svg" />
+    <Resource Include="Icon\Paying-Taxes-1--Streamline-Milano.png" />
+    <Resource Include="Icon\magnifying-glass.png" />
     <Resource Include="Pop out image\marketing-target.png" />
     <Resource Include="Pop out image\Phone-Hotspot-1--Streamline-Milano.png" />
     <Resource Include="Icon\profile.png" />
@@ -40,6 +52,8 @@
     <Resource Include="Pop out image\slang-to-the-moon.png" />
     <Resource Include="Icon\Swarm_bee_user.png" />
     <Resource Include="Icon\wallet.png" />
+    <Resource Include="Icon\stack-of-money.png" />
+    <Resource Include="quotes-fill.png" />
   </ItemGroup>
 
 </Project>
