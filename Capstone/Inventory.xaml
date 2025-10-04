@@ -55,7 +55,7 @@
             <!-- Employees Profile -->
             <Border BorderBrush="#000" BorderThickness="1" CornerRadius="8" Padding="15" Margin="5">
                 <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
-                    <Image Source="/Sorting-Center--Streamline-Milano.png" Stretch="Uniform" Width="120" Height="100"/>
+                    <Image Source="/Icon/Sorting-Center--Streamline-Milano.png" Stretch="Uniform" Width="120" Height="100"/>
                     <Button Content="Manage Item"
                             Background="Black" Foreground="White"
                             FontWeight="Bold" Height="40" Width="160" Margin="0,10,0,0"
@@ -74,7 +74,7 @@
             <!-- Payroll History -->
             <Border BorderBrush="#000" BorderThickness="1" CornerRadius="8" Padding="15" Margin="5">
                 <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
-                    <Image Source="/Dropshipping-1--Streamline-Milano.png" Stretch="Uniform" Width="120" Height="100"/>
+                    <Image Source="/Icon/Dropshipping-1--Streamline-Milano.png" Stretch="Uniform" Width="120" Height="100"/>
                     <Button Content="Purchased Orders"
                             Background="Black" Foreground="White"
                             FontWeight="Bold" Height="40" Width="160" Margin="0,10,0,0"
@@ -93,7 +93,7 @@
             <!-- Attendance Report -->
             <Border BorderBrush="#000" BorderThickness="1" CornerRadius="8" Padding="15" Margin="5">
                 <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
-                    <Image Source="/emptystates-empty-cart.png" Stretch="Uniform" Width="120" Height="100"/>
+                    <Image Source="/Icon/emptystates-empty-cart.png" Stretch="Uniform" Width="120" Height="100"/>
                     <Button Content="Sales Orders"
                             Background="Black" Foreground="White"
                             FontWeight="Bold" Height="40" Width="160" Margin="0,10,0,0"

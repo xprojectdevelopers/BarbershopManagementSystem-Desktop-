@@ -40,15 +40,15 @@ namespace Capstone
 
         private void Purchased_Click(object sender, RoutedEventArgs e)
         {
-            PayrollHistory PayrollHistory = new PayrollHistory();
-            PayrollHistory.Show();
+            PurchaseOrders PurchaseOrders = new PurchaseOrders();
+            PurchaseOrders.Show();
             this.Close();
         }
 
         private void Sales_Click(object sender, RoutedEventArgs e)
         {
-            PayrollHistory PayrollHistory = new PayrollHistory();
-            PayrollHistory.Show();
+            SaleItem SaleItem = new SaleItem();
+            SaleItem.Show();
             this.Close();
         }
     }
