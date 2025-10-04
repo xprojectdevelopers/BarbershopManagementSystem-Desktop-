@@ -48,5 +48,12 @@ namespace Capstone
             Payroll.Show();
             this.Hide();
         }
+
+        private void Inventory_Click(object sender, System.Windows.Input.MouseButtonEventArgs e)
+        {
+            Inventory Inventory = new Inventory();
+            Inventory.Show();
+            this.Hide();
+        }
     }
 }

@@ -317,7 +317,8 @@
                     </Border>
 
                     <!-- Inventory Card -->
-                    <Border Grid.Row="1" Grid.Column="1" Style="{StaticResource MenuCard}">
+                    <Border Grid.Row="1" Grid.Column="1" Style="{StaticResource MenuCard}"
+                            MouseLeftButtonDown="Inventory_Click">
                         <Grid>
                             <Grid.RowDefinitions>
                                 <RowDefinition Height="Auto"/>

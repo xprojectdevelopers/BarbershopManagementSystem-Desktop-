@@ -11,11 +11,14 @@
   <ItemGroup>
     <None Remove="Being-Productive-4--Streamline-Milano.png" />
     <None Remove="Diverse-Team-1--Streamline-Milano %281%29.png" />
+    <None Remove="Dropshipping-1--Streamline-Milano.png" />
+    <None Remove="emptystates-empty-cart.png" />
     <None Remove="export %281%29.png" />
     <None Remove="magnifying-glass.png" />
     <None Remove="Paying-Taxes-1--Streamline-Milano.png" />
     <None Remove="quotes-fill.png" />
     <None Remove="Security-Vault--Streamline-Milano.png" />
+    <None Remove="Sorting-Center--Streamline-Milano.png" />
     <None Remove="stack-of-money.png" />
     <None Remove="Swarm_bee_user.png" />
   </ItemGroup>
@@ -29,6 +32,8 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Resource Include="Dropshipping-1--Streamline-Milano.png" />
+    <Resource Include="emptystates-empty-cart.png" />
     <Resource Include="Icon\export %281%29.png" />
     <Resource Include="Icon\Being-Productive-4--Streamline-Milano.png" />
     <Resource Include="Icon\Diverse-Team-1--Streamline-Milano %281%29.png" />
@@ -54,6 +59,7 @@
     <Resource Include="Icon\wallet.png" />
     <Resource Include="Icon\stack-of-money.png" />
     <Resource Include="quotes-fill.png" />
+    <Resource Include="Sorting-Center--Streamline-Milano.png" />
   </ItemGroup>
 
 </Project>
