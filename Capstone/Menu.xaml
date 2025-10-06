@@ -248,7 +248,8 @@
                     </Border>
 
                     <!-- Customers Card -->
-                    <Border Grid.Row="0" Grid.Column="1" Style="{StaticResource MenuCard}">
+                    <Border Grid.Row="0" Grid.Column="1" Style="{StaticResource MenuCard}"
+                            MouseLeftButtonDown="Customers_Click">
                         <Grid>
                             <Grid.RowDefinitions>
                                 <RowDefinition Height="Auto"/>

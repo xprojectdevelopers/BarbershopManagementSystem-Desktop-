@@ -34,6 +34,12 @@ namespace Capstone
             }
         }
 
+        private void Customers_Click(object sender, System.Windows.Input.MouseButtonEventArgs e)
+        {
+            Customers Customers = new Customers();
+            Customers.Show();
+            this.Hide();
+        }
 
         private void Employees_Click(object sender, System.Windows.Input.MouseButtonEventArgs e)
         {
