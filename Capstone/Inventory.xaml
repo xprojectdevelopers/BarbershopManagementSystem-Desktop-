@@ -4,6 +4,7 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Capstone"
+        xmlns:custom="clr-namespace:Capstone.CustomControls"
         mc:Ignorable="d"
         Title="Inventory" Height="700" Width="1280"
         WindowState="Maximized"
@@ -89,6 +90,7 @@
                     </Button>
                 </StackPanel>
             </Border>
+            
 
             <!-- Attendance Report -->
             <Border BorderBrush="#000" BorderThickness="1" CornerRadius="8" Padding="15" Margin="5">
