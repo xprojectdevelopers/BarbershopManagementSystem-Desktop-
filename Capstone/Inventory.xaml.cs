@@ -14,14 +14,15 @@ using System.Windows.Shapes;
 
 namespace Capstone
 {
-    /// <summary>
-    /// Interaction logic for Inventory.xaml
-    /// </summary>
     public partial class Inventory : Window
     {
+        private Window currentModalWindow;
+
         public Inventory()
         {
             InitializeComponent();
+            // Add handler directly to the overlay
+            ModalOverlay.PreviewMouseLeftButtonDown += ModalOverlay_Click;
         }
 
         private void Home_Click(object sender, MouseButtonEventArgs e)
@@ -40,16 +41,54 @@ namespace Capstone
 
         private void Purchased_Click(object sender, RoutedEventArgs e)
         {
-            PurchaseOrders PurchaseOrders = new PurchaseOrders();
-            PurchaseOrders.Show();
-            this.Close();
+            // Show the overlay FIRST
+            ModalOverlay.Visibility = Visibility.Visible;
+
+            // Open PurchaseOrders as a regular window
+            currentModalWindow = new PurchaseOrders();
+            currentModalWindow.Owner = this;
+            currentModalWindow.WindowStartupLocation = WindowStartupLocation.CenterOwner;
+
+            // Subscribe to Closed event
+            currentModalWindow.Closed += ModalWindow_Closed;
+
+            // Show as regular window
+            currentModalWindow.Show();
         }
 
         private void Sales_Click(object sender, RoutedEventArgs e)
         {
-            SaleItem SaleItem = new SaleItem();
-            SaleItem.Show();
-            this.Close();
+            // Show the overlay FIRST
+            ModalOverlay.Visibility = Visibility.Visible;
+
+            // Open SaleItem as a regular window
+            currentModalWindow = new SaleItem();
+            currentModalWindow.Owner = this;
+            currentModalWindow.WindowStartupLocation = WindowStartupLocation.CenterOwner;
+
+            // Subscribe to Closed event
+            currentModalWindow.Closed += ModalWindow_Closed;
+
+            // Show as regular window
+            currentModalWindow.Show();
+        }
+
+        private void ModalWindow_Closed(object sender, EventArgs e)
+        {
+            ModalOverlay.Visibility = Visibility.Collapsed;
+            currentModalWindow = null;
+        }
+
+        private void ModalOverlay_Click(object sender, MouseButtonEventArgs e)
+        {
+            // Close the modal window when clicking on the overlay
+            if (currentModalWindow != null)
+            {
+                currentModalWindow.Close();
+            }
+
+            // Mark event as handled
+            e.Handled = true;
         }
     }
 }

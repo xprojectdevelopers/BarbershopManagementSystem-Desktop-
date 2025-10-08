@@ -5,7 +5,10 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Capstone"
         mc:Ignorable="d"
-        Title="succesfull" Height="490" Width="500" WindowStartupLocation="CenterScreen">
+        Title="succesfull" Height="490" Width="500" 
+        ResizeMode="CanResizeWithGrip"
+        WindowStartupLocation="CenterOwner"
+        ShowInTaskbar="False">
     
     <Grid>
 

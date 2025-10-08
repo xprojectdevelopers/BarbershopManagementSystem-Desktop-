@@ -1,22 +1,24 @@
-﻿using Microsoft.Win32;
+﻿using Capstone.CustomControls;
+using Microsoft.Win32;
 using Supabase;
 using Supabase.Postgrest.Attributes;
 using Supabase.Postgrest.Models;
-using System.Windows.Media;
+using System;
 using System.Collections.ObjectModel;
 using System.Configuration;
+using System.Globalization;
+using System.IO;
 using System.Text.RegularExpressions;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Input;
-using System.Windows.Media.Imaging;
-using System.IO;
-using System;
-using System.Globalization;
 using System.Windows.Data;
+using System.Windows.Input;
+using System.Windows.Media;
+using System.Windows.Media.Imaging;
 
 namespace Capstone
 {
+
     public partial class AddEmployee : Window
     {
         private Client supabase;
@@ -24,11 +26,13 @@ namespace Capstone
         private string selectedPhotoPath = string.Empty;
         private string photoBase64 = string.Empty;
         private bool isSaving = false;
+        private Window currentModalWindow;
 
         public AddEmployee()
         {
             InitializeComponent();
             Loaded += async (s, e) => await InitializeData(); // Initialize when window is loaded
+         
         }
 
         private async Task InitializeSupabaseAsync()
@@ -623,8 +627,19 @@ namespace Capstone
                     employees.Add(result.Models[0]);
 
                     // Show success window only once
-                    succesfull successWindow = new succesfull();
-                    successWindow.ShowDialog();
+                    // Show the overlay FIRST
+                    ModalOverlay.Visibility = Visibility.Visible;
+
+                    // Open PurchaseOrders as a regular window
+                    currentModalWindow = new succesfull();
+                    currentModalWindow.Owner = this;
+                    currentModalWindow.WindowStartupLocation = WindowStartupLocation.CenterOwner;
+
+                    // Subscribe to Closed event
+                    currentModalWindow.Closed += ModalWindow_Closed;
+
+                    // Show as regular window
+                    currentModalWindow.Show();
 
                     // Clear the form after successful save
                     Clear_Click(sender, e);
@@ -648,6 +663,12 @@ namespace Capstone
                 saveButton.IsEnabled = true;
                 saveButton.Content = "Add Employee";
             }
+        }
+
+        private void ModalWindow_Closed(object sender, EventArgs e)
+        {
+            ModalOverlay.Visibility = Visibility.Collapsed;
+            currentModalWindow = null;
         }
 
         private string GetSelectedComboBoxValue(ComboBox comboBox)

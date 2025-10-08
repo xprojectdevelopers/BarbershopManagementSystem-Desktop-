@@ -19,6 +19,7 @@ namespace Capstone
         private ObservableCollection<BarbershopManagementSystem> employees;
         private string currentPhotoPath; // Add this field to track current photo path
         private bool isPhotoChanged = false; // Add this field to track if photo was changed
+        private Window currentModalWindow;
 
         public EmployeeProfile()
         {
@@ -118,8 +119,18 @@ namespace Capstone
                 {
                     // Hide all validation errors before showing not found dialog
                     HideAllErrorMessages();
-                    notfound notfound = new notfound();
-                    notfound.ShowDialog();
+                    ModalOverlay.Visibility = Visibility.Visible;
+
+                    // Open PurchaseOrders as a regular window
+                    currentModalWindow = new notfound();
+                    currentModalWindow.Owner = this;
+                    currentModalWindow.WindowStartupLocation = WindowStartupLocation.CenterOwner;
+
+                    // Subscribe to Closed event
+                    currentModalWindow.Closed += ModalWindow_Closed;
+
+                    // Show as regular window
+                    currentModalWindow.Show();
                     ClearForm();
                 }
             }
@@ -127,6 +138,12 @@ namespace Capstone
             {
                 MessageBox.Show($"Error searching for employee: {ex.Message}", "Search Error", MessageBoxButton.OK, MessageBoxImage.Error);
             }
+        }
+
+        private void ModalWindow_Closed(object sender, EventArgs e)
+        {
+            ModalOverlay.Visibility = Visibility.Collapsed;
+            currentModalWindow = null;
         }
 
         private bool ValidateEmployeeInlineForUpdate(BarbershopManagementSystem newEmployee, string currentEmployeeId)
@@ -513,14 +530,37 @@ namespace Capstone
                 if (employeeToDelete.Models.Count == 0)
                 {
                     HideAllErrorMessages();
-                    notfound notfound = new notfound();
-                    notfound.ShowDialog();
+                    ModalOverlay.Visibility = Visibility.Visible;
+
+                    // Open PurchaseOrders as a regular window
+                    currentModalWindow = new notfound();
+                    currentModalWindow.Owner = this;
+                    currentModalWindow.WindowStartupLocation = WindowStartupLocation.CenterOwner;
+
+                    // Subscribe to Closed event
+                    currentModalWindow.Closed += ModalWindow_Closed;
+
+                    // Show as regular window
+                    currentModalWindow.Show();
                     ClearForm();
                     return;
                 }
 
                 // Show delete confirmation
-                delete deleteDialog = new delete();
+                ModalOverlay.Visibility = Visibility.Visible;
+
+                // Open delete confirmation as a regular window
+                currentModalWindow = new delete();
+                currentModalWindow.Owner = this;
+                currentModalWindow.WindowStartupLocation = WindowStartupLocation.CenterOwner;
+
+                // Store reference for dialog result
+                delete deleteDialog = (delete)currentModalWindow;
+
+                // Subscribe to Closed event
+                currentModalWindow.Closed += ModalWindow_Closed;
+
+                // Show as dialog
                 bool? result = deleteDialog.ShowDialog();
 
                 if (result == true)
@@ -539,8 +579,18 @@ namespace Capstone
                     }
 
                     HideAllErrorMessages();
-                    DeleteSuccessfull DeleteSuccessfull = new DeleteSuccessfull();
-                    DeleteSuccessfull.ShowDialog();
+                    ModalOverlay.Visibility = Visibility.Visible;
+
+                    // Open PurchaseOrders as a regular window
+                    currentModalWindow = new DeleteSuccessfull();
+                    currentModalWindow.Owner = this;
+                    currentModalWindow.WindowStartupLocation = WindowStartupLocation.CenterOwner;
+
+                    // Subscribe to Closed event
+                    currentModalWindow.Closed += ModalWindow_Closed;
+
+                    // Show as regular window
+                    currentModalWindow.Show();
                     ClearForm();
                 }
             }
@@ -572,8 +622,19 @@ namespace Capstone
                 if (existingEmployee.Models.Count == 0)
                 {
                     HideAllErrorMessages();
-                    notfound notfound = new notfound();
-                    notfound.ShowDialog();
+                    ModalOverlay.Visibility = Visibility.Visible;
+
+                    // Open PurchaseOrders as a regular window
+                    currentModalWindow = new notfound();
+                    currentModalWindow.Owner = this;
+                    currentModalWindow.WindowStartupLocation = WindowStartupLocation.CenterOwner;
+
+                    // Subscribe to Closed event
+                    currentModalWindow.Closed += ModalWindow_Closed;
+
+                    // Show as regular window
+                    currentModalWindow.Show();
+
                     ClearForm();
                     return;
                 }
@@ -670,8 +731,18 @@ namespace Capstone
 
                 isPhotoChanged = false;
 
-                UpdateSuccessful UpdateSuccessful = new UpdateSuccessful();
-                UpdateSuccessful.ShowDialog();
+                ModalOverlay.Visibility = Visibility.Visible;
+
+                // Open PurchaseOrders as a regular window
+                currentModalWindow = new UpdateSuccessful();
+                currentModalWindow.Owner = this;
+                currentModalWindow.WindowStartupLocation = WindowStartupLocation.CenterOwner;
+
+                // Subscribe to Closed event
+                currentModalWindow.Closed += ModalWindow_Closed;
+
+                // Show as regular window
+                currentModalWindow.Show();
             }
             catch (Exception ex)
             {
