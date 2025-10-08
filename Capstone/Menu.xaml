@@ -12,8 +12,8 @@
         ResizeMode="CanResizeWithGrip">
 
     <Window.Resources>
-        
-        
+
+
         <!-- Responsive card style -->
         <Style x:Key="MenuCard" TargetType="Border">
             <Setter Property="BorderThickness" Value="1"/>
@@ -165,18 +165,19 @@
                         </Grid.ColumnDefinitions>
 
                         <!-- Notification Icon -->
-                        <Button Grid.Column="1" 
-                                Margin="0,0,-20,0" 
-                                Style="{StaticResource ResponsiveButton}"
-                                ToolTip="Notifications">
+                        <Button 
+        Margin="1015,0,0,0" 
+        Style="{StaticResource ResponsiveButton}"
+        ToolTip="Notifications"
+        Click="Notification_Click" Grid.ColumnSpan="3" HorizontalAlignment="Left">
                             <Image Source="/Icon/bell.png" Style="{StaticResource TopBarIcon}"/>
                         </Button>
 
                         <!-- Settings Icon -->
-                        <Button Grid.Column="2"  
-                                Margin="0,0,50,0" 
+                        <Button  
+                                Margin="1045,0,0,0" 
                                 Style="{StaticResource ResponsiveButton}"
-                                ToolTip="Settings">
+                                ToolTip="Settings" Grid.ColumnSpan="3" HorizontalAlignment="Left" Click="Setting_Click">
                             <Image Source="/Icon/gear.png" Style="{StaticResource TopBarIcon}"/>
                         </Button>
                     </Grid>
@@ -344,5 +345,12 @@
                 </Grid>
             </Grid>
         </ScrollViewer>
+        <!-- Gray Overlay for Modal Effect -->
+        <Border x:Name="ModalOverlay"
+    Grid.RowSpan="3"
+    Background="#80000000"
+    Visibility="Collapsed"
+    IsHitTestVisible="True"
+    MouseLeftButtonDown="ModalOverlay_Click"/>
     </Grid>
 </Window>

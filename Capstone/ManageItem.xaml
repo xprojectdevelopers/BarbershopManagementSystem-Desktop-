@@ -9,6 +9,7 @@
         WindowState="Maximized"
         ResizeMode="CanResize"
         Background="White">
+    
     <Window.Resources>
         <Style x:Key="TextBoxStyleComboBox" TargetType="ComboBox">
             <Setter Property="Background" Value="White"/>
@@ -370,13 +371,17 @@ Foreground="white">
                             </Button>
                         </StackPanel>
                     </StackPanel>
-                    
-                    
                 </Border>
-
-                
-                
             </StackPanel>
         </ScrollViewer>
+
+        <!-- Gray Overlay for Modal Effect -->
+        <Border x:Name="ModalOverlay"
+        Grid.RowSpan="3"
+        Background="#80000000"
+        Visibility="Collapsed"
+        IsHitTestVisible="True"
+        MouseLeftButtonDown="ModalOverlay_Click"/>
+        
     </Grid>
 </Window>
