@@ -203,12 +203,11 @@
 
                         <!-- DataGrid -->
                         <DataGrid x:Name="EmployeeGrid" AutoGenerateColumns="False"
-                                  CanUserAddRows="False" CanUserDeleteRows="False"
-                                  HeadersVisibility="Column"
-                                  RowHeight="35" FontSize="14"
-                                  BorderBrush="#DDD" BorderThickness="1"
-                                  GridLinesVisibility="All"
-                                  MaxHeight="7500" Height="301">
+          CanUserAddRows="False" CanUserDeleteRows="False"
+          HeadersVisibility="Column"
+          RowHeight="35" FontSize="14"
+          BorderBrush="#DDD" BorderThickness="1"
+          GridLinesVisibility="All">
                             <DataGrid.ColumnHeaderStyle>
                                 <Style TargetType="DataGridColumnHeader">
                                     <Setter Property="Background" Value="Black"/>
@@ -219,13 +218,13 @@
                                 </Style>
                             </DataGrid.ColumnHeaderStyle>
                             <DataGrid.Columns>
-                                <DataGridTextColumn Header="Item ID" Binding="{Binding EmployeeID}" Width="*"/>
-                                <DataGridTextColumn Header="Item Name" Binding="{Binding EmployeeName}" Width="*"/>
-                                <DataGridTextColumn Header="Category" Binding="{Binding EmployeeRole}" Width="*"/>
-                                <DataGridTextColumn Header="Quantity in Stock" Binding="{Binding ContactNumber}" Width="*"/>
-                                <DataGridTextColumn Header="Price" Binding="{Binding EmergencyContactDisplay}" Width="*"/>
-                                <DataGridTextColumn Header="Supplier" Binding="{Binding EmergencyContactDisplay}" Width="*"/>
-                                <DataGridTextColumn Header="Last Update" Binding="{Binding EmergencyContactDisplay}" Width="*"/>
+                                <DataGridTextColumn Header="Item ID" Binding="{Binding ItemID}" Width="*"/>
+                                <DataGridTextColumn Header="Item Name" Binding="{Binding ItemName}" Width="*"/>
+                                <DataGridTextColumn Header="Category" Binding="{Binding Category}" Width="*"/>
+                                <DataGridTextColumn Header="Quantity In Stock" Binding="{Binding QuantityStock, TargetNullValue=''}" Width="*"/>
+                                <DataGridTextColumn Header="Price" Binding="{Binding Price, TargetNullValue=''}" Width="*"/>
+                                <DataGridTextColumn Header="Supplier" Binding="{Binding SupplierName}" Width="*"/>
+                                <DataGridTextColumn Header="Last Update" Binding="{Binding Date}" Width="*"/>
                             </DataGrid.Columns>
                         </DataGrid>
 

@@ -244,10 +244,22 @@
                     <Label Content="Category " FontSize="20" HorizontalAlignment="Left" Margin="40,80,0,0" Grid.Row="1" VerticalAlignment="Top"/>
                     <ComboBox x:Name="Category" Margin="-96,117,0,0" Width="200" Height="47" FontSize="16" SelectedIndex="-1"
           Style="{StaticResource TextBoxStyleComboBox}">
-                        <ComboBoxItem IsEnabled="False" IsSelected="True" Foreground="Gray">All Items</ComboBoxItem>
-                        <ComboBoxItem>Male</ComboBoxItem>
-                        <ComboBoxItem>Female</ComboBoxItem>
-                        <ComboBoxItem>Prefer not to say</ComboBoxItem>
+                        <ComboBoxItem IsEnabled="False" IsSelected="True" Foreground="Gray">Select Category</ComboBoxItem>
+                        <ComboBoxItem>Aftershaves</ComboBoxItem>
+                        <ComboBoxItem>Clays</ComboBoxItem>
+                        <ComboBoxItem>Clippers and trimmers</ComboBoxItem>
+                        <ComboBoxItem>Combs and brushes</ComboBoxItem>
+                        <ComboBoxItem>Conditioners</ComboBoxItem>
+                        <ComboBoxItem>Gel</ComboBoxItem>
+                        <ComboBoxItem>Hair dyes</ComboBoxItem>
+                        <ComboBoxItem>Hair sprays</ComboBoxItem>
+                        <ComboBoxItem>Pomades</ComboBoxItem>
+                        <ComboBoxItem>Razor and blades</ComboBoxItem>
+                        <ComboBoxItem>Scissors</ComboBoxItem>
+                        <ComboBoxItem>Shampoos</ComboBoxItem>
+                        <ComboBoxItem>Shavings creams</ComboBoxItem>
+                        <ComboBoxItem>Towels</ComboBoxItem>
+                        <ComboBoxItem>Waxes</ComboBoxItem>
                     </ComboBox>
                     <TextBlock x:Name="txtCategoryError" Foreground="Red" FontSize="14" Margin="620,898,0,0" Grid.Row="1" HorizontalAlignment="Left" VerticalAlignment="Top" Visibility="Collapsed"/>
 

@@ -69,30 +69,36 @@ namespace Capstone
 
         private void btnGenerateID_Click(object sender, RoutedEventArgs e)
         {
-            var yearEmployees = employees
-                .Where(emp => emp.ItemID.StartsWith($"MSBI"))
+            string prefix = "MSBI";
+            int nextNumber = 1;
+
+            // Find all items with IDs starting with "MSBI-"
+            var existingIDs = employees
+                .Where(emp => !string.IsNullOrEmpty(emp.ItemID) && emp.ItemID.StartsWith(prefix))
+                .Select(emp => emp.ItemID)
                 .ToList();
 
-            int nextNumber = 1;
-            if (yearEmployees.Any())
+            if (existingIDs.Any())
             {
-                var lastId = yearEmployees
-                    .Select(emp => emp.ItemID)
-                    .OrderByDescending(id => id)
-                    .FirstOrDefault();
-
-                if (lastId != null)
-                {
-                    string[] parts = lastId.Split('-');
-                    if (parts.Length == 3 && int.TryParse(parts[2], out int lastNumber))
+                // Extract the last numeric part from each ID
+                var maxNumber = existingIDs
+                    .Select(id =>
                     {
-                        nextNumber = lastNumber + 1;
-                    }
-                }
+                        var parts = id.Split('-');
+                        if (parts.Length == 2 && int.TryParse(parts[1], out int num))
+                            return num;
+                        return 0;
+                    })
+                    .Max();
+
+                nextNumber = maxNumber + 1;
             }
 
-            string employeeId = $"MSBI-{nextNumber:D4}";
-            txtItemID.Text = employeeId;
+            // Format as MSBI-0001, MSBI-0002, etc.
+            string newID = $"{prefix}-{nextNumber:D4}";
+
+            // Display or assign the new ID (example: txtItemID is your TextBox)
+            txtItemID.Text = newID;
         }
 
         private void ClearAllValidationErrors()
