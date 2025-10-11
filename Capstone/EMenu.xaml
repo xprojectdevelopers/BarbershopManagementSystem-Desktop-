@@ -1,0 +1,212 @@
+﻿<Window x:Class="Capstone.EMenu"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:Capstone"
+        mc:Ignorable="d"
+        Title="EMenu"
+        WindowState="Maximized"
+        ResizeMode="CanResize"
+        Background="White">
+
+    <!-- Scroll container -->
+    <ScrollViewer VerticalScrollBarVisibility="Auto"
+                  HorizontalScrollBarVisibility="Disabled"
+                  PanningMode="VerticalOnly">
+
+        <StackPanel Margin="40">
+
+            <!-- Header Section -->
+            <Grid Margin="0,0,0,20">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+
+                <!-- Home - on the left side -->
+                <StackPanel Orientation="Horizontal" Grid.Column="0" VerticalAlignment="Center"
+                    MouseLeftButtonUp="Home_Click" Cursor="Hand" Margin="0,0,15,0">
+                    <Image Source="/Icon/house.png" Width="30" Height="30"/>
+                    <Label Content="Home" FontWeight="Bold" FontSize="20" VerticalAlignment="Center" Margin="5,0,0,0"/>
+                </StackPanel>
+
+                <!-- Empty space in middle -->
+                <StackPanel Grid.Column="1"/>
+
+                <!-- Notification -->
+                <Image Source="/Icon/bell.png" Width="30" Height="30" Grid.Column="2" Margin="0,0,15,0" VerticalAlignment="Center"/>
+
+                <!-- Settings -->
+                <Image Source="/Icon/gear.png" Width="30" Height="30" Grid.Column="3" VerticalAlignment="Center"/>
+            </Grid>
+
+            <!-- Page Title -->
+            <Label Content="Employees" FontSize="20" FontWeight="Bold" Margin="0,0,0,15"/>
+
+            <!-- Top Cards -->
+            <Grid Margin="0,0,0,20">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="2*"/>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+
+                <!-- New Employee Card -->
+                <Border Grid.Column="0" BorderBrush="#000" BorderThickness="1" CornerRadius="8" Padding="15" Margin="5">
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="Auto"/>
+                        </Grid.ColumnDefinitions>
+                        <StackPanel Grid.Column="0" VerticalAlignment="Center">
+                            <TextBlock Text="New Employee" FontSize="24" FontWeight="Bold"/>
+                            <TextBlock Text="Register a new staff in Molave Street's Barbers."
+                       FontSize="14" Foreground="Gray" Margin="0,5,0,15" TextWrapping="Wrap"/>
+                            <Button Content="Add Employee"
+                    Padding="10,5"
+                    Background="Blue" Foreground="White"
+                    FontWeight="Bold" Width="140" Height="40"
+                    HorizontalAlignment="Left"
+                    Click="Addemployee_Click" Cursor="Hand">
+                                <Button.Template>
+                                    <ControlTemplate TargetType="Button">
+                                        <Border Background="{TemplateBinding Background}" CornerRadius="15" Padding="{TemplateBinding Padding}">
+                                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                        </Border>
+                                    </ControlTemplate>
+                                </Button.Template>
+                            </Button>
+                        </StackPanel>
+                        <Image Grid.Column="1" 
+               Source="Icon/Add Employee.png" 
+               Width="120" 
+               Height="120" 
+               Stretch="Fill"
+               VerticalAlignment="Center"
+               HorizontalAlignment="Right"
+               Margin="10,0,0,0"/>
+                    </Grid>
+                </Border>
+
+                <!-- Total Employees Card -->
+                <Border Grid.Column="1" BorderBrush="#000" BorderThickness="1" CornerRadius="8" Padding="15" Margin="5">
+                    <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center">
+                        <!-- Dynamic employee count -->
+                        <TextBlock x:Name="TotalEmployeesText" Text="0" FontSize="64" FontWeight="Bold"/>
+                        <TextBlock Text="Total Employees" FontSize="16" FontWeight="Bold"/>
+                    </StackPanel>
+                </Border>
+
+                <!-- Absentees Card -->
+                <Border Grid.Column="2" BorderBrush="#000" BorderThickness="1" CornerRadius="8" Padding="15" Margin="5">
+                    <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center">
+                        <TextBlock Text="09/20/2025" FontSize="12" Foreground="Gray"/>
+                        <TextBlock Text="15" FontSize="28" FontWeight="Bold" Foreground="Red"/>
+                        <TextBlock Text="Absent Staff Count" FontSize="12" Foreground="Gray"/>
+                    </StackPanel>
+                </Border>
+            </Grid>
+
+            <!-- Employee Table -->
+            <Border BorderBrush="Black" BorderThickness="1" Padding="20" CornerRadius="8" Margin="0,0,0,20">
+                <StackPanel>
+                    <TextBlock Text="Molave Street's Barbers Employees"
+                   FontSize="20" FontWeight="Bold"
+                   HorizontalAlignment="Center" Margin="0,0,0,20"/>
+                    <DataGrid x:Name="EmployeeGrid" AutoGenerateColumns="False"
+                  CanUserAddRows="False" CanUserDeleteRows="False"
+                  HeadersVisibility="Column"
+                  RowHeight="35" FontSize="14"
+                  BorderBrush="#DDD" BorderThickness="1"
+                  GridLinesVisibility="All">
+                        <DataGrid.ColumnHeaderStyle>
+                            <Style TargetType="DataGridColumnHeader">
+                                <Setter Property="Background" Value="Black"/>
+                                <Setter Property="Foreground" Value="White"/>
+                                <Setter Property="FontWeight" Value="Bold"/>
+                                <Setter Property="HorizontalContentAlignment" Value="Center"/>
+                                <Setter Property="Padding" Value="5"/>
+                            </Style>
+                        </DataGrid.ColumnHeaderStyle>
+                        <DataGrid.Columns>
+                            <DataGridTextColumn Header="Employee ID" Binding="{Binding EmployeeID}" Width="*"/>
+                            <DataGridTextColumn Header="Employee Name" Binding="{Binding EmployeeName}" Width="*"/>
+                            <DataGridTextColumn Header="Employee Role" Binding="{Binding EmployeeRole}" Width="*"/>
+                            <DataGridTextColumn Header="Contact Number" Binding="{Binding ContactNumber}" Width="*"/>
+                            <DataGridTextColumn Header="Emergency Contact" Binding="{Binding EmergencyContactDisplay}" Width="*"/>
+                        </DataGrid.Columns>
+                    </DataGrid>
+
+                    <!-- Pagination Controls -->
+                    <StackPanel x:Name="PaginationPanel" Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,10,0,0"/>
+                </StackPanel>
+            </Border>
+
+
+            <!-- Bottom 3 Cards -->
+            <UniformGrid Columns="3" Rows="1" HorizontalAlignment="Stretch">
+
+                <!-- Employees Profile -->
+                <Border BorderBrush="#000" BorderThickness="1" CornerRadius="8" Padding="15" Margin="5">
+                    <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
+                        <Image Source="/Icon/Diverse-Team-1--Streamline-Milano (1).png" Stretch="Uniform" Width="120" Height="100"/>
+                        <Button Content="Employees Profile"
+                Background="Black" Foreground="White"
+                FontWeight="Bold" Height="40" Width="160" Margin="0,10,0,0"
+                Click="Employee_Click" Cursor="Hand">
+                            <Button.Template>
+                                <ControlTemplate TargetType="Button">
+                                    <Border Background="{TemplateBinding Background}" CornerRadius="15">
+                                        <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                    </Border>
+                                </ControlTemplate>
+                            </Button.Template>
+                        </Button>
+                    </StackPanel>
+                </Border>
+
+                <!-- Payroll History -->
+                <Border BorderBrush="#000" BorderThickness="1" CornerRadius="8" Padding="15" Margin="5">
+                    <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
+                        <Image Source="/Icon/Paying-Taxes-1--Streamline-Milano.png" Stretch="Uniform" Width="120" Height="100"/>
+                        <Button Content="Payroll History"
+                Background="Black" Foreground="White"
+                FontWeight="Bold" Height="40" Width="160" Margin="0,10,0,0"
+                Click="PayrollHistory_Click" Cursor="Hand">
+                            <Button.Template>
+                                <ControlTemplate TargetType="Button">
+                                    <Border Background="{TemplateBinding Background}" CornerRadius="15">
+                                        <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                    </Border>
+                                </ControlTemplate>
+                            </Button.Template>
+                        </Button>
+                    </StackPanel>
+                </Border>
+
+                <!-- Attendance Report -->
+                <Border BorderBrush="#000" BorderThickness="1" CornerRadius="8" Padding="15" Margin="5">
+                    <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
+                        <Image Source="/Icon/Being-Productive-4--Streamline-Milano.png" Stretch="Uniform" Width="120" Height="100"/>
+                        <Button Content="Attendance Report"
+                Background="Black" Foreground="White"
+                FontWeight="Bold" Height="40" Width="160" Margin="0,10,0,0"
+                Click="AttendanceReport_Click" Cursor="Hand">
+                            <Button.Template>
+                                <ControlTemplate TargetType="Button">
+                                    <Border Background="{TemplateBinding Background}" CornerRadius="15">
+                                        <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                    </Border>
+                                </ControlTemplate>
+                            </Button.Template>
+                        </Button>
+                    </StackPanel>
+                </Border>
+
+            </UniformGrid>
+        </StackPanel>
+    </ScrollViewer>
+</Window>
