@@ -18,7 +18,7 @@ using System.Windows.Shapes;
 using static Supabase.Postgrest.Constants;
 
 namespace Capstone
-{  
+{   
     public partial class Appointments : Window
     {
         private Supabase.Client? supabase;
