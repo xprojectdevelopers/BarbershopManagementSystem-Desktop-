@@ -1,0 +1,19 @@
+﻿<Window x:Class="Capstone.ModalsSetting"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:Capstone"
+        mc:Ignorable="d"
+        Title="ModalsNotification" Height="450" Width="270"
+        ResizeMode="CanResizeWithGrip"
+WindowStartupLocation="CenterOwner"
+ShowInTaskbar="False"
+WindowStyle="None">
+    <Grid>
+        <Label Content="Setting" FontSize="20" FontWeight="Bold" Margin="90,20,35,360"/>
+
+        
+
+    </Grid>
+</Window>
