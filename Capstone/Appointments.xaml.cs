@@ -19,9 +19,6 @@ using static Supabase.Postgrest.Constants;
 
 namespace Capstone
 {
-    /// <summary>
-    /// Interaction logic for Appointments.xaml
-    /// </summary>
     public partial class Appointments : Window
     {
         private Supabase.Client? supabase;
