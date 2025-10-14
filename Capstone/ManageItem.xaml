@@ -7,7 +7,7 @@
         mc:Ignorable="d" 
         Title="PayrollHistory" Height="1300" Width="1280"
         WindowState="Maximized"
-        ResizeMode="CanResize"
+        ResizeMode="CanResize" 
         Background="White">
 
     <Window.Resources>
