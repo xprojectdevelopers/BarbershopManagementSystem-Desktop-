@@ -267,7 +267,7 @@ namespace Capstone
                     HideAllErrorMessages();
                     ModalOverlay.Visibility = Visibility.Visible;
 
-                    currentModalWindow = new notfound();
+                    currentModalWindow = new notfoundItem();
                     currentModalWindow.Owner = this;
                     currentModalWindow.WindowStartupLocation = WindowStartupLocation.CenterOwner;
                     currentModalWindow.Closed += ModalWindow_Closed;
@@ -379,7 +379,7 @@ namespace Capstone
 
                 // Show success modal
                 ModalOverlay.Visibility = Visibility.Visible;
-                currentModalWindow = new UpdateSuccessful();
+                currentModalWindow = new ItemSuccessfulUpdate();
                 currentModalWindow.Owner = this;
                 currentModalWindow.WindowStartupLocation = WindowStartupLocation.CenterOwner;
                 currentModalWindow.Closed += ModalWindow_Closed;
@@ -633,7 +633,7 @@ namespace Capstone
                     ModalOverlay.Visibility = Visibility.Visible;
 
                     // Open PurchaseOrders as a regular window
-                    currentModalWindow = new DeleteSuccessfull();
+                    currentModalWindow = new ItemSuccessfulDelete();
                     currentModalWindow.Owner = this;
                     currentModalWindow.WindowStartupLocation = WindowStartupLocation.CenterOwner;
 
