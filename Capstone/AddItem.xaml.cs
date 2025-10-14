@@ -1,4 +1,5 @@
-﻿using Supabase;
+﻿using Microsoft.IdentityModel.Tokens;
+using Supabase;
 using Supabase.Postgrest.Attributes;
 using Supabase.Postgrest.Models;
 using System;
@@ -162,6 +163,16 @@ namespace Capstone
                 ShowValidationError(txtSCNumberError, "Supplier Contact Number is required");
                 isValid = false;
             }
+            else if (!Regex.IsMatch(newEmployee.SCNumber, @"^[0-9]+$"))
+            {
+                ShowValidationError(txtSCNumberError, "No special character and alphabet");
+                isValid = false;
+            }
+            else if (!Regex.IsMatch(newEmployee.SCNumber, @"^[0-9]{11}$"))
+            {
+                ShowValidationError(txtSCNumberError, "Emergency contact number must be 11 digits only");
+                isValid = false;
+            }
 
 
             if (!newEmployee.Date.HasValue)
@@ -271,6 +282,126 @@ namespace Capstone
                 return selectedItem.Content.ToString();
             }
             return null;
+        }
+
+        private bool ValidateEmployeeInline(BarbershopManagementSystem newEmployee)
+        {
+            bool isValid = true;
+
+            // Clear previous errors for uniqueness checks only
+            txtItemIDSame.Visibility = Visibility.Collapsed;
+            txtItemNameSame.Visibility = Visibility.Collapsed;
+            txtCategorySame.Visibility = Visibility.Collapsed;
+
+            // Validate Item ID uniqueness
+            if (!string.IsNullOrWhiteSpace(newEmployee.ItemID) &&
+                employees.Any(emp => emp.ItemID == newEmployee.ItemID))
+            {
+                ShowValidationError(txtItemIDSame, "Item ID already use. Please choose another.");
+                isValid = false;
+            }
+
+            // Validate Category + Item Name combination (no duplicate item name within same category)
+            if (!string.IsNullOrWhiteSpace(newEmployee.Category) &&
+                !string.IsNullOrWhiteSpace(newEmployee.ItemName))
+            {
+                bool hasDuplicate = employees.Any(emp =>
+                    emp.Category == newEmployee.Category &&
+                    emp.ItemName.Equals(newEmployee.ItemName, StringComparison.OrdinalIgnoreCase));
+
+                if (hasDuplicate)
+                {
+                    txtCategorySame.Text = "Item name already exists in this category. Please choose another.";
+                    txtCategorySame.Visibility = Visibility.Visible;
+                    isValid = false;
+                }
+            }
+
+            return isValid;
+        }
+
+        private async void SaveButton_Click(object sender, RoutedEventArgs e)
+        {
+            // Prevent double-clicking
+            if (isSaving)
+                return;
+
+            try
+            {
+                // Set saving flag and disable button
+                isSaving = true;
+                Button saveButton = (Button)sender;
+                saveButton.IsEnabled = false;
+
+                // Clear only required field validation errors (not uniqueness errors)
+                ClearAllValidationErrors();
+
+                var newEmployee = new BarbershopManagementSystem
+                {
+                    ItemID = txtItemID.Text.Trim(),
+                    ItemName = txtItemName.Text.Trim(),
+                    Category = GetSelectedComboBoxValue(Category),
+                    Price = txtPrice.Text.Trim(),
+                    SupplierName = txtSupplierName.Text.Trim(),
+                    SCNumber = txtSCNumber.Text.Trim(),
+                    Date = ItemDate.SelectedDate,
+                };
+
+                // Validate required fields first
+                bool isRequiredValid = ValidateAllRequiredFieldsInline(newEmployee);
+
+                // Validate uniqueness (Item ID and Category+ItemName)
+                bool isUniqueValid = ValidateEmployeeInline(newEmployee);
+
+                // If either validation fails, stop
+                if (!isRequiredValid || !isUniqueValid)
+                {
+                    // Re-enable button if validation fails
+                    saveButton.IsEnabled = true;
+                    isSaving = false;
+                    return;
+                }
+
+                // Save to Supabase database
+                var result = await supabase.From<BarbershopManagementSystem>().Insert(newEmployee);
+
+                if (result != null && result.Models.Count > 0)
+                {
+                    // Add to local collection only once
+                    employees.Add(result.Models[0]);
+
+                    // Show the overlay FIRST
+                    ModalOverlay.Visibility = Visibility.Visible;
+
+                    // Open PurchaseOrders as a regular window
+                    currentModalWindow = new succesfull();
+                    currentModalWindow.Owner = this;
+                    currentModalWindow.WindowStartupLocation = WindowStartupLocation.CenterOwner;
+
+                    // Subscribe to Closed event
+                    currentModalWindow.Closed += ModalWindow_Closed;
+
+                    // Show as regular window
+                    currentModalWindow.Show();
+                }
+                else
+                {
+                    MessageBox.Show("Failed to save item to database.", "Error",
+                                  MessageBoxButton.OK, MessageBoxImage.Error);
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Error saving item: {ex.Message}", "Database Error",
+                              MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+            finally
+            {
+                // Always re-enable button and reset flag
+                isSaving = false;
+                Button saveButton = (Button)sender;
+                saveButton.IsEnabled = true;
+            }
         }
 
         [Table("Add_Item")] // pangalan ng table sa Supabase

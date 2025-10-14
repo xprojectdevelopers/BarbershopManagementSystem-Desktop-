@@ -25,10 +25,10 @@
                     <ControlTemplate TargetType="DatePicker">
                         <Grid>
                             <Border Name="Border"
-                                    Background="{TemplateBinding Background}"
-                                    BorderBrush="{TemplateBinding BorderBrush}"
-                                    BorderThickness="{TemplateBinding BorderThickness}"
-                                    CornerRadius="4">
+            Background="{TemplateBinding Background}"
+            BorderBrush="{TemplateBinding BorderBrush}"
+            BorderThickness="{TemplateBinding BorderThickness}"
+            CornerRadius="4">
                                 <Grid>
                                     <Grid.ColumnDefinitions>
                                         <ColumnDefinition Width="*"/>
@@ -37,63 +37,55 @@
 
                                     <!-- TextBox part -->
                                     <DatePickerTextBox Grid.Column="0" 
-                                                       x:Name="PART_TextBox"
-                                                       Margin="{TemplateBinding Padding}"
-                                                       Background="Transparent"
-                                                       BorderThickness="0"
-                                                       FontSize="{TemplateBinding FontSize}"
-                                                       VerticalAlignment="Center"/>
-
+                               x:Name="PART_TextBox"
+                               Margin="{TemplateBinding Padding}"
+                               Background="Transparent"
+                               BorderThickness="0"
+                               FontSize="{TemplateBinding FontSize}"
+                               VerticalAlignment="Center"/>
 
                                     <TextBlock Grid.Column="0"
-                                               x:Name="PlaceholderText"
-                                               Text="{TemplateBinding Tag}"
-                                               Foreground="Gray"
-                                               FontSize="{TemplateBinding FontSize}"
-                                               Margin="{TemplateBinding Padding}"
-                                               VerticalAlignment="Center"
-                                               IsHitTestVisible="False"/>
+                       x:Name="PlaceholderText"
+                       Text="{TemplateBinding Tag}"
+                       Foreground="Gray"
+                       FontSize="{TemplateBinding FontSize}"
+                       Margin="{TemplateBinding Padding}"
+                       VerticalAlignment="Center"
+                       IsHitTestVisible="False"
+                       Visibility="Collapsed"/>
 
                                     <!-- Calendar button -->
                                     <Button Grid.Column="1" 
-                                            x:Name="PART_Button"
-                                            Background="Transparent"
-                                            BorderThickness="0"
-                                            Width="20"
-                                            Height="20"
-                                            Margin="0,0,5,0"
-                                            VerticalAlignment="Center">
+                    x:Name="PART_Button"
+                    Background="Transparent"
+                    BorderThickness="0"
+                    Width="20"
+                    Height="20"
+                    Margin="0,0,5,0"
+                    VerticalAlignment="Center">
                                         <!-- Calendar icon -->
                                         <Path Fill="Gray" 
-                                              Data="M19,3H18V1H16V3H8V1H6V3H5C3.89,3 3,3.9 3,5V19A2,2 0 0,0 5,21H19A2,2 0 0,0 21,19V5A2,2 0 0,0 19,3M19,19H5V8H19V19Z"
-                                              Stretch="Uniform"
-                                              Width="12"
-                                              Height="12"/>
+                      Data="M19,3H18V1H16V3H8V1H6V3H5C3.89,3 3,3.9 3,5V19A2,2 0 0,0 5,21H19A2,2 0 0,0 21,19V5A2,2 0 0,0 19,3M19,19H5V8H19V19Z"
+                      Stretch="Uniform"
+                      Width="12"
+                      Height="12"/>
                                     </Button>
 
                                     <!-- Popup for calendar -->
                                     <Popup Grid.Column="0" Grid.ColumnSpan="2"
-                                           x:Name="PART_Popup"
-                                           PlacementTarget="{Binding ElementName=Border}"
-                                           Placement="Bottom"
-                                           StaysOpen="False"/>
+                   x:Name="PART_Popup"
+                   PlacementTarget="{Binding ElementName=Border}"
+                   Placement="Bottom"
+                   StaysOpen="False"/>
                                 </Grid>
                             </Border>
                         </Grid>
                         <ControlTemplate.Triggers>
-                            <!-- Show placeholder -->
+                            <!-- Show placeholder when no date selected -->
                             <Trigger Property="SelectedDate" Value="{x:Null}">
                                 <Setter TargetName="PlaceholderText" Property="Visibility" Value="Visible"/>
-                                <Setter TargetName="PART_TextBox" Property="Visibility" Value="Hidden"/>
+                                <Setter TargetName="PART_TextBox" Property="Visibility" Value="Collapsed"/>
                             </Trigger>
-                            <!-- Hide placeholder-->
-                            <DataTrigger Binding="{Binding SelectedDate, RelativeSource={RelativeSource Self}}">
-                                <DataTrigger.Value>
-                                    <x:Null/>
-                                </DataTrigger.Value>
-                                <Setter TargetName="PlaceholderText" Property="Visibility" Value="Visible"/>
-                                <Setter TargetName="PART_TextBox" Property="Visibility" Value="Hidden"/>
-                            </DataTrigger>
                         </ControlTemplate.Triggers>
                     </ControlTemplate>
                 </Setter.Value>
@@ -246,7 +238,7 @@
             <StackPanel Grid.Row="1" Orientation="Vertical" HorizontalAlignment="Left" Margin="760,201,0,-7">
                 <Image x:Name="PhotoPreview" Height="195" Width="195" Source="/Icon/profile.png" 
            Stretch="UniformToFill" Margin="0,0,0,10"/>
-                <Button Content="Upload Photo" Background="white" Padding="15,8" Click="UploadPhoto_Click" Width="295" Height="50"/>
+                <Button Content="Upload Photo" Cursor="Hand" Background="white" Padding="15,8" Click="UploadPhoto_Click" Width="295" Height="50"/>
             </StackPanel>
             <TextBlock x:Name="txtPhotoError" Foreground="Red" FontSize="14" 
            Margin="760,465,0,0" Grid.Row="1" 
@@ -304,7 +296,7 @@
             <TextBox x:Name="txtEmployeeID" HorizontalAlignment="Left" FontSize="30" Margin="255,1039,0,0" Grid.Row="1" TextWrapping="Wrap" VerticalAlignment="Top" Width="620"/>
             <TextBlock x:Name="txtEmployeeIDError" Foreground="Red" FontSize="14" Margin="255,1085,0,0" Grid.Row="1" HorizontalAlignment="Left" VerticalAlignment="Top" Visibility="Collapsed"/>
             <TextBlock x:Name="txtEmployeeIDSame" Foreground="Red" FontSize="14" Margin="255,1085,0,0" Grid.Row="1" HorizontalAlignment="Left" VerticalAlignment="Top" Visibility="Collapsed"/>
-            <Button Content="Generate ID" Click="btnGenerateID_Click"
+            <Button Content="Generate ID" Click="btnGenerateID_Click" Cursor="Hand"
         Width="160"
         Height="40"
         Margin="905,1039,0,0"
@@ -348,7 +340,7 @@ Height="40"
 Margin="845,1154,0,0"
 HorizontalAlignment="Left"
 VerticalAlignment="Top" Grid.Row="1"
-Foreground="Blue">
+Foreground="Blue" Cursor="Hand">
                 <Button.Template>
                     <ControlTemplate TargetType="Button">
                         <Border Background="white" 
@@ -434,8 +426,8 @@ Grid.Row="1" VerticalAlignment="Top"/>
             </UniformGrid>
             <TextBlock x:Name="txtWorkScheduleError" Foreground="Red" FontSize="14" Margin="255,1650,0,0" Grid.Row="1" HorizontalAlignment="Left" VerticalAlignment="Top" Visibility="Collapsed"/>
 
-            <Button Content="Clear"
-        Width="240"
+            <Button Content="Clear" Cursor="Hand"
+        Width="240" 
         Height="60"
         Margin="435,1750,0,0"
         HorizontalAlignment="Left"
@@ -462,7 +454,7 @@ Grid.Row="1" VerticalAlignment="Top"/>
         Margin="705,1750,0,0"
         HorizontalAlignment="Left"
         VerticalAlignment="Top" Grid.Row="1"
-        Foreground="White" FontSize="20" FontWeight="Bold">
+        Foreground="White" FontSize="20" FontWeight="Bold" Cursor="Hand">
                 <Button.Template>
                     <ControlTemplate TargetType="Button">
                         <Border Background="Blue" 

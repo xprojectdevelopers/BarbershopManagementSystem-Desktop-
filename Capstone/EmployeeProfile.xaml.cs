@@ -4,6 +4,7 @@ using Supabase.Postgrest.Attributes;
 using Supabase.Postgrest.Models;
 using System.Collections.ObjectModel;
 using System.Configuration;
+using System.Text.RegularExpressions;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
@@ -87,7 +88,7 @@ namespace Capstone
                     MessageBox.Show("Failed to load image: " + ex.Message);
                 }
             }
-        }
+        } 
 
         private async void Search_Click(object sender, RoutedEventArgs e)
         {
@@ -790,130 +791,168 @@ namespace Capstone
             return true;
         }
 
+        // FIXED: ValidateForm method - corrected parameter declaration and validation logic
         private bool ValidateForm()
-{
-    bool isValid = true;
-    HideAllErrorMessages();
-
-    // Basic personal information validation
-    if (string.IsNullOrWhiteSpace(txtFullName.Text))
-    {
-        ShowError(txtFullNameError, "Full name is required");
-        isValid = false;
-    }
-
-    if (!bdate.SelectedDate.HasValue)
-    {
-        ShowError(txtBdateError, "Birthdate is required");
-        isValid = false;
-    }
-
-    if (Gender.SelectedIndex <= 0)
-    {
-        ShowError(txtGenderError, "Gender is required");
-        isValid = false;
-    }
-
-    if (string.IsNullOrWhiteSpace(txtAddress.Text))
-    {
-        ShowError(txtAddressError, "Address is required");
-        isValid = false;
-    }
-
-    if (string.IsNullOrWhiteSpace(txtContactNumber.Text))
-    {
-        ShowError(txtContactNumberError, "Contact number is required");
-        isValid = false;
-    }
-
-    if (string.IsNullOrWhiteSpace(txtEmail.Text))
-    {
-        ShowError(txtEmailError, "Email is required");
-        isValid = false;
-    }
-
-    if (string.IsNullOrWhiteSpace(txtEmergencyName.Text))
-    {
-        ShowError(txtEmergencyNameError, "Emergency contact name is required");
-        isValid = false;
-    }
-
-    if (string.IsNullOrWhiteSpace(txtEmergencyNumber.Text))
-    {
-        ShowError(txtEmergencyNumberError, "Emergency contact number is required");
-        isValid = false;
-    }
-
-    // Employment information validation
-    if (cmbRole.SelectedIndex < 0)
-    {
-        ShowError(txtRoleError, "Employee role is required");
-        isValid = false;
-    }
-    else
-    {
-        // Role-specific validation
-        if (cmbRole.SelectedItem is ComboBoxItem roleItem)
         {
-            string selectedRole = roleItem.Content.ToString();
+            bool isValid = true;
+            HideAllErrorMessages();
 
-            if (selectedRole == "Cashier")
+            // Create temporary employee object for validation
+            var newEmployee = new BarbershopManagementSystem
             {
-                if (string.IsNullOrWhiteSpace(txtEmployeePassword.Text))
+                Fname = txtFullName.Text.Trim(),
+                Cnumber = txtContactNumber.Text.Trim(),
+                ECnumber = txtEmergencyNumber.Text.Trim(),
+                Email = txtEmail.Text.Trim(),
+                Role = GetComboBoxSelectedValue(cmbRole),
+                Epassword = txtEmployeePassword.Text.Trim(),
+                Nickname = txtNickname.Text.Trim()
+            };
+
+            // Basic personal information validation
+            if (string.IsNullOrWhiteSpace(txtFullName.Text))
+            {
+                ShowError(txtFullNameError, "Full name is required");
+                isValid = false;
+            }
+
+            if (!bdate.SelectedDate.HasValue)
+            {
+                ShowError(txtBdateError, "Birthdate is required");
+                isValid = false;
+            }
+
+            if (Gender.SelectedIndex <= 0)
+            {
+                ShowError(txtGenderError, "Gender is required");
+                isValid = false;
+            }
+
+            if (string.IsNullOrWhiteSpace(txtAddress.Text))
+            {
+                ShowError(txtAddressError, "Address is required");
+                isValid = false;
+            }
+
+            // Contact number validation
+            if (string.IsNullOrWhiteSpace(txtContactNumber.Text))
+            {
+                ShowError(txtContactNumberError, "Contact number is required");
+                isValid = false;
+            }
+            else if (!Regex.IsMatch(newEmployee.Cnumber, @"^[0-9]+$"))
+            {
+                ShowError(txtContactNumberError, "No special character and alphabet");
+                isValid = false;
+            }
+            else if (!Regex.IsMatch(newEmployee.Cnumber, @"^[0-9]{11}$"))
+            {
+                ShowError(txtContactNumberError, "Contact Number must be 11 digits only");
+                isValid = false;
+            }
+
+            // Email validation
+            if (string.IsNullOrWhiteSpace(txtEmail.Text))
+            {
+                ShowError(txtEmailError, "Email is required");
+                isValid = false;
+            }
+            else if (!Regex.IsMatch(newEmployee.Email, @"^[^@\s]+@[^@\s]+\.[^@\s]+$"))
+            {
+                ShowError(txtEmailError, "Please enter a valid email address");
+                isValid = false;
+            }
+
+            // Emergency contact validation
+            if (string.IsNullOrWhiteSpace(txtEmergencyName.Text))
+            {
+                ShowError(txtEmergencyNameError, "Emergency contact name is required");
+                isValid = false;
+            }
+
+            if (string.IsNullOrWhiteSpace(txtEmergencyNumber.Text))
+            {
+                ShowError(txtEmergencyNumberError, "Emergency contact number is required");
+                isValid = false;
+            }
+            else if (!Regex.IsMatch(newEmployee.ECnumber, @"^[0-9]+$"))
+            {
+                ShowError(txtEmergencyNumberError, "No special character and alphabet");
+                isValid = false;
+            }
+            else if (!Regex.IsMatch(newEmployee.ECnumber, @"^[0-9]{11}$"))
+            {
+                ShowError(txtEmergencyNumberError, "Emergency contact number must be 11 digits only");
+                isValid = false;
+            }
+
+            // Employment information validation
+            if (cmbRole.SelectedIndex < 0)
+            {
+                ShowError(txtRoleError, "Employee role is required");
+                isValid = false;
+            }
+            else
+            {
+                // Role-specific validation
+                string selectedRole = GetComboBoxSelectedValue(cmbRole);
+
+                if (selectedRole == "Cashier")
                 {
-                    ShowError(txtPasswordError, "Password is required for Cashier role");
-                    isValid = false;
+                    if (string.IsNullOrWhiteSpace(txtEmployeePassword.Text))
+                    {
+                        ShowError(txtPasswordError, "Password is required for Cashier role");
+                        isValid = false;
+                    }
+                }
+                else if (selectedRole == "Barber")
+                {
+                    // Validate barber expertise
+                    if (cmbBarberExpertise.SelectedIndex <= 0)
+                    {
+                        ShowError(txtBarberExpertiseError, "Barber expertise is required for Barber role");
+                        isValid = false;
+                    }
                 }
             }
-            else if (selectedRole == "Barber")
+
+            if (string.IsNullOrWhiteSpace(txtNickname.Text))
             {
-                // Validate barber expertise
-                if (cmbBarberExpertise.SelectedIndex <= 0)
+                ShowError(txtNicknameError, "Nickname is required");
+                isValid = false;
+            }
+
+            if (!dateHiredPicker.SelectedDate.HasValue)
+            {
+                ShowError(txtDateHiredError, "Date hired is required");
+                isValid = false;
+            }
+
+            if (cmbEmploymentStatus.SelectedIndex <= 0)
+            {
+                ShowError(txtEmploymentStatusError, "Employment status is required");
+                isValid = false;
+            }
+
+            // Validate work schedule - at least one day must be selected
+            bool hasSelectedDay = false;
+            foreach (var child in workSchedulePanel.Children)
+            {
+                if (child is CheckBox checkBox && checkBox.IsChecked == true)
                 {
-                    ShowError(txtBarberExpertiseError, "Barber expertise is required for Barber role");
-                    isValid = false;
+                    hasSelectedDay = true;
+                    break;
                 }
             }
+
+            if (!hasSelectedDay)
+            {
+                ShowError(txtWorkScheduleError, "At least one work day must be selected");
+                isValid = false;
+            }
+
+            return isValid;
         }
-    }
-
-    if (string.IsNullOrWhiteSpace(txtNickname.Text))
-    {
-        ShowError(txtNicknameError, "Nickname is required");
-        isValid = false;
-    }
-
-    if (!dateHiredPicker.SelectedDate.HasValue)
-    {
-        ShowError(txtDateHiredError, "Date hired is required");
-        isValid = false;
-    }
-
-    if (cmbEmploymentStatus.SelectedIndex <= 0)
-    {
-        ShowError(txtEmploymentStatusError, "Employment status is required");
-        isValid = false;
-    }
-
-    // Validate work schedule - at least one day must be selected
-    bool hasSelectedDay = false;
-    foreach (var child in workSchedulePanel.Children)
-    {
-        if (child is CheckBox checkBox && checkBox.IsChecked == true)
-        {
-            hasSelectedDay = true;
-            break;
-        }
-    }
-
-    if (!hasSelectedDay)
-    {
-        ShowError(txtWorkScheduleError, "At least one work day must be selected");
-        isValid = false;
-    }
-
-    return isValid;
-}
 
         private void ShowError(TextBlock errorTextBlock, string message)
         {
