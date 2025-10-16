@@ -314,11 +314,25 @@
                                 <DataGridTextColumn Header="Item Name" Binding="{Binding ItemName}" Width="*"/>
                                 <DataGridTextColumn Header="Category" Binding="{Binding Category}" Width="*"/>
                                 <DataGridTextColumn Header="Quantity In Stock" Binding="{Binding QuantityStock, TargetNullValue=''}" Width="*"/>
-                                <DataGridTextColumn Header="Price" Width="*">
-                                    <DataGridTextColumn.Binding>
-                                        <Binding Path="Price" StringFormat="₱ {0}" TargetNullValue=""/>
-                                    </DataGridTextColumn.Binding>
-                                </DataGridTextColumn>
+                                <!-- SIMPLE SOLUTION: Use CellTemplate instead -->
+                                <DataGridTemplateColumn Header="Price" Width="*">
+                                    <DataGridTemplateColumn.CellTemplate>
+                                        <DataTemplate>
+                                            <TextBlock>
+                                                <TextBlock.Style>
+                                                    <Style TargetType="TextBlock">
+                                                        <Setter Property="Text" Value="{Binding Price, StringFormat='₱ {0}'}"/>
+                                                        <Style.Triggers>
+                                                            <DataTrigger Binding="{Binding Price}" Value="">
+                                                                <Setter Property="Text" Value=""/>
+                                                            </DataTrigger>
+                                                        </Style.Triggers>
+                                                    </Style>
+                                                </TextBlock.Style>
+                                            </TextBlock>
+                                        </DataTemplate>
+                                    </DataGridTemplateColumn.CellTemplate>
+                                </DataGridTemplateColumn>
                                 <DataGridTextColumn Header="Supplier" Binding="{Binding SupplierName}" Width="*"/>
                                 <DataGridTextColumn Header="Last Update" Binding="{Binding Date}" Width="*"/>
                             </DataGrid.Columns>

@@ -14,6 +14,7 @@ namespace Capstone
         private readonly HttpClient httpClient;
         private readonly string supabaseUrl;
         private readonly string supabaseKey;
+        public static string CurrentEmployeeId { get; set; } // Static property to store current user
 
         public LoginForm()
         {
@@ -71,6 +72,9 @@ namespace Capstone
                 {
                     lblStatus.Content = $"Login successful as {userType}!";
                     lblStatus.Foreground = System.Windows.Media.Brushes.Green;
+
+                    // Store the logged-in employee ID
+                    CurrentEmployeeId = employeeId;
 
                     // Wait a moment then open Menu window
                     await Task.Delay(1000);

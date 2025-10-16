@@ -209,40 +209,19 @@
                     </Grid.ColumnDefinitions>
 
                     <!-- Item Name -->
-                    <Label Content="Process By" FontSize="20" Grid.Row="0" Grid.Column="0" VerticalAlignment="Bottom" Margin="0,0,0,5"/>
-                    <TextBox x:Name="txtItemName" FontSize="30" Grid.Row="1" Grid.Column="0" Height="47"/>
-                    <TextBlock x:Name="txtItemNameError" Foreground="Red" FontSize="12" 
-                Grid.Row="2" Grid.Column="0" Margin="0,2,0,0"
-                VerticalAlignment="Top" Visibility="Collapsed"/>
-                    <TextBlock x:Name="txtItemNameSame" Foreground="Red" FontSize="12" 
+                    <Label Content="Processed By" FontSize="20" Grid.Row="0" Grid.Column="0" VerticalAlignment="Bottom" Margin="0,0,0,5"/>
+                    <TextBox x:Name="txtProcess" FontSize="20" Grid.Row="1" Grid.Column="0" Height="47"/>
+                    <TextBlock x:Name="txtProcessError" Foreground="Red" FontSize="12" 
                 Grid.Row="2" Grid.Column="0" Margin="0,2,0,0"
                 VerticalAlignment="Top" Visibility="Collapsed"/>
 
                     <!-- Category -->
                     <Label Content="Item ID" FontSize="20" Grid.Row="0" Grid.Column="2" VerticalAlignment="Bottom" Margin="0,0,0,5"/>
-                    <ComboBox x:Name="Category" Grid.Row="1" Grid.Column="2" Height="47" FontSize="16" 
+                    <ComboBox x:Name="cmbItemID" SelectionChanged="cmbItemID_SelectionChanged" Grid.Row="1" Grid.Column="2" Height="47" FontSize="16" 
                SelectedIndex="-1" Style="{StaticResource TextBoxStyleComboBox}" HorizontalAlignment="Left" Margin="0,0,0,30" Grid.RowSpan="2" Width="205">
                         <ComboBoxItem IsEnabled="False" IsSelected="True" Foreground="Gray">Select Item ID</ComboBoxItem>
-                        <ComboBoxItem>Aftershaves</ComboBoxItem>
-                        <ComboBoxItem>Clays</ComboBoxItem>
-                        <ComboBoxItem>Clippers and trimmers</ComboBoxItem>
-                        <ComboBoxItem>Combs and brushes</ComboBoxItem>
-                        <ComboBoxItem>Conditioners</ComboBoxItem>
-                        <ComboBoxItem>Gel</ComboBoxItem>
-                        <ComboBoxItem>Hair dyes</ComboBoxItem>
-                        <ComboBoxItem>Hair sprays</ComboBoxItem>
-                        <ComboBoxItem>Pomades</ComboBoxItem>
-                        <ComboBoxItem>Razor and blades</ComboBoxItem>
-                        <ComboBoxItem>Scissors</ComboBoxItem>
-                        <ComboBoxItem>Shampoos</ComboBoxItem>
-                        <ComboBoxItem>Shavings creams</ComboBoxItem>
-                        <ComboBoxItem>Towels</ComboBoxItem>
-                        <ComboBoxItem>Waxes</ComboBoxItem>
                     </ComboBox>
-                    <TextBlock x:Name="txtCategoryError" Foreground="Red" FontSize="12" 
-                Grid.Row="2" Grid.Column="2" Margin="0,2,0,0"
-                VerticalAlignment="Top" Visibility="Collapsed"/>
-                    <TextBlock x:Name="txtCategorySame" Foreground="Red" FontSize="12" 
+                    <TextBlock x:Name="cmbItemIDError" Foreground="Red" FontSize="12" 
                 Grid.Row="2" Grid.Column="2" Margin="0,2,0,0"
                 VerticalAlignment="Top" Visibility="Collapsed"/>
                 </Grid>
@@ -265,15 +244,15 @@
 
                     <!-- Supplier Name -->
                     <Label Content="Item Name" FontSize="20" Grid.Row="0" Grid.Column="0" VerticalAlignment="Bottom" Margin="0,0,0,5"/>
-                    <TextBox x:Name="txtSupplierName" FontSize="30" Grid.Row="1" Grid.Column="0" Height="47"/>
-                    <TextBlock x:Name="txtSupplierNameError" Foreground="Red" FontSize="12" 
+                    <TextBox x:Name="txtItemName" FontSize="30" Grid.Row="1" Grid.Column="0" Height="47"/>
+                    <TextBlock x:Name="txtItemNameError" Foreground="Red" FontSize="12" 
                 Grid.Row="2" Grid.Column="0" Margin="0,2,0,0"
                 VerticalAlignment="Top" Visibility="Collapsed"/>
 
                     <!-- Supplier Contact Number -->
                     <Label Content="Quantity" FontSize="17" Grid.Row="0" Grid.Column="2" VerticalAlignment="Bottom" Margin="0,0,0,5"/>
-                    <TextBox x:Name="txtSCNumber" FontSize="30" Grid.Row="1" Grid.Column="2" Height="47"/>
-                    <TextBlock x:Name="txtSCNumberError" Foreground="Red" FontSize="12" 
+                    <TextBox x:Name="txtQuantity" FontSize="30" Grid.Row="1" Grid.Column="2" Height="47"/>
+                    <TextBlock x:Name="txtQuantityError" Foreground="Red" FontSize="12" 
                 Grid.Row="2" Grid.Column="2" Margin="0,2,0,0"
                 VerticalAlignment="Top" Visibility="Collapsed"/>
 
@@ -319,7 +298,7 @@ Height="40"
 Margin="30,37,0,0"
 HorizontalAlignment="Left"
 VerticalAlignment="Top" Grid.Row="1"
-Foreground="white">
+Foreground="white" Click="btnStockIn_Click">
                         <Button.Template>
                             <ControlTemplate TargetType="Button">
                                 <Border Background="blue" 
@@ -339,8 +318,13 @@ Foreground="white">
                     </Button>
                 </StackPanel>
             </StackPanel>
-
-
         </Border>
+
+        <!-- Gray Overlay for Modal Effect -->
+        <Border x:Name="ModalOverlay"
+Grid.RowSpan="3"
+Background="#80000000"
+Visibility="Collapsed"
+IsHitTestVisible="True"/>
     </Grid>
 </Window>

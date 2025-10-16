@@ -2,14 +2,40 @@
 using Supabase.Postgrest.Models;
 using System.Collections.ObjectModel;
 using System.Configuration;
+using System.Globalization;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Data;
 using System.Windows.Documents;
 using System.Windows.Input;
 using static Supabase.Postgrest.Constants;
 
 namespace Capstone
 {
+    // Price Converter Class
+    public class PriceConverter : IValueConverter
+    {
+        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            if (value == null || string.IsNullOrWhiteSpace(value.ToString()))
+                return "";
+
+            string priceValue = value.ToString().Trim();
+            if (string.IsNullOrEmpty(priceValue))
+                return "";
+
+            return "₱ " + priceValue;
+        }
+
+        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            if (value == null) return "";
+
+            string strValue = value.ToString();
+            return strValue.Replace("₱", "").Trim();
+        }
+    }
+
     public partial class ManageItem : Window
     {
         private Supabase.Client? supabase;
