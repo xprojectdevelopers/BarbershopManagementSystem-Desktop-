@@ -314,7 +314,11 @@
                                 <DataGridTextColumn Header="Item Name" Binding="{Binding ItemName}" Width="*"/>
                                 <DataGridTextColumn Header="Category" Binding="{Binding Category}" Width="*"/>
                                 <DataGridTextColumn Header="Quantity In Stock" Binding="{Binding QuantityStock, TargetNullValue=''}" Width="*"/>
-                                <DataGridTextColumn Header="Price" Binding="{Binding Price, TargetNullValue=''}" Width="*"/>
+                                <DataGridTextColumn Header="Price" Width="*">
+                                    <DataGridTextColumn.Binding>
+                                        <Binding Path="Price" StringFormat="₱ {0}" TargetNullValue=""/>
+                                    </DataGridTextColumn.Binding>
+                                </DataGridTextColumn>
                                 <DataGridTextColumn Header="Supplier" Binding="{Binding SupplierName}" Width="*"/>
                                 <DataGridTextColumn Header="Last Update" Binding="{Binding Date}" Width="*"/>
                             </DataGrid.Columns>
@@ -436,9 +440,23 @@ Click="Search_Click">
                Grid.Row="2" Grid.Column="2" Margin="0,2,0,0"
                VerticalAlignment="Top" Visibility="Collapsed"/>
 
-                            <!-- Price -->
+                            <!-- Price with Peso Symbol -->
                             <Label Content="Price" FontSize="20" Grid.Row="0" Grid.Column="4" VerticalAlignment="Bottom" Margin="0,0,0,5"/>
-                            <TextBox x:Name="txtPrice" FontSize="30" Grid.Row="1" Grid.Column="4" Height="47"/>
+                            <Grid Grid.Row="1" Grid.Column="4">
+                                <TextBox x:Name="txtPrice" 
+                                         FontSize="30" 
+                                         Height="47"
+                                         Padding="30,0,10,0"
+                                         VerticalContentAlignment="Center"
+                                         BorderBrush="Gray"
+                                         BorderThickness="1"/>
+                                <TextBlock Text="₱" 
+                                           FontSize="30"
+                                           Foreground="Black"
+                                           VerticalAlignment="Center"
+                                           Margin="10,0,0,0"
+                                           IsHitTestVisible="False"/>
+                            </Grid>
                             <TextBlock x:Name="txtPriceError" Foreground="Red" FontSize="12" 
                Grid.Row="2" Grid.Column="4" Margin="0,2,0,0"
                VerticalAlignment="Top" Visibility="Collapsed"/>

@@ -296,7 +296,10 @@ namespace Capstone
 
             SetComboBoxSelection(Category, item.Category);
             txtItemName.Text = item.ItemName ?? "";
+
+            // Display price WITHOUT peso symbol (it will show visually due to XAML overlay)
             txtPrice.Text = item.Price ?? "";
+
             txtSupplierName.Text = item.SupplierName ?? "";
             txtSCNumber.Text = item.SCNumber ?? "";
         }
@@ -350,12 +353,15 @@ namespace Capstone
                 // Get updated values from form
                 string itemName = txtItemName.Text.Trim();
                 string category = GetComboBoxSelectedValue(Category);
+
+                // Get price WITHOUT peso symbol (clean text value only)
                 string price = txtPrice.Text.Trim();
+
                 string supplierName = txtSupplierName.Text.Trim();
                 string scNumber = txtSCNumber.Text.Trim();
                 string date = ItemDate.SelectedDate?.ToString("yyyy-MM-dd") ?? "";
 
-                // Update the item object
+                // Update the item object (price saved WITHOUT peso symbol)
                 item.ItemName = itemName;
                 item.Category = category;
                 item.Price = price;
@@ -421,10 +427,15 @@ namespace Capstone
                 txtCategoryError.Visibility = Visibility.Collapsed;
             }
 
-            // Validate Price
+            // Validate Price (check if it's a valid number)
             if (string.IsNullOrWhiteSpace(txtPrice.Text))
             {
                 ShowError(txtPriceError, "Price is required");
+                isValid = false;
+            }
+            else if (!decimal.TryParse(txtPrice.Text.Trim(), out _))
+            {
+                ShowError(txtPriceError, "Price must be a valid number");
                 isValid = false;
             }
             else
