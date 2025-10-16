@@ -61,7 +61,7 @@ namespace Capstone
             }
         }
 
-        [Table("Add_Employee")] // pangalan ng table sa Supabase
+        [Table("Item")] // pangalan ng table sa Supabase
         public class BarbershopManagementSystem : BaseModel
         {
             [PrimaryKey("id", false)]
