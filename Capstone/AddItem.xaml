@@ -321,6 +321,9 @@
                     <TextBlock x:Name="txtSupplierNameError" Foreground="Red" FontSize="12" 
                                Grid.Row="2" Grid.Column="0" Margin="0,2,0,0"
                                VerticalAlignment="Top" Visibility="Collapsed"/>
+                    <TextBlock x:Name="txtSupplierNameSame" Foreground="Red" FontSize="12" 
+                               Grid.Row="2" Grid.Column="0" Margin="0,2,0,0"
+                               VerticalAlignment="Top" Visibility="Collapsed"/>
 
                     <!-- Supplier Contact Number -->
                     <Label Content="Supplier Contact Number" FontSize="17" Grid.Row="0" Grid.Column="2" VerticalAlignment="Bottom" Margin="0,0,0,5"/>

@@ -28,10 +28,10 @@
                     <ControlTemplate TargetType="DatePicker">
                         <Grid>
                             <Border Name="Border"
-                            Background="{TemplateBinding Background}"
-                            BorderBrush="{TemplateBinding BorderBrush}"
-                            BorderThickness="{TemplateBinding BorderThickness}"
-                            CornerRadius="4">
+    Background="{TemplateBinding Background}"
+    BorderBrush="{TemplateBinding BorderBrush}"
+    BorderThickness="{TemplateBinding BorderThickness}"
+    CornerRadius="4">
                                 <Grid>
                                     <Grid.ColumnDefinitions>
                                         <ColumnDefinition Width="*"/>
@@ -40,62 +40,55 @@
 
                                     <!-- TextBox part -->
                                     <DatePickerTextBox Grid.Column="0" 
-                                               x:Name="PART_TextBox"
-                                               Margin="{TemplateBinding Padding}"
-                                               Background="Transparent"
-                                               BorderThickness="0"
-                                               FontSize="{TemplateBinding FontSize}"
-                                               VerticalAlignment="Center"/>
+                       x:Name="PART_TextBox"
+                       Margin="{TemplateBinding Padding}"
+                       Background="Transparent"
+                       BorderThickness="0"
+                       FontSize="{TemplateBinding FontSize}"
+                       VerticalAlignment="Center"/>
 
                                     <TextBlock Grid.Column="0"
-                                       x:Name="PlaceholderText"
-                                       Text="{TemplateBinding Tag}"
-                                       Foreground="Gray"
-                                       FontSize="{TemplateBinding FontSize}"
-                                       Margin="{TemplateBinding Padding}"
-                                       VerticalAlignment="Center"
-                                       IsHitTestVisible="False"/>
+               x:Name="PlaceholderText"
+               Text="{TemplateBinding Tag}"
+               Foreground="Gray"
+               FontSize="{TemplateBinding FontSize}"
+               Margin="{TemplateBinding Padding}"
+               VerticalAlignment="Center"
+               IsHitTestVisible="False"
+               Visibility="Collapsed"/>
 
                                     <!-- Calendar button -->
                                     <Button Grid.Column="1" 
-                                    x:Name="PART_Button"
-                                    Background="Transparent"
-                                    BorderThickness="0"
-                                    Width="20"
-                                    Height="20"
-                                    Margin="0,0,5,0"
-                                    VerticalAlignment="Center">
+            x:Name="PART_Button"
+            Background="Transparent"
+            BorderThickness="0"
+            Width="20"
+            Height="20"
+            Margin="0,0,5,0"
+            VerticalAlignment="Center">
                                         <!-- Calendar icon -->
                                         <Path Fill="Gray" 
-                                      Data="M19,3H18V1H16V3H8V1H6V3H5C3.89,3 3,3.9 3,5V19A2,2 0 0,0 5,21H19A2,2 0 0,0 21,19V5A2,2 0 0,0 19,3M19,19H5V8H19V19Z"
-                                      Stretch="Uniform"
-                                      Width="12"
-                                      Height="12"/>
+              Data="M19,3H18V1H16V3H8V1H6V3H5C3.89,3 3,3.9 3,5V19A2,2 0 0,0 5,21H19A2,2 0 0,0 21,19V5A2,2 0 0,0 19,3M19,19H5V8H19V19Z"
+              Stretch="Uniform"
+              Width="12"
+              Height="12"/>
                                     </Button>
 
                                     <!-- Popup for calendar -->
                                     <Popup Grid.Column="0" Grid.ColumnSpan="2"
-                                   x:Name="PART_Popup"
-                                   PlacementTarget="{Binding ElementName=Border}"
-                                   Placement="Bottom"
-                                   StaysOpen="False"/>
+           x:Name="PART_Popup"
+           PlacementTarget="{Binding ElementName=Border}"
+           Placement="Bottom"
+           StaysOpen="False"/>
                                 </Grid>
                             </Border>
                         </Grid>
                         <ControlTemplate.Triggers>
-                            <!-- Show placeholder -->
+                            <!-- Show placeholder when no date selected -->
                             <Trigger Property="SelectedDate" Value="{x:Null}">
                                 <Setter TargetName="PlaceholderText" Property="Visibility" Value="Visible"/>
-                                <Setter TargetName="PART_TextBox" Property="Visibility" Value="Hidden"/>
+                                <Setter TargetName="PART_TextBox" Property="Visibility" Value="Collapsed"/>
                             </Trigger>
-                            <!-- Hide placeholder-->
-                            <DataTrigger Binding="{Binding SelectedDate, RelativeSource={RelativeSource Self}}">
-                                <DataTrigger.Value>
-                                    <x:Null/>
-                                </DataTrigger.Value>
-                                <Setter TargetName="PlaceholderText" Property="Visibility" Value="Visible"/>
-                                <Setter TargetName="PART_TextBox" Property="Visibility" Value="Hidden"/>
-                            </DataTrigger>
                         </ControlTemplate.Triggers>
                     </ControlTemplate>
                 </Setter.Value>

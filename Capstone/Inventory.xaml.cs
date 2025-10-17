@@ -241,7 +241,7 @@ namespace Capstone
             public int Id { get; set; }
 
             [Column("Date")]
-            public DateTime? Date { get; set; }
+            public String Date { get; set; }
 
             [Column("ItemName")]
             public string ItemName { get; set; }
@@ -254,6 +254,22 @@ namespace Capstone
 
             [Column("ProcessedBy")]
             public string ProcessedBy { get; set; }
+
+            // ✅ Computed property for display with sign
+            public string QuantityWithSign
+            {
+                get
+                {
+                    if (string.IsNullOrEmpty(Quantity)) return "";
+
+                    if (Transaction == "Stock Out")
+                        return $"-{Quantity}";
+                    else if (Transaction == "Stock In")
+                        return $"+{Quantity}";
+
+                    return Quantity;
+                }
+            }
         }
     }
 }

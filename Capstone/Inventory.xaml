@@ -138,7 +138,7 @@ GridLinesVisibility="All">
                             <DataGridTextColumn Header="Date" Binding="{Binding Date}" Width="*"/>
                             <DataGridTextColumn Header="Item Name" Binding="{Binding ItemName}" Width="*"/>
                             <DataGridTextColumn Header="Transaction Type" Binding="{Binding Transaction}" Width="*"/>
-                            <DataGridTextColumn Header="Quantity" Binding="{Binding Quantity, TargetNullValue=''}" Width="*"/>
+                            <DataGridTextColumn Header="Quantity" Binding="{Binding QuantityWithSign}" Width="*"/>
                             <DataGridTextColumn Header="Processed By" Binding="{Binding ProcessedBy, TargetNullValue=''}" Width="*"/>
                         </DataGrid.Columns>
                     </DataGrid>

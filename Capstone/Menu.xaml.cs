@@ -1,17 +1,279 @@
-﻿using System.Globalization;
+﻿using Supabase.Postgrest.Attributes;
+using Supabase.Postgrest.Models;
+using System.Collections.ObjectModel;
+using System.Configuration;
+using System.Globalization;
 using System.Windows;
+using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Input;
+using System.Windows.Media.Imaging;
+using static Supabase.Postgrest.Constants;
 
 namespace Capstone
 {
     public partial class Menu : Window
     {
+        private Supabase.Client? supabase;
+        private ObservableCollection<BarbershopManagementSystem> employees = new ObservableCollection<BarbershopManagementSystem>();
         private Window currentModalWindow;
+        public static string CurrentUserRole { get; set; }
+        public static string CurrentUserName { get; set; } // Add this
+        public static string CurrentUserPhoto { get; set; } // Add this
+
         public Menu()
         {
             InitializeComponent();
+
+            // INSTANT: Apply role and display profile immediately
+            ApplyRoleBasedAccess();
+            DisplayCurrentUserProfile(); // NEW: Instant display
+
+            // BACKGROUND: Load full data asynchronously
+            Loaded += async (s, e) => await InitializeData();
             ModalOverlay.PreviewMouseLeftButtonDown += ModalOverlay_Click;
+        }
+
+        // NEW METHOD: Instant profile display using cached data
+        private void DisplayCurrentUserProfile()
+        {
+            // Display name and role instantly from LoginForm cache
+            if (!string.IsNullOrEmpty(CurrentUserName))
+            {
+                NameText.Text = CurrentUserName;
+            }
+
+            if (!string.IsNullOrEmpty(CurrentUserRole))
+            {
+                RoleText.Text = CurrentUserRole;
+            }
+
+            // Display profile picture instantly if available
+            if (!string.IsNullOrEmpty(CurrentUserPhoto))
+            {
+                LoadProfilePicture(CurrentUserPhoto);
+            }
+        }
+
+        private async Task InitializeData()
+        {
+            await InitializeSupabaseAsync();
+            // Refresh profile data in background (optional, for updates)
+            await RefreshUserProfile();
+            await LoadEmployeeCount();
+        }
+
+        private void ApplyRoleBasedAccess()
+        {
+            if (string.IsNullOrEmpty(CurrentUserRole))
+                return;
+
+            bool isAdmin = CurrentUserRole.Equals("Admin", StringComparison.OrdinalIgnoreCase);
+            bool isCashier = CurrentUserRole.Equals("Cashier", StringComparison.OrdinalIgnoreCase);
+
+            // For Cashier: Only Payroll and Inventory are enabled
+            if (isCashier)
+            {
+                // Disable Appointments
+                AppointmentsCard.IsEnabled = false;
+                AppointmentsCard.Opacity = 0.4;
+                AppointmentsCard.Cursor = Cursors.No;
+
+                // Disable Customers
+                CustomersCard.IsEnabled = false;
+                CustomersCard.Opacity = 0.4;
+                CustomersCard.Cursor = Cursors.No;
+
+                // Disable Employees
+                EmployeesCard.IsEnabled = false;
+                EmployeesCard.Opacity = 0.4;
+                EmployeesCard.Cursor = Cursors.No;
+
+                // Enable Payroll (keep enabled)
+                PayrollCard.IsEnabled = true;
+                PayrollCard.Opacity = 1.0;
+                PayrollCard.Cursor = Cursors.Hand;
+
+                // Enable Inventory (keep enabled)
+                InventoryCard.IsEnabled = true;
+                InventoryCard.Opacity = 1.0;
+                InventoryCard.Cursor = Cursors.Hand;
+            }
+            // For Admin: All modules are enabled (default state)
+            else if (isAdmin)
+            {
+                // All cards remain enabled
+                AppointmentsCard.IsEnabled = true;
+                AppointmentsCard.Opacity = 1.0;
+                AppointmentsCard.Cursor = Cursors.Hand;
+
+                CustomersCard.IsEnabled = true;
+                CustomersCard.Opacity = 1.0;
+                CustomersCard.Cursor = Cursors.Hand;
+
+                EmployeesCard.IsEnabled = true;
+                EmployeesCard.Opacity = 1.0;
+                EmployeesCard.Cursor = Cursors.Hand;
+
+                PayrollCard.IsEnabled = true;
+                PayrollCard.Opacity = 1.0;
+                PayrollCard.Cursor = Cursors.Hand;
+
+                InventoryCard.IsEnabled = true;
+                InventoryCard.Opacity = 1.0;
+                InventoryCard.Cursor = Cursors.Hand;
+            }
+        }
+
+        // RENAMED: This now refreshes data in background
+        private async Task RefreshUserProfile()
+        {
+            if (supabase == null) return;
+
+            try
+            {
+                string employeeId = LoginForm.CurrentEmployeeId;
+
+                if (string.IsNullOrEmpty(employeeId))
+                    return;
+
+                // Try to get from Employee table first
+                var employeeResult = await supabase
+                    .From<BarbershopManagementSystem>()
+                    .Where(e => e.EmployeeID == employeeId)
+                    .Get();
+
+                if (employeeResult.Models.Count > 0)
+                {
+                    var employee = employeeResult.Models[0];
+
+                    // Update display if data changed
+                    if (NameText.Text != employee.EmployeeName)
+                        NameText.Text = employee.EmployeeName;
+
+                    if (RoleText.Text != employee.EmployeeRole)
+                        RoleText.Text = employee.EmployeeRole;
+
+                    if (!string.IsNullOrEmpty(employee.ProfilePicture) &&
+                        CurrentUserPhoto != employee.ProfilePicture)
+                    {
+                        LoadProfilePicture(employee.ProfilePicture);
+                    }
+                }
+                else
+                {
+                    // Try Admin table
+                    var adminResult = await supabase
+                        .From<AdminAccount>()
+                        .Where(a => a.AdminLogin == employeeId)
+                        .Get();
+
+                    if (adminResult.Models.Count > 0)
+                    {
+                        var admin = adminResult.Models[0];
+
+                        if (NameText.Text != admin.AdminName)
+                            NameText.Text = admin.AdminName;
+
+                        if (RoleText.Text != admin.AdminRole)
+                            RoleText.Text = admin.AdminRole;
+
+                        if (!string.IsNullOrEmpty(admin.ProfilePicture) &&
+                            CurrentUserPhoto != admin.ProfilePicture)
+                        {
+                            LoadProfilePicture(admin.ProfilePicture);
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"Profile refresh error: {ex}");
+            }
+        }
+
+        private void LoadProfilePicture(string imageData)
+        {
+            try
+            {
+                if (!string.IsNullOrEmpty(imageData))
+                {
+                    BitmapImage bitmap = new BitmapImage();
+                    bitmap.BeginInit();
+
+                    // Check if it's a URL or base64 data
+                    if (imageData.StartsWith("http://") || imageData.StartsWith("https://"))
+                    {
+                        // It's a URL
+                        bitmap.UriSource = new Uri(imageData, UriKind.Absolute);
+                    }
+                    else
+                    {
+                        // It's base64 data
+                        byte[] imageBytes = Convert.FromBase64String(imageData);
+                        using (var ms = new System.IO.MemoryStream(imageBytes))
+                        {
+                            bitmap.StreamSource = ms;
+                            bitmap.CacheOption = BitmapCacheOption.OnLoad;
+                            bitmap.EndInit();
+                            bitmap.Freeze();
+                        }
+                    }
+
+                    if (bitmap.UriSource != null)
+                    {
+                        bitmap.CacheOption = BitmapCacheOption.OnLoad;
+                        bitmap.EndInit();
+                    }
+
+                    // Find the Image control in the Border
+                    var profileBorder = FindName("ProfileImageBorder") as Border;
+                    if (profileBorder != null)
+                    {
+                        var image = profileBorder.Child as System.Windows.Controls.Image;
+                        if (image != null)
+                        {
+                            image.Source = bitmap;
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"Error loading profile picture: {ex.Message}");
+            }
+        }
+
+        private async Task LoadEmployeeCount()
+        {
+            if (supabase == null) return;
+
+            var result = await supabase
+                .From<BarbershopManagementSystem>()
+                .Get();
+
+            int total = result.Models.Count;
+            int cashierCount = result.Models.Count(e => e.EmployeeRole?.Equals("Cashier", StringComparison.OrdinalIgnoreCase) == true);
+        }
+
+        private async Task InitializeSupabaseAsync()
+        {
+            string? supabaseUrl = ConfigurationManager.AppSettings["SupabaseUrl"];
+            string? supabaseKey = ConfigurationManager.AppSettings["SupabaseKey"];
+
+            if (string.IsNullOrEmpty(supabaseUrl) || string.IsNullOrEmpty(supabaseKey))
+            {
+                MessageBox.Show("Supabase configuration missing in App.config!");
+                return;
+            }
+
+            supabase = new Supabase.Client(supabaseUrl, supabaseKey, new Supabase.SupabaseOptions
+            {
+                AutoRefreshToken = true,
+                AutoConnectRealtime = false
+            });
+
+            await supabase.InitializeAsync();
         }
 
         public class ComparisonConverter : IValueConverter
@@ -45,7 +307,6 @@ namespace Capstone
             currentModalWindow.Owner = this;
             currentModalWindow.WindowStartupLocation = WindowStartupLocation.Manual;
 
-            // Position sa top-right corner, below the notification area
             currentModalWindow.Left = this.Left + this.ActualWidth - currentModalWindow.Width - 190;
             currentModalWindow.Top = this.Top + 135;
 
@@ -61,7 +322,6 @@ namespace Capstone
             currentModalWindow.Owner = this;
             currentModalWindow.WindowStartupLocation = WindowStartupLocation.Manual;
 
-            // Position sa top-right corner, below the notification area
             currentModalWindow.Left = this.Left + this.ActualWidth - currentModalWindow.Width - 190;
             currentModalWindow.Top = this.Top + 135;
 
@@ -77,18 +337,17 @@ namespace Capstone
 
         private void ModalOverlay_Click(object sender, MouseButtonEventArgs e)
         {
-            // Close the modal window when clicking on the overlay
             if (currentModalWindow != null)
             {
                 currentModalWindow.Close();
             }
-
-            // Mark event as handled
             e.Handled = true;
         }
 
         private void Customers_Click(object sender, System.Windows.Input.MouseButtonEventArgs e)
         {
+            if (!CustomersCard.IsEnabled) return;
+
             Customers Customers = new Customers();
             Customers.Show();
             this.Hide();
@@ -96,6 +355,8 @@ namespace Capstone
 
         private void Employees_Click(object sender, System.Windows.Input.MouseButtonEventArgs e)
         {
+            if (!EmployeesCard.IsEnabled) return;
+
             EMenu EMenu = new EMenu();
             EMenu.Show();
             this.Hide();
@@ -103,6 +364,8 @@ namespace Capstone
 
         private void Payroll_Click(object sender, System.Windows.Input.MouseButtonEventArgs e)
         {
+            if (!PayrollCard.IsEnabled) return;
+
             Payroll Payroll = new Payroll();
             Payroll.Show();
             this.Hide();
@@ -110,15 +373,55 @@ namespace Capstone
 
         private void Inventory_Click(object sender, System.Windows.Input.MouseButtonEventArgs e)
         {
+            if (!InventoryCard.IsEnabled) return;
+
             Inventory Inventory = new Inventory();
             Inventory.Show();
             this.Hide();
         }
+
         private void Appointments_Click(object sender, System.Windows.Input.MouseButtonEventArgs e)
         {
+            if (!AppointmentsCard.IsEnabled) return;
+
             Appointments appointments = new Appointments();
             appointments.Show();
             this.Hide();
+        }
+
+        [Table("Add_Employee")]
+        public class BarbershopManagementSystem : BaseModel
+        {
+            [PrimaryKey("Employee_ID", false)]
+            public string EmployeeID { get; set; } = string.Empty;
+
+            [Column("Full_Name")]
+            public string EmployeeName { get; set; } = string.Empty;
+
+            [Column("Employee_Role")]
+            public string EmployeeRole { get; set; } = string.Empty;
+
+            [Column("Photo")]
+            public string? ProfilePicture { get; set; }
+        }
+
+        [Table("Admin_Account")]
+        public class AdminAccount : BaseModel
+        {
+            [PrimaryKey("Admin_Login", false)]
+            public string AdminLogin { get; set; } = string.Empty;
+
+            [Column("Admin_Name")]
+            public string AdminName { get; set; } = string.Empty;
+
+            [Column("Admin_Role")]
+            public string AdminRole { get; set; } = string.Empty;
+
+            [Column("Admin_Password")]
+            public string AdminPassword { get; set; } = string.Empty;
+
+            [Column("Photo")]
+            public string? ProfilePicture { get; set; }
         }
     }
 }

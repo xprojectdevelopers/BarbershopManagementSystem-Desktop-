@@ -15,6 +15,7 @@ namespace Capstone
         private readonly string supabaseUrl;
         private readonly string supabaseKey;
         public static string CurrentEmployeeId { get; set; } // Static property to store current user
+        public static string CurrentUserRole { get; set; } // Static property to store current user role
 
         public LoginForm()
         {
@@ -66,20 +67,24 @@ namespace Capstone
             try
             {
                 // Try to authenticate as Admin first, then as Employee
-                var (isAuthenticated, userType) = await AuthenticateUser(employeeId, password);
+                var (isAuthenticated, userType, userRole) = await AuthenticateUser(employeeId, password);
 
                 if (isAuthenticated)
                 {
                     lblStatus.Content = $"Login successful as {userType}!";
                     lblStatus.Foreground = System.Windows.Media.Brushes.Green;
 
-                    // Store the logged-in employee ID
+                    // Store the logged-in employee ID and role
                     CurrentEmployeeId = employeeId;
+                    CurrentUserRole = userRole;
+                    Menu.CurrentUserRole = userRole; // Set role BEFORE opening window
+
+                    System.Diagnostics.Debug.WriteLine($"Logged in as: {userType} with role: {userRole}");
 
                     // Wait a moment then open Menu window
                     await Task.Delay(1000);
-                    Menu Menu = new Menu();
-                    Menu.Show();
+                    Menu menuWindow = new Menu();
+                    menuWindow.Show();
                     this.Close();
                 }
                 else
@@ -106,7 +111,7 @@ namespace Capstone
             }
         }
 
-        private async Task<(bool isAuthenticated, string userType)> AuthenticateUser(string employeeId, string password)
+        private async Task<(bool isAuthenticated, string userType, string userRole)> AuthenticateUser(string employeeId, string password)
         {
             try
             {
@@ -125,8 +130,9 @@ namespace Capstone
 
                     if (adminUsers.Count > 0)
                     {
-                        System.Diagnostics.Debug.WriteLine("Admin login successful!");
-                        return (true, "Admin");
+                        string adminRole = adminUsers[0]["Admin_Role"]?.ToString() ?? "Admin";
+                        System.Diagnostics.Debug.WriteLine($"Admin login successful! Role: {adminRole}");
+                        return (true, "Admin", adminRole);
                     }
                 }
 
@@ -145,8 +151,9 @@ namespace Capstone
 
                     if (employeeUsers.Count > 0)
                     {
-                        System.Diagnostics.Debug.WriteLine("Employee login successful!");
-                        return (true, "Employee");
+                        string employeeRole = employeeUsers[0]["Employee_Role"]?.ToString() ?? "Employee";
+                        System.Diagnostics.Debug.WriteLine($"Employee login successful! Role: {employeeRole}");
+                        return (true, "Employee", employeeRole);
                     }
                 }
                 else
@@ -157,7 +164,7 @@ namespace Capstone
 
                 // No match found in either table
                 System.Diagnostics.Debug.WriteLine("No matching credentials found in either table");
-                return (false, null);
+                return (false, null, null);
             }
             catch (Exception ex)
             {

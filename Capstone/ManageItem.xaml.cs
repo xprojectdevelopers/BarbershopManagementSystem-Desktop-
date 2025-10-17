@@ -43,7 +43,7 @@ namespace Capstone
         private ObservableCollection<BarbershopManagementSystem> filteredItems = new ObservableCollection<BarbershopManagementSystem>();
 
         private int CurrentPage = 1;
-        private int PageSize = 5; // 5 items per page
+        private int PageSize = 10; // 5 items per page
         private int TotalPages = 1;
 
         private Window currentModalWindow;

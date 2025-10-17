@@ -192,23 +192,23 @@
                     <Viewbox Stretch="Uniform" MaxWidth="350" MaxHeight="300" StretchDirection="DownOnly">
                         <StackPanel Orientation="Vertical">
                             <!-- Profile Image Container -->
-                            <Border Width="120" Height="120" 
-                                CornerRadius="60"
-                                Background="LightGray" 
-                                HorizontalAlignment="Center"
-                                Margin="0,0,0,15"
-                                ClipToBounds="True">
+                            <Border x:Name="ProfileImageBorder" Width="120" Height="120" 
+                                       CornerRadius="60"
+                                       Background="LightGray" 
+                                       HorizontalAlignment="Center"
+                                       Margin="0,0,0,15"
+                                       ClipToBounds="True">
                                 <Image Source="/Icon/profile.png" 
-                                Stretch="UniformToFill"
-                                VerticalAlignment="Center"
-                                HorizontalAlignment="Center"/>
+                                       Stretch="UniformToFill"
+                                       VerticalAlignment="Center"
+                                       HorizontalAlignment="Center"/>
                             </Border>
 
                             <!-- Profile Info -->
                             <StackPanel>
-                                <TextBlock Text="Emiliano C. Doro" 
+                                <TextBlock Text="Name" x:Name="NameText"
                                           Style="{StaticResource ResponsiveProfileName}"/>
-                                <TextBlock Text="Admin" 
+                                <TextBlock Text="Role" x:Name="RoleText"
                                           Style="{StaticResource ResponsiveProfileRole}"/>
                                 <TextBlock Text="My Account" 
                                           Style="{StaticResource ResponsiveProfileLink}"/>
@@ -231,7 +231,7 @@
 
                     <!-- First Row Cards -->
                     <!-- Appointments Card -->
-                    <Border Grid.Row="0" Grid.Column="0" Style="{StaticResource MenuCard}" MouseLeftButtonDown="Appointments_Click">
+                    <Border x:Name="AppointmentsCard" Grid.Row="0" Grid.Column="0" Style="{StaticResource MenuCard}" MouseLeftButtonDown="Appointments_Click">
                         <Grid>
                             <Grid.RowDefinitions>
                                 <RowDefinition Height="Auto"/>
@@ -253,7 +253,7 @@
                     </Border>
 
                     <!-- Customers Card -->
-                    <Border Grid.Row="0" Grid.Column="1" Style="{StaticResource MenuCard}"
+                    <Border x:Name="CustomersCard" Grid.Row="0" Grid.Column="1" Style="{StaticResource MenuCard}"
                             MouseLeftButtonDown="Customers_Click">
                         <Grid>
                             <Grid.RowDefinitions>
@@ -276,7 +276,7 @@
                     </Border>
 
                     <!-- Employees Card -->
-                    <Border Grid.Row="0" Grid.Column="2" Style="{StaticResource MenuCard}"
+                    <Border x:Name="EmployeesCard" Grid.Row="0" Grid.Column="2" Style="{StaticResource MenuCard}"
                            MouseLeftButtonDown="Employees_Click">
                         <Grid>
                             <Grid.RowDefinitions>
@@ -300,7 +300,7 @@
 
                     <!-- Second Row Cards -->
                     <!-- Payroll Card -->
-                    <Border Grid.Row="1" Grid.Column="0" Style="{StaticResource MenuCard}"
+                    <Border x:Name="PayrollCard" Grid.Row="1" Grid.Column="0" Style="{StaticResource MenuCard}"
                             MouseLeftButtonDown="Payroll_Click">
                         <Grid>
                             <Grid.RowDefinitions>
@@ -323,7 +323,7 @@
                     </Border>
 
                     <!-- Inventory Card -->
-                    <Border Grid.Row="1" Grid.Column="1" Style="{StaticResource MenuCard}"
+                    <Border x:Name="InventoryCard" Grid.Row="1" Grid.Column="1" Style="{StaticResource MenuCard}"
                             MouseLeftButtonDown="Inventory_Click">
                         <Grid>
                             <Grid.RowDefinitions>

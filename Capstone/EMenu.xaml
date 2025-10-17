@@ -103,9 +103,8 @@
                 <!-- Absentees Card -->
                 <Border Grid.Column="2" BorderBrush="#000" BorderThickness="1" CornerRadius="8" Padding="15" Margin="5">
                     <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center">
-                        <TextBlock Text="09/20/2025" FontSize="12" Foreground="Gray"/>
-                        <TextBlock Text="15" FontSize="28" FontWeight="Bold" Foreground="Red"/>
-                        <TextBlock Text="Absent Staff Count" FontSize="12" Foreground="Gray"/>
+                        <TextBlock x:Name="TotalCashierText" Text="0" FontSize="64" FontWeight="Bold"/>
+                        <TextBlock Text="Total Cashier" FontSize="16" FontWeight="Bold"/>
                     </StackPanel>
                 </Border>
             </Grid>

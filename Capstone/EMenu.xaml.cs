@@ -156,7 +156,10 @@ namespace Capstone
                 .Get();
 
             int total = result.Models.Count;
+            int cashierCount = result.Models.Count(e => e.EmployeeRole?.Equals("Cashier", StringComparison.OrdinalIgnoreCase) == true);
+
             TotalEmployeesText.Text = total.ToString();
+            TotalCashierText.Text = cashierCount.ToString();
         }
 
         private void Home_Click(object sender, MouseButtonEventArgs e)

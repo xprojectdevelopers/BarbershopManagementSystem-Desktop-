@@ -2,31 +2,13 @@
 using Supabase;
 using Supabase.Postgrest.Attributes;
 using Supabase.Postgrest.Models;
-using System;
-using System;
-using System.Collections.Generic;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Configuration;
-using System.Linq;
-using System.Linq;
 using System.Net.Http;
 using System.Text;
-using System.Text;
-using System.Threading.Tasks;
-using System.Threading.Tasks;
-using System.Windows;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Data;
 using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Shapes;
-using static Capstone.PurchaseOrders;
 
 namespace Capstone
 {
@@ -39,6 +21,7 @@ namespace Capstone
         private string supabaseKey;
         private Window currentModalWindow;
         public string LoggedInEmployeeId { get; set; }
+
         public SaleItem(string employeeId)
         {
             InitializeComponent();
@@ -152,7 +135,8 @@ namespace Capstone
                 return employeeId;
             }
         }
-        private void cmbItemID_SelectionChanged(object sender, SelectionChangedEventArgs e)
+
+        private async void cmbItemID_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             if (cmbItemID.SelectedItem != null && cmbItemID.SelectedItem is ComboBoxItem selectedItem)
             {
@@ -164,7 +148,39 @@ namespace Capstone
             }
         }
 
-        private bool ValidateInputs()
+        // ✅ NEW: Async method to get current stock
+        private async Task<int> GetCurrentStock(string itemId)
+        {
+            try
+            {
+                string queryUrl = $"{supabaseUrl}/rest/v1/Add_Item?Item_ID=eq.{itemId}&select=Quantity_Stock";
+                HttpResponseMessage response = await httpClient.GetAsync(queryUrl);
+
+                if (response.IsSuccessStatusCode)
+                {
+                    string content = await response.Content.ReadAsStringAsync();
+                    JArray items = JArray.Parse(content);
+
+                    if (items.Count > 0)
+                    {
+                        var quantityToken = items[0]["Quantity_Stock"];
+                        if (quantityToken != null && quantityToken.Type != JTokenType.Null)
+                        {
+                            return quantityToken.ToObject<int>();
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"Error getting current stock: {ex.Message}");
+            }
+
+            return 0;
+        }
+
+        // ✅ UPDATED: Async validation with stock checking
+        private async Task<bool> ValidateInputs()
         {
             bool isValid = true;
 
@@ -207,6 +223,26 @@ namespace Capstone
                 txtQuantityError.Visibility = Visibility.Visible;
                 isValid = false;
             }
+            else
+            {
+                // ✅ CHECK STOCK AVAILABILITY
+                var selectedComboItem = cmbItemID.SelectedItem as ComboBoxItem;
+                var selectedItem = selectedComboItem?.Tag as ItemData;
+
+                if (selectedItem != null)
+                {
+                    int currentStock = await GetCurrentStock(selectedItem.Item_ID);
+                    int requestedQty = int.Parse(txtQuantity.Text);
+
+                    // ✅ Validate if stock becomes 0 or negative after transaction
+                    if (currentStock == 0 || requestedQty >= currentStock)
+                    {
+                        txtQuantityError.Text = "Cannot proceed. Item is out of stock.";
+                        txtQuantityError.Visibility = Visibility.Visible;
+                        isValid = false;
+                    }
+                }
+            }
 
             if (!ItemDate.SelectedDate.HasValue)
             {
@@ -222,7 +258,8 @@ namespace Capstone
         {
             try
             {
-                if (!ValidateInputs())
+                // ✅ Now using async validation
+                if (!await ValidateInputs())
                 {
                     return;
                 }
@@ -238,84 +275,50 @@ namespace Capstone
 
                 int quantityToSubtract = int.Parse(txtQuantity.Text);
 
-                // Get current quantity first to validate
-                string queryUrl = $"{supabaseUrl}/rest/v1/Add_Item?Item_ID=eq.{selectedItem.Item_ID}&select=Quantity_Stock";
-                HttpResponseMessage response = await httpClient.GetAsync(queryUrl);
+                // Get current quantity
+                int currentQuantity = await GetCurrentStock(selectedItem.Item_ID);
 
-                if (response.IsSuccessStatusCode)
+                // Calculate new quantity (SUBTRACT)
+                int newQuantity = currentQuantity - quantityToSubtract;
+
+                // Insert into Item_Order table
+                var itemTransaction = new BarbershopManagementSystem
                 {
-                    string content = await response.Content.ReadAsStringAsync();
-                    JArray items = JArray.Parse(content);
+                    Date = ItemDate.SelectedDate.Value,
+                    Transaction = "Stock Out",
+                    Quantity = quantityToSubtract.ToString(),
+                    ItemName = txtItemName.Text,
+                    ProcessedBy = txtProcess.Text
+                };
 
-                    if (items.Count > 0)
-                    {
-                        int currentQuantity = 0;
-                        var quantityToken = items[0]["Quantity_Stock"];
-                        if (quantityToken != null && quantityToken.Type != JTokenType.Null)
-                        {
-                            currentQuantity = quantityToken.ToObject<int>();
-                        }
+                await supabase.From<BarbershopManagementSystem>().Insert(itemTransaction);
 
-                        // Check if there's enough stock
-                        if (currentQuantity < quantityToSubtract)
-                        {
-                            MessageBox.Show($"Insufficient stock! Available: {currentQuantity}, Requested: {quantityToSubtract}",
-                                            "Error", MessageBoxButton.OK, MessageBoxImage.Error);
-                            return;
-                        }
+                // Update Quantity_Stock in Add_Item table
+                string updateUrl = $"{supabaseUrl}/rest/v1/Add_Item?Item_ID=eq.{selectedItem.Item_ID}";
+                var updateData = new JObject
+                {
+                    ["Quantity_Stock"] = newQuantity
+                };
 
-                        // Calculate new quantity (SUBTRACT instead of ADD)
-                        int newQuantity = currentQuantity - quantityToSubtract;
+                var jsonContent = new StringContent(updateData.ToString(), Encoding.UTF8, "application/json");
+                HttpResponseMessage updateResponse = await httpClient.PatchAsync(updateUrl, jsonContent);
 
-                        // Insert into Item_Order table
-                        var itemTransaction = new BarbershopManagementSystem
-                        {
-                            Date = ItemDate.SelectedDate.Value,
-                            Transaction = "Stock Out",
-                            Quantity = quantityToSubtract.ToString(),
-                            ItemName = txtItemName.Text,
-                            ProcessedBy = txtProcess.Text
-                        };
+                if (updateResponse.IsSuccessStatusCode)
+                {
+                    ModalOverlay.Visibility = Visibility.Visible;
 
-                        await supabase.From<BarbershopManagementSystem>().Insert(itemTransaction);
+                    currentModalWindow = new ItemSaleSuccessful();
+                    currentModalWindow.Owner = this;
+                    currentModalWindow.WindowStartupLocation = WindowStartupLocation.CenterOwner;
+                    currentModalWindow.Closed += ModalWindow_Closed;
+                    currentModalWindow.Show();
 
-                        // Update Quantity_Stock in Add_Item table
-                        string updateUrl = $"{supabaseUrl}/rest/v1/Add_Item?Item_ID=eq.{selectedItem.Item_ID}";
-                        var updateData = new JObject
-                        {
-                            ["Quantity_Stock"] = newQuantity
-                        };
-
-                        var jsonContent = new StringContent(updateData.ToString(), Encoding.UTF8, "application/json");
-                        HttpResponseMessage updateResponse = await httpClient.PatchAsync(updateUrl, jsonContent);
-
-                        if (updateResponse.IsSuccessStatusCode)
-                        {
-                            ModalOverlay.Visibility = Visibility.Visible;
-
-                            currentModalWindow = new ItemSuccessful();
-                            currentModalWindow.Owner = this;
-                            currentModalWindow.WindowStartupLocation = WindowStartupLocation.CenterOwner;
-                            currentModalWindow.Closed += ModalWindow_Closed;
-                            currentModalWindow.Show();
-
-                            ClearForm();
-                        }
-                        else
-                        {
-                            string errorContent = await updateResponse.Content.ReadAsStringAsync();
-                            MessageBox.Show($"Error updating quantity: {errorContent}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
-                        }
-                    }
-                    else
-                    {
-                        MessageBox.Show("Item not found in inventory", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
-                    }
+                    ClearForm();
                 }
                 else
                 {
-                    string errorContent = await response.Content.ReadAsStringAsync();
-                    MessageBox.Show($"Error fetching current quantity: {errorContent}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                    string errorContent = await updateResponse.Content.ReadAsStringAsync();
+                    MessageBox.Show($"Error updating quantity: {errorContent}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
                 }
             }
             catch (Exception ex)

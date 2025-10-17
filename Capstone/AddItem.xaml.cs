@@ -292,6 +292,7 @@ namespace Capstone
             txtItemIDSame.Visibility = Visibility.Collapsed;
             txtItemNameSame.Visibility = Visibility.Collapsed;
             txtCategorySame.Visibility = Visibility.Collapsed;
+            txtSupplierNameSame.Visibility = Visibility.Collapsed;
 
             // Validate Item ID uniqueness
             if (!string.IsNullOrWhiteSpace(newEmployee.ItemID) &&
@@ -301,13 +302,15 @@ namespace Capstone
                 isValid = false;
             }
 
-            // Validate Category + Item Name combination (no duplicate item name within same category)
+            // Validate Category + Item Name + Supplier Name combination (no duplicate item name within same category and supplier)
             if (!string.IsNullOrWhiteSpace(newEmployee.Category) &&
-                !string.IsNullOrWhiteSpace(newEmployee.ItemName))
+                !string.IsNullOrWhiteSpace(newEmployee.ItemName) &&
+                !string.IsNullOrWhiteSpace(newEmployee.SupplierName))
             {
                 bool hasDuplicate = employees.Any(emp =>
                     emp.Category == newEmployee.Category &&
-                    emp.ItemName.Equals(newEmployee.ItemName, StringComparison.OrdinalIgnoreCase));
+                    emp.ItemName.Equals(newEmployee.ItemName, StringComparison.OrdinalIgnoreCase) &&
+                    emp.SupplierName.Equals(newEmployee.SupplierName, StringComparison.OrdinalIgnoreCase));
 
                 if (hasDuplicate)
                 {
@@ -315,6 +318,14 @@ namespace Capstone
                     txtCategorySame.Visibility = Visibility.Visible;
                     isValid = false;
                 }
+
+                if (hasDuplicate)
+                {
+                    txtSupplierNameSame.Text = "Item name already exists in this category and supplier name. Please choose another.";
+                    txtSupplierNameSame.Visibility = Visibility.Visible;
+                    isValid = false;
+                }
+
             }
 
             return isValid;
