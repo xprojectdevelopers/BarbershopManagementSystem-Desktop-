@@ -351,7 +351,7 @@ namespace Capstone
             public int? Quantity_Stock { get; set; }
         }
 
-        [Table("Purchased_Order")]
+        [Table("Item_Order")]
         public class BarbershopManagementSystem : BaseModel
         {
             [PrimaryKey("id", false)]

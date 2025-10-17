@@ -206,7 +206,7 @@ namespace Capstone
             ModalOverlay.Visibility = Visibility.Visible;
 
             // Open SaleItem as a regular window
-            currentModalWindow = new SaleItem();
+            currentModalWindow = new SaleItem(LoginForm.CurrentEmployeeId);
             currentModalWindow.Owner = this;
             currentModalWindow.WindowStartupLocation = WindowStartupLocation.CenterOwner;
 
@@ -234,7 +234,7 @@ namespace Capstone
             e.Handled = true;
         }
 
-        [Table("Purchased_Order")]
+        [Table("Item_Order")]
         public class BarbershopManagementSystem : BaseModel
         {
             [PrimaryKey("id", false)]
