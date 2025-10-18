@@ -23,5 +23,12 @@ namespace Capstone.AppointmentOptions
         {
             InitializeComponent();
         }
+
+        private void Home_Click(object sender, MouseButtonEventArgs e)
+        {
+            Appointments Appointments = new Appointments();
+            Appointments.Show();
+            this.Close();
+        }
     }
 }

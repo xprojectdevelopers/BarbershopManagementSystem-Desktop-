@@ -1,4 +1,5 @@
-﻿using Supabase.Postgrest.Attributes;
+﻿using Capstone.AppointmentOptions;
+using Supabase.Postgrest.Attributes;
 using Supabase.Postgrest.Models;
 using System;
 using System.Collections.Generic;
@@ -161,6 +162,28 @@ namespace Capstone
             menu.Show();
             this.Close();
         }
+
+        private void Book_Click(object sender, RoutedEventArgs e)
+        {
+            Appointment_Information Appointment_Information = new Appointment_Information();
+            Appointment_Information.Show();
+            this.Close();
+        }
+
+        private void Record_Click(object sender, RoutedEventArgs e)
+        {
+            Appointment_Records Appointment_Records = new Appointment_Records();
+            Appointment_Records.Show();
+            this.Close();
+        }
+         
+        private void Service_Click(object sender, RoutedEventArgs e)
+        {
+            Manage_Services Manage_Services = new Manage_Services();
+            Manage_Services.Show();
+            this.Close();
+        }
+
 
         [Table("Add_Employee")]
         public class BarbershopManagementSystem : BaseModel

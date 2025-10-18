@@ -309,8 +309,16 @@ namespace Capstone
             {
                 bool hasDuplicate = employees.Any(emp =>
                     emp.Category == newEmployee.Category &&
+                    emp.ItemName == newEmployee.ItemName &&
                     emp.ItemName.Equals(newEmployee.ItemName, StringComparison.OrdinalIgnoreCase) &&
                     emp.SupplierName.Equals(newEmployee.SupplierName, StringComparison.OrdinalIgnoreCase));
+
+                if (hasDuplicate)
+                {
+                    txtItemNameSame.Text = "Item name already in use. Please choose another";
+                    txtItemNameSame.Visibility = Visibility.Visible;
+                    isValid = false;
+                }
 
                 if (hasDuplicate)
                 {

@@ -74,8 +74,4 @@
     <Resource Include="Icon\Sorting-Center--Streamline-Milano.png" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="AppointmentOptions\" />
-  </ItemGroup>
-
 </Project>
