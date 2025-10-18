@@ -34,6 +34,7 @@ namespace Capstone
         {
             InitializeComponent();
             Loaded += async (s, e) => await InitializeData();
+            ModalOverlay.PreviewMouseLeftButtonDown += ModalOverlay_Click;
         }
 
         private async Task InitializeData()
@@ -230,7 +231,7 @@ namespace Capstone
             {
                 currentModalWindow.Close();
             }
-            // Mark event as handled
+
             e.Handled = true;
         }
 

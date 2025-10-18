@@ -480,7 +480,6 @@ Grid.Row="1" VerticalAlignment="Top"/>
                 Background="#80000000"
                 Visibility="Collapsed"
                 IsHitTestVisible="True"/>
-            
         </Grid>
     </ScrollViewer>
 </Window>

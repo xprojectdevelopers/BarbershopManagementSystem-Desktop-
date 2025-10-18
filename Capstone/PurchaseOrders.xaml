@@ -260,7 +260,7 @@
 
                 <StackPanel Orientation="Horizontal" Grid.Column="0" VerticalAlignment="Center" Margin="190,-10,0,0">
 
-                    <Button Content="Cancel"
+                    <Button Content="Cancel" Click="btnCancel_Click" Cursor="Hand"
 Width="205"
 Height="40"
 Margin="0,37,0,0"
@@ -285,7 +285,7 @@ Foreground="white">
                         </Button.Template>
                     </Button>
 
-                    <Button Content="Stock In"
+                    <Button Content="Stock In" Cursor="Hand"
 Width="205"
 Height="40"
 Margin="30,37,0,0"

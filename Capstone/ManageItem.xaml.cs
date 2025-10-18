@@ -52,7 +52,6 @@ namespace Capstone
         {
             InitializeComponent();
             Loaded += async (s, e) => await InitializeData();
-            ModalOverlay.PreviewMouseLeftButtonDown += ModalOverlay_Click;
         }
 
         private async Task InitializeData()
@@ -248,9 +247,6 @@ namespace Capstone
         {
             ModalOverlay.Visibility = Visibility.Collapsed;
             currentModalWindow = null;
-
-            // Refresh the items list after modal closes
-            _ = LoadItems();
         }
 
         private void ModalOverlay_Click(object sender, MouseButtonEventArgs e)

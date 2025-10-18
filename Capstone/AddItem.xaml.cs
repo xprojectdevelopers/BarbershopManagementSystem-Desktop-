@@ -423,6 +423,11 @@ namespace Capstone
             }
         }
 
+                private void btnCancel_Click(object sender, RoutedEventArgs e)
+        {
+            this.Close();
+        }
+
         [Table("Add_Item")] // pangalan ng table sa Supabase
         public class BarbershopManagementSystem : BaseModel
         {

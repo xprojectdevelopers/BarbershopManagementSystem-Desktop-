@@ -158,8 +158,7 @@ GridLinesVisibility="All">
                 Grid.RowSpan="3"
                 Background="#80000000"
                 Visibility="Collapsed"
-                IsHitTestVisible="True"
-                MouseLeftButtonDown="ModalOverlay_Click"/>
+                IsHitTestVisible="True"/>
         </Grid>
     </ScrollViewer>
 </Window>

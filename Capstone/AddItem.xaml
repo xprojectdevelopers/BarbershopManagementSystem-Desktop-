@@ -343,7 +343,7 @@
 
                 <StackPanel Orientation="Horizontal" Grid.Column="0" VerticalAlignment="Center" Margin="190,-10,0,0">
 
-                    <Button Content="Cancel" Cursor="Hand"
+                    <Button Content="Cancel" Cursor="Hand" Click="btnCancel_Click"
 Width="205"
 Height="40"
 Margin="0,37,0,0"
@@ -404,6 +404,5 @@ Foreground="white" Click="SaveButton_Click">
      Background="#80000000"
      Visibility="Collapsed"
      IsHitTestVisible="True"/>
-
     </Grid>
 </Window>
