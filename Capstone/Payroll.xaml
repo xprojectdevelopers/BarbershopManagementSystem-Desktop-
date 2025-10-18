@@ -470,5 +470,12 @@ Foreground="white">
                 </Border>
             </StackPanel>
         </ScrollViewer>
+
+        <!-- Gray Overlay for Modal Effect -->
+        <Border x:Name="ModalOverlay"
+    Grid.RowSpan="3"
+    Background="#80000000"
+    Visibility="Collapsed"
+    IsHitTestVisible="True"/>
     </Grid>
 </Window>

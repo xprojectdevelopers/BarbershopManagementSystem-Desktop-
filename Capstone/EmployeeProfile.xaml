@@ -207,7 +207,7 @@
 
 
             <!-- PAGE TITLE -->
-            <TextBlock Text="New Employee" 
+            <TextBlock Text="Employee Profile" 
            FontSize="20" 
            FontWeight="Bold" 
            Margin="100,20,0,481" 
