@@ -85,9 +85,9 @@ namespace Capstone
                 CustomersCard.Cursor = Cursors.No;
 
                 // Disable Employees
-                EmployeesCard.IsEnabled = false;
-                EmployeesCard.Opacity = 0.4;
-                EmployeesCard.Cursor = Cursors.No;
+                EmployeesCard.IsEnabled = true;
+                EmployeesCard.Opacity = 1.0;
+                EmployeesCard.Cursor = Cursors.Hand;
 
                 // Enable Payroll (keep enabled)
                 PayrollCard.IsEnabled = true;
@@ -158,7 +158,7 @@ namespace Capstone
                         CurrentUserPhoto != employee.ProfilePicture)
                     {
                         LoadProfilePicture(employee.ProfilePicture);
-                    }
+                    } 
                 }
                 else
                 {

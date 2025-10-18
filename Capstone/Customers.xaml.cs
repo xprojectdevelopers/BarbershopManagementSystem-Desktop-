@@ -145,6 +145,13 @@ namespace Capstone
             }
         }
 
+        private void Home_Click(object sender, MouseButtonEventArgs e)
+        {
+            Menu Menu = new Menu();
+            Menu.Show();
+            this.Close();
+        }
+
         private void SeeAllSubscribers_Click(object sender, RoutedEventArgs e)
         {
             // Create instance of ListSubscribers window

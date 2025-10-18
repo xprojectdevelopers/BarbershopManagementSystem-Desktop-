@@ -21,7 +21,7 @@
                 </Grid.ColumnDefinitions>
 
                 <!-- Home -->
-                <StackPanel Orientation="Horizontal" VerticalAlignment="Center" Grid.Column="0"
+                <StackPanel MouseLeftButtonUp="Home_Click" Orientation="Horizontal" VerticalAlignment="Center" Grid.Column="0"
                             Cursor="Hand" Margin="0,0,15,0">
                     <Image Source="/Icon/house.png" Width="30" Height="30"/>
                     <Label Content="Home" FontWeight="Bold" FontSize="20" VerticalAlignment="Center" Margin="5,0,0,0"/>
