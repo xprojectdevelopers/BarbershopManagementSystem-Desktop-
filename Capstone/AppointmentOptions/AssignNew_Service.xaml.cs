@@ -15,11 +15,11 @@ using System.Windows.Shapes;
 namespace Capstone.AppointmentOptions
 {
     /// <summary>
-    /// Interaction logic for Book_Appointments.xaml
+    /// Interaction logic for AssignNew_Service.xaml
     /// </summary>
-    public partial class Book_Appointments : Window
+    public partial class AssignNew_Service : Window
     {
-        public Book_Appointments()
+        public AssignNew_Service()
         {
             InitializeComponent();
         }

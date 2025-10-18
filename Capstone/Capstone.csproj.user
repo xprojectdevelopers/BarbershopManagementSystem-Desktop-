@@ -2,7 +2,13 @@
 <Project ToolsVersion="Current" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup />
   <ItemGroup>
-    <Compile Update="AppointmentOptions\Appointment_Information.xaml.cs">
+    <Compile Update="AppointmentOptions\AssignNew_Service.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Update="AppointmentOptions\Book_Appointment.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Update="AppointmentOptions\Service_Description.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
   </ItemGroup>

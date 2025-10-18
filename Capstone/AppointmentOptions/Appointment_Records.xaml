@@ -173,6 +173,45 @@
                 </Setter.Value>
             </Setter>
         </Style>
+
+        <!-- Responsive button style for notification and settings -->
+        <Style x:Key="ResponsiveButton" TargetType="Button">
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Padding" Value="12"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="HorizontalAlignment" Value="Center"/>
+            <Setter Property="VerticalAlignment" Value="Center"/>
+            <Setter Property="MinWidth" Value="40"/>
+            <Setter Property="MinHeight" Value="40"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border Background="{TemplateBinding Background}" 
+        BorderBrush="{TemplateBinding BorderBrush}"
+        BorderThickness="{TemplateBinding BorderThickness}"
+        Padding="{TemplateBinding Padding}"
+        CornerRadius="20">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter Property="Background" Value="Transparent"/>
+                            </Trigger>
+                            <Trigger Property="IsPressed" Value="True">
+                                <Setter Property="Background" Value="Transparent"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <!-- Simple icon style for top bar (no converter needed) -->
+        <Style x:Key="TopBarIcon" TargetType="Image">
+            <Setter Property="Width" Value="24"/>
+            <Setter Property="Height" Value="24"/>
+        </Style>
     </Window.Resources>
 
     <Grid>
@@ -183,8 +222,7 @@
             <StackPanel Margin="40">
 
                 <!-- Header Section -->
-                <Grid Margin="20,
-                      0,20,0">
+                <Grid Margin="20,0,20,0">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="Auto"/>
                         <ColumnDefinition Width="*"/>
@@ -192,9 +230,10 @@
                         <ColumnDefinition Width="Auto"/>
                     </Grid.ColumnDefinitions>
 
+                    <!-- Home - on the left side -->
                     <!-- Back - on the left side -->
                     <StackPanel Orientation="Horizontal" Grid.Column="0" VerticalAlignment="Center"
-                                MouseLeftButtonUp="Home_Click" Cursor="Hand" Margin="0,0,15,0">
+        MouseLeftButtonUp="Home_Click" Cursor="Hand" Margin="0,0,15,0">
                         <Image Source="/Icon/arrow-left.png" Width="30" Height="30"/>
                         <Label Content="Back" FontWeight="Bold" FontSize="20" VerticalAlignment="Center" Margin="5,0,0,0"/>
                     </StackPanel>
@@ -202,11 +241,30 @@
                     <!-- Empty space in middle -->
                     <StackPanel Grid.Column="1"/>
 
-                    <!-- Notification -->
-                    <Image Source="/Icon/bell.png" Width="30" Height="30" Grid.Column="2" Margin="0,0,15,0" VerticalAlignment="Center"/>
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="Auto"/>
+                        </Grid.ColumnDefinitions>
 
-                    <!-- Settings -->
-                    <Image Source="/Icon/gear.png" Width="30" Height="30" Grid.Column="3" VerticalAlignment="Center"/>
+                        <!-- Notification Icon -->
+                        <Button 
+        Margin="1060,0,0,0" 
+        Style="{StaticResource ResponsiveButton}"
+        ToolTip="Notifications"
+        Click="Notification_Click" Grid.ColumnSpan="3" HorizontalAlignment="Left">
+                            <Image Source="/Icon/bell.png" Style="{StaticResource TopBarIcon}"/>
+                        </Button>
+
+                        <!-- Settings Icon -->
+                        <Button  
+        Margin="1095,0,0,0" 
+        Style="{StaticResource ResponsiveButton}"
+        ToolTip="Settings" Grid.ColumnSpan="3" HorizontalAlignment="Left" Click="Setting_Click">
+                            <Image Source="/Icon/gear.png" Style="{StaticResource TopBarIcon}"/>
+                        </Button>
+                    </Grid>
                 </Grid>
 
                 <!-- Page Title -->
@@ -242,10 +300,10 @@
 
                                 <Label Content="Date" FontSize="20" Grid.Row="0" Grid.Column="0" VerticalAlignment="Bottom" Margin="0,0,0,5"/>
                                 <DatePicker Style="{StaticResource TextBoxStyleDatePicker}"
-                                 Tag="Select Date" Grid.Row="1" Grid.Column="0" Width="205"/>
+                                 Tag="Select Date" Grid.Row="1" Grid.Column="0" Width="205" Height="46" Margin="0,0,0,30" Grid.RowSpan="2"/>
 
-                                
-                                
+
+
                                 <Label Content="Barber Nickname" FontSize="20" Grid.Row="0" Grid.Column="2" VerticalAlignment="Bottom" Margin="0,0,0,5"/>
                                 <ComboBox Grid.Row="1" Grid.Column="02" Height="47" FontSize="16" 
                                     SelectedIndex="0" Style="{StaticResource TextBoxStyleComboBox}">
@@ -415,7 +473,7 @@
 
                             <Label Content="Date" FontSize="20" Grid.Row="0" Grid.Column="0" VerticalAlignment="Bottom" Margin="0,0,0,5"/>
                             <TextBox FontSize="30" Grid.Row="1" Grid.Column="0" Height="47"/>
-                            
+
                             <Label Content="Time" FontSize="20" Grid.Row="0" Grid.Column="2" VerticalAlignment="Bottom" Margin="0,0,0,5"/>
                             <TextBox FontSize="30" Grid.Row="1" Grid.Column="2" Height="47"/>
 
@@ -533,5 +591,12 @@ Foreground="white">
             </StackPanel>
         </ScrollViewer>
 
+        <!-- Gray Overlay for Modal Effect -->
+        <Border x:Name="ModalOverlay"
+Grid.RowSpan="3"
+Background="#80000000"
+Visibility="Collapsed"
+IsHitTestVisible="True"
+MouseLeftButtonDown="ModalOverlay_Click" Grid.ColumnSpan="2"/>
     </Grid>
 </Window>

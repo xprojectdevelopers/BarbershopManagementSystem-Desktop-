@@ -14,14 +14,14 @@ using System.Windows.Shapes;
 
 namespace Capstone.AppointmentOptions
 {
-    /// <summary>
-    /// Interaction logic for Manage_Services.xaml
-    /// </summary>
     public partial class Manage_Services : Window
     {
+        private Window currentModalWindow;
+
         public Manage_Services()
         {
             InitializeComponent();
+            ModalOverlay.PreviewMouseLeftButtonDown += ModalOverlay_Click;
         }
 
         private void Home_Click(object sender, MouseButtonEventArgs e)
@@ -29,6 +29,64 @@ namespace Capstone.AppointmentOptions
             Appointments Appointments = new Appointments();
             Appointments.Show();
             this.Close();
+        }
+
+        private void ModalWindow_Closed(object sender, EventArgs e)
+        {
+            ModalOverlay.Visibility = Visibility.Collapsed;
+            currentModalWindow = null;
+
+        }
+
+        private void ModalOverlay_Click(object sender, MouseButtonEventArgs e)
+        {
+            if (currentModalWindow != null)
+            {
+                currentModalWindow.Close();
+            }
+            e.Handled = true;
+        }
+
+        private void Service_Click(object sender, RoutedEventArgs e)
+        {
+            ModalOverlay.Visibility = Visibility.Visible;
+
+            currentModalWindow = new AssignNew_Service();
+            currentModalWindow.Owner = this;
+            currentModalWindow.WindowStartupLocation = WindowStartupLocation.CenterOwner;
+
+            currentModalWindow.Closed += ModalWindow_Closed;
+            currentModalWindow.Show();
+        }
+
+        private void Notification_Click(object sender, RoutedEventArgs e)
+        {
+            ModalOverlay.Visibility = Visibility.Visible;
+
+            currentModalWindow = new ModalsNotification();
+            currentModalWindow.Owner = this;
+            currentModalWindow.WindowStartupLocation = WindowStartupLocation.Manual;
+
+            currentModalWindow.Left = this.Left + this.ActualWidth - currentModalWindow.Width - 95;
+            currentModalWindow.Top = this.Top + 110;
+
+            currentModalWindow.Closed += ModalWindow_Closed;
+            currentModalWindow.Show();
+        }
+
+        private void Setting_Click(object sender, RoutedEventArgs e)
+        {
+            ModalOverlay.Visibility = Visibility.Visible;
+
+            currentModalWindow = new ModalsSetting();
+            currentModalWindow.Owner = this;
+            currentModalWindow.WindowStartupLocation = WindowStartupLocation.Manual;
+
+            currentModalWindow.Left = this.Left + this.ActualWidth - currentModalWindow.Width - 95;
+            currentModalWindow.Top = this.Top + 110;
+
+            currentModalWindow.Closed += ModalWindow_Closed;
+            currentModalWindow.Show();
         }
     }
 }

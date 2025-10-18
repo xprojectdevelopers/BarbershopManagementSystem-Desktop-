@@ -173,6 +173,45 @@
                 </Setter.Value>
             </Setter>
         </Style>
+
+        <!-- Responsive button style for notification and settings -->
+        <Style x:Key="ResponsiveButton" TargetType="Button">
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Padding" Value="12"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="HorizontalAlignment" Value="Center"/>
+            <Setter Property="VerticalAlignment" Value="Center"/>
+            <Setter Property="MinWidth" Value="40"/>
+            <Setter Property="MinHeight" Value="40"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border Background="{TemplateBinding Background}" 
+        BorderBrush="{TemplateBinding BorderBrush}"
+        BorderThickness="{TemplateBinding BorderThickness}"
+        Padding="{TemplateBinding Padding}"
+        CornerRadius="20">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter Property="Background" Value="Transparent"/>
+                            </Trigger>
+                            <Trigger Property="IsPressed" Value="True">
+                                <Setter Property="Background" Value="Transparent"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <!-- Simple icon style for top bar (no converter needed) -->
+        <Style x:Key="TopBarIcon" TargetType="Image">
+            <Setter Property="Width" Value="24"/>
+            <Setter Property="Height" Value="24"/>
+        </Style>
     </Window.Resources>
 
     <Grid>
@@ -182,9 +221,7 @@
                       PanningMode="VerticalOnly">
             <StackPanel Margin="40">
 
-                <!-- Header Section -->
-                <Grid Margin="20,
-                      0,20,0">
+                <Grid Margin="20,0,20,0">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="Auto"/>
                         <ColumnDefinition Width="*"/>
@@ -192,9 +229,10 @@
                         <ColumnDefinition Width="Auto"/>
                     </Grid.ColumnDefinitions>
 
+                    <!-- Home - on the left side -->
                     <!-- Back - on the left side -->
                     <StackPanel Orientation="Horizontal" Grid.Column="0" VerticalAlignment="Center"
-                                MouseLeftButtonUp="Home_Click" Cursor="Hand" Margin="0,0,15,0">
+        MouseLeftButtonUp="Home_Click" Cursor="Hand" Margin="0,0,15,0">
                         <Image Source="/Icon/arrow-left.png" Width="30" Height="30"/>
                         <Label Content="Back" FontWeight="Bold" FontSize="20" VerticalAlignment="Center" Margin="5,0,0,0"/>
                     </StackPanel>
@@ -202,21 +240,40 @@
                     <!-- Empty space in middle -->
                     <StackPanel Grid.Column="1"/>
 
-                    <!-- Notification -->
-                    <Image Source="/Icon/bell.png" Width="30" Height="30" Grid.Column="2" Margin="0,0,15,0" VerticalAlignment="Center"/>
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="Auto"/>
+                        </Grid.ColumnDefinitions>
 
-                    <!-- Settings -->
-                    <Image Source="/Icon/gear.png" Width="30" Height="30" Grid.Column="3" VerticalAlignment="Center"/>
+                        <!-- Notification Icon -->
+                        <Button 
+        Margin="1060,0,0,0" 
+        Style="{StaticResource ResponsiveButton}"
+        ToolTip="Notifications"
+        Click="Notification_Click" Grid.ColumnSpan="3" HorizontalAlignment="Left">
+                            <Image Source="/Icon/bell.png" Style="{StaticResource TopBarIcon}"/>
+                        </Button>
+
+                        <!-- Settings Icon -->
+                        <Button  
+        Margin="1095,0,0,0" 
+        Style="{StaticResource ResponsiveButton}"
+        ToolTip="Settings" Grid.ColumnSpan="3" HorizontalAlignment="Left" Click="Setting_Click">
+                            <Image Source="/Icon/gear.png" Style="{StaticResource TopBarIcon}"/>
+                        </Button>
+                    </Grid>
                 </Grid>
 
                 <!-- Page Title -->
-                <Label Content="Appointment Records" FontSize="20" FontWeight="Bold" Margin="20,20,20,15"/>
+                <Label Content="Manage Service" FontSize="20" FontWeight="Bold" Margin="20,20,20,15"/>
 
                 <!-- Filter and Action Section -->
                 <Border BorderBrush="Black" BorderThickness="1" Padding="20" CornerRadius="8" Margin="20,-15,20,20">
                     <StackPanel>
                         <!-- Filrs and Buttons Row -->
-                        <Grid Margin="0,0,0,20">
+                        <Grid Margin="0,0,0,0">
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="Auto"/>
                                 <ColumnDefinition Width="Auto"/>
@@ -239,40 +296,59 @@
                                     <ColumnDefinition Width="205"/>
                                     <ColumnDefinition Width="*"/>
                                 </Grid.ColumnDefinitions>
- 
-                                <Label Content="Date" FontSize="20" Grid.Row="0" Grid.Column="0" VerticalAlignment="Bottom" Margin="0,0,0,5"/>
-                                <DatePicker Style="{StaticResource TextBoxStyleDatePicker}"
-                                 Tag="Select Date" Grid.Row="1" Grid.Column="0" Width="205"/>
 
-
-
-                                <Label Content="Barber Nickname" FontSize="20" Grid.Row="0" Grid.Column="2" VerticalAlignment="Bottom" Margin="0,0,0,5"/>
-                                <ComboBox Grid.Row="1" Grid.Column="02" Height="47" FontSize="16" 
-                                    SelectedIndex="0" Style="{StaticResource TextBoxStyleComboBox}">
-                                    <ComboBoxItem IsEnabled="False" IsSelected="True" Foreground="Gray">All Barber</ComboBoxItem>
-                                    <ComboBoxItem>Aftershaves</ComboBoxItem>
-                                </ComboBox>
-
+                                <Label Content="Employee ID" FontSize="20" Grid.Row="0" Grid.Column="0" VerticalAlignment="Bottom" Margin="0,0,0,5"/>
+                                <TextBox FontSize="30" Grid.Row="1" Grid.Column="0" Height="47"/>
 
                                 <!-- Sort Button -->
-                                <Button Grid.Column="4" Grid.Row="1" Content="Sort by" Cursor="Hand"
-                                    Height="47"
-                                    VerticalAlignment="Center"
-                                    Foreground="white">
+                                <Button Grid.Column="2" Grid.Row="1" Content="Search" Cursor="Hand"
+                                Height="47"
+                                VerticalAlignment="Center"
+                                Foreground="white">
                                     <Button.Template>
                                         <ControlTemplate TargetType="Button">
-                                            <Border Background="black" 
-                                                CornerRadius="20" 
-                                                BorderBrush="Black" 
-                                                BorderThickness="1">
-                                                <ContentPresenter HorizontalAlignment="Center"
-                                                              VerticalAlignment="Center"
-                                                              RecognizesAccessKey="True"
-                                                              TextElement.Foreground="{TemplateBinding Foreground}"/>
+                                            <Border Background="black"
+                                            CornerRadius="20" 
+                                            BorderBrush="Black" 
+                                            BorderThickness="1">
+                                               <StackPanel Orientation="Horizontal" 
+                                               HorizontalAlignment="Center"
+                                               VerticalAlignment="Center">
+                                                    <Image Source="/Icon/magnifying-glass.png" 
+                                                    Width="16" 
+                                                    Height="16" 
+                                                    Margin="0,0,8,0"
+                                                    VerticalAlignment="Center"/>
+                                                    <ContentPresenter HorizontalAlignment="Center"
+                                                    VerticalAlignment="Center"
+                                                    RecognizesAccessKey="True"
+                                                    TextElement.Foreground="{TemplateBinding Foreground}"/>
+                                                </StackPanel>
                                             </Border>
                                         </ControlTemplate>
                                     </Button.Template>
                                 </Button>
+
+                                <Button Grid.Column="5" Content="Assign New Service" Cursor="Hand"
+                                Height="47" Click="Service_Click"
+                                VerticalAlignment="Center"
+                                Foreground="white" Margin="199,0,-404,0" Grid.Row="1">
+                                    <Button.Template>
+                                        <ControlTemplate TargetType="Button">
+                                            <Border Background="blue" 
+                                            CornerRadius="20" 
+                                            BorderBrush="Blue" 
+                                            BorderThickness="1">
+                                                <ContentPresenter HorizontalAlignment="Center"
+                                                VerticalAlignment="Center"
+                                                RecognizesAccessKey="True"
+                                                TextElement.Foreground="{TemplateBinding Foreground}"/>
+                                            </Border>
+                                        </ControlTemplate>
+                                    </Button.Template>
+                                </Button>
+
+
                             </Grid>
                         </Grid>
 
@@ -293,12 +369,11 @@
                                 </Style>
                             </DataGrid.ColumnHeaderStyle>
                             <DataGrid.Columns>
-                                <DataGridTextColumn Header="Date" Binding="{Binding ItemID}" Width="*"/>
-                                <DataGridTextColumn Header="Time" Binding="{Binding ItemName}" Width="*"/>
-                                <DataGridTextColumn Header="Customer Name" Binding="{Binding Category}" Width="*"/>
-                                <DataGridTextColumn Header="Contact Number" Binding="{Binding QuantityStock}" Width="*"/>
-                                <DataGridTextColumn Header="Assign Barber" Binding="{Binding SupplierName}" Width="*"/>
-                                <DataGridTextColumn Header="Appointment Status" Binding="{Binding Date}" Width="*"/>
+                                <DataGridTextColumn Header="Employee ID" Binding="{Binding ItemID}" Width="*"/>
+                                <DataGridTextColumn Header="Assigned Barber" Binding="{Binding ItemName}" Width="*"/>
+                                <DataGridTextColumn Header="Service" Binding="{Binding Category}" Width="*"/>
+                                <DataGridTextColumn Header="Price" Binding="{Binding QuantityStock}" Width="*"/>
+                                <DataGridTextColumn Header="Action" Binding="{Binding SupplierName}" Width="*"/>
                             </DataGrid.Columns>
                         </DataGrid>
 
@@ -309,5 +384,12 @@
             </StackPanel>
         </ScrollViewer>
 
+        <!-- Gray Overlay for Modal Effect -->
+        <Border x:Name="ModalOverlay"
+        Grid.RowSpan="3"
+        Background="#80000000"
+        Visibility="Collapsed"
+        IsHitTestVisible="True"
+        MouseLeftButtonDown="ModalOverlay_Click"/>
     </Grid>
 </Window>

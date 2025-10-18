@@ -1,4 +1,5 @@
-﻿using Supabase.Postgrest.Attributes;
+﻿using Capstone.AppointmentOptions;
+using Supabase.Postgrest.Attributes;
 using Supabase.Postgrest.Models;
 using System.Collections.ObjectModel;
 using System.Configuration;
@@ -384,9 +385,10 @@ namespace Capstone
         {
             if (!AppointmentsCard.IsEnabled) return;
 
-            Appointments appointments = new Appointments();
-            appointments.Show();
-            this.Hide();
+            Appointments Appointments = new Appointments();
+            Appointments.Show();
+
+            this.Close();
         }
 
         [Table("Add_Employee")]

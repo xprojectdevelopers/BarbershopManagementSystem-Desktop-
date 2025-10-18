@@ -18,13 +18,13 @@ using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
 using static Supabase.Postgrest.Constants;
 
-namespace Capstone
+namespace Capstone.AppointmentOptions
 {     
     public partial class Appointments : Window
     {
         private Supabase.Client? supabase;
         private ObservableCollection<BarbershopManagementSystem> employees = new ObservableCollection<BarbershopManagementSystem>();
-
+        private Window currentModalWindow;
         private int CurrentPage = 1;
         private int PageSize = 5; // 5 employees per page
         private int TotalPages = 1;
@@ -33,6 +33,7 @@ namespace Capstone
         {
             InitializeComponent();
             Loaded += async (s, e) => await InitializeData();
+            ModalOverlay.PreviewMouseLeftButtonDown += ModalOverlay_Click;
         }
 
         private async Task InitializeData()
@@ -165,8 +166,8 @@ namespace Capstone
 
         private void Book_Click(object sender, RoutedEventArgs e)
         {
-            Appointment_Information Appointment_Information = new Appointment_Information();
-            Appointment_Information.Show();
+            Book_Appointment Book_Appointment = new Book_Appointment();
+            Book_Appointment.Show();
             this.Close();
         }
 
@@ -182,6 +183,51 @@ namespace Capstone
             Manage_Services Manage_Services = new Manage_Services();
             Manage_Services.Show();
             this.Close();
+        }
+
+        private void Notification_Click(object sender, RoutedEventArgs e)
+        {
+            ModalOverlay.Visibility = Visibility.Visible;
+
+            currentModalWindow = new ModalsNotification();
+            currentModalWindow.Owner = this;
+            currentModalWindow.WindowStartupLocation = WindowStartupLocation.Manual;
+
+            currentModalWindow.Left = this.Left + this.ActualWidth - currentModalWindow.Width - 95;
+            currentModalWindow.Top = this.Top + 110;
+
+            currentModalWindow.Closed += ModalWindow_Closed;
+            currentModalWindow.Show();
+        }
+
+        private void Setting_Click(object sender, RoutedEventArgs e)
+        {
+            ModalOverlay.Visibility = Visibility.Visible;
+
+            currentModalWindow = new ModalsSetting();
+            currentModalWindow.Owner = this;
+            currentModalWindow.WindowStartupLocation = WindowStartupLocation.Manual;
+
+            currentModalWindow.Left = this.Left + this.ActualWidth - currentModalWindow.Width - 95;
+            currentModalWindow.Top = this.Top + 110;
+
+            currentModalWindow.Closed += ModalWindow_Closed;
+            currentModalWindow.Show();
+        }
+
+        private void ModalWindow_Closed(object sender, EventArgs e)
+        {
+            ModalOverlay.Visibility = Visibility.Collapsed;
+            currentModalWindow = null;
+        }
+
+        private void ModalOverlay_Click(object sender, MouseButtonEventArgs e)
+        {
+            if (currentModalWindow != null)
+            {
+                currentModalWindow.Close();
+            }
+            e.Handled = true;
         }
 
 

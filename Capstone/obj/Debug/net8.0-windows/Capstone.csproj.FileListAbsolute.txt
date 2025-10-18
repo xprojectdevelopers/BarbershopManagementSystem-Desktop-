@@ -35,9 +35,7 @@ C:\Users\Mezzc\Documents\Capstone\Capstone\obj\Debug\net8.0-windows\SuccessQuick
 C:\Users\Mezzc\Documents\Capstone\Capstone\obj\Debug\net8.0-windows\AddEmployee.g.cs
 C:\Users\Mezzc\Documents\Capstone\Capstone\obj\Debug\net8.0-windows\AddItem.g.cs
 C:\Users\Mezzc\Documents\Capstone\Capstone\obj\Debug\net8.0-windows\AppointmentOptions\Appointment_Records.g.cs
-C:\Users\Mezzc\Documents\Capstone\Capstone\obj\Debug\net8.0-windows\AppointmentOptions\Book_Appointments.g.cs
 C:\Users\Mezzc\Documents\Capstone\Capstone\obj\Debug\net8.0-windows\AppointmentOptions\Manage_Services.g.cs
-C:\Users\Mezzc\Documents\Capstone\Capstone\obj\Debug\net8.0-windows\Appointments.g.cs
 C:\Users\Mezzc\Documents\Capstone\Capstone\obj\Debug\net8.0-windows\AttendanceReport.g.cs
 C:\Users\Mezzc\Documents\Capstone\Capstone\obj\Debug\net8.0-windows\Customers.g.cs
 C:\Users\Mezzc\Documents\Capstone\Capstone\obj\Debug\net8.0-windows\delete.g.cs
@@ -71,9 +69,7 @@ C:\Users\Mezzc\Documents\Capstone\Capstone\obj\Debug\net8.0-windows\Capstone_Mar
 C:\Users\Mezzc\Documents\Capstone\Capstone\obj\Debug\net8.0-windows\AddEmployee.baml
 C:\Users\Mezzc\Documents\Capstone\Capstone\obj\Debug\net8.0-windows\AddItem.baml
 C:\Users\Mezzc\Documents\Capstone\Capstone\obj\Debug\net8.0-windows\AppointmentOptions\Appointment_Records.baml
-C:\Users\Mezzc\Documents\Capstone\Capstone\obj\Debug\net8.0-windows\AppointmentOptions\Book_Appointments.baml
 C:\Users\Mezzc\Documents\Capstone\Capstone\obj\Debug\net8.0-windows\AppointmentOptions\Manage_Services.baml
-C:\Users\Mezzc\Documents\Capstone\Capstone\obj\Debug\net8.0-windows\Appointments.baml
 C:\Users\Mezzc\Documents\Capstone\Capstone\obj\Debug\net8.0-windows\AttendanceReport.baml
 C:\Users\Mezzc\Documents\Capstone\Capstone\obj\Debug\net8.0-windows\delete.baml
 C:\Users\Mezzc\Documents\Capstone\Capstone\obj\Debug\net8.0-windows\DeleteSuccessfull.baml
@@ -110,5 +106,11 @@ C:\Users\Mezzc\Documents\Capstone\Capstone\obj\Debug\net8.0-windows\refint\Capst
 C:\Users\Mezzc\Documents\Capstone\Capstone\obj\Debug\net8.0-windows\Capstone.pdb
 C:\Users\Mezzc\Documents\Capstone\Capstone\obj\Debug\net8.0-windows\Capstone.genruntimeconfig.cache
 C:\Users\Mezzc\Documents\Capstone\Capstone\obj\Debug\net8.0-windows\ref\Capstone.dll
-C:\Users\Mezzc\Documents\Capstone\Capstone\obj\Debug\net8.0-windows\AppointmentOptions\Appointment_Information.g.cs
-C:\Users\Mezzc\Documents\Capstone\Capstone\obj\Debug\net8.0-windows\AppointmentOptions\Appointment_Information.baml
+C:\Users\Mezzc\Documents\Capstone\Capstone\obj\Debug\net8.0-windows\AppointmentOptions\Book_Appointment.g.cs
+C:\Users\Mezzc\Documents\Capstone\Capstone\obj\Debug\net8.0-windows\AppointmentOptions\Book_Appointment.baml
+C:\Users\Mezzc\Documents\Capstone\Capstone\obj\Debug\net8.0-windows\AppointmentOptions\AssignNew_Service.g.cs
+C:\Users\Mezzc\Documents\Capstone\Capstone\obj\Debug\net8.0-windows\AppointmentOptions\AssignNew_Service.baml
+C:\Users\Mezzc\Documents\Capstone\Capstone\obj\Debug\net8.0-windows\AppointmentOptions\Service_Description.g.cs
+C:\Users\Mezzc\Documents\Capstone\Capstone\obj\Debug\net8.0-windows\AppointmentOptions\Service_Description.baml
+C:\Users\Mezzc\Documents\Capstone\Capstone\obj\Debug\net8.0-windows\AppointmentOptions\Appointments.g.cs
+C:\Users\Mezzc\Documents\Capstone\Capstone\obj\Debug\net8.0-windows\AppointmentOptions\Appointments.baml

@@ -15,20 +15,13 @@ using System.Windows.Shapes;
 namespace Capstone.AppointmentOptions
 {
     /// <summary>
-    /// Interaction logic for Appointment_Information.xaml
+    /// Interaction logic for Service_Description.xaml
     /// </summary>
-    public partial class Appointment_Information : Window
+    public partial class Service_Description : Window
     {
-        public Appointment_Information()
+        public Service_Description()
         {
             InitializeComponent();
-        }
-
-        private void Home_Click(object sender, MouseButtonEventArgs e)
-        {
-            Appointments Appointments = new Appointments();
-            Appointments.Show();
-            this.Close();
         }
     }
 }

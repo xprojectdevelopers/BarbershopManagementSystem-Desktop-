@@ -2,11 +2,8 @@
 
 FC:\Users\Mezzc\Documents\Capstone\Capstone\AddEmployee.xaml;;
 FC:\Users\Mezzc\Documents\Capstone\Capstone\AddItem.xaml;;
-FC:\Users\Mezzc\Documents\Capstone\Capstone\AppointmentOptions\Appointment_Information.xaml;;
 FC:\Users\Mezzc\Documents\Capstone\Capstone\AppointmentOptions\Appointment_Records.xaml;;
-FC:\Users\Mezzc\Documents\Capstone\Capstone\AppointmentOptions\Book_Appointments.xaml;;
 FC:\Users\Mezzc\Documents\Capstone\Capstone\AppointmentOptions\Manage_Services.xaml;;
-FC:\Users\Mezzc\Documents\Capstone\Capstone\Appointments.xaml;;
 FC:\Users\Mezzc\Documents\Capstone\Capstone\AttendanceReport.xaml;;
 FC:\Users\Mezzc\Documents\Capstone\Capstone\delete.xaml;;
 FC:\Users\Mezzc\Documents\Capstone\Capstone\DeleteSuccessfull.xaml;;
@@ -31,4 +28,8 @@ FC:\Users\Mezzc\Documents\Capstone\Capstone\SaleItem.xaml;;
 FC:\Users\Mezzc\Documents\Capstone\Capstone\succesfull.xaml;;
 FC:\Users\Mezzc\Documents\Capstone\Capstone\UpdateSuccessful.xaml;;
 FC:\Users\Mezzc\Documents\Capstone\Capstone\Views\PayrollHistory.xaml;;
+FC:\Users\Mezzc\Documents\Capstone\Capstone\AppointmentOptions\Book_Appointment.xaml;;
+FC:\Users\Mezzc\Documents\Capstone\Capstone\AppointmentOptions\AssignNew_Service.xaml;;
+FC:\Users\Mezzc\Documents\Capstone\Capstone\AppointmentOptions\Service_Description.xaml;;
+FC:\Users\Mezzc\Documents\Capstone\Capstone\AppointmentOptions\Appointments.xaml;;
 

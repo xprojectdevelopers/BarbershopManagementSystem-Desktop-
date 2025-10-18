@@ -15,12 +15,13 @@ using System.Windows.Shapes;
 namespace Capstone.AppointmentOptions
 {
     /// <summary>
-    /// Interaction logic for Appointment_Records.xaml
+    /// Interaction logic for Book_Appointment.xaml
     /// </summary>
-    public partial class Appointment_Records : Window
+    public partial class Book_Appointment : Window
     {
         private Window currentModalWindow;
-        public Appointment_Records()
+
+        public Book_Appointment()
         {
             InitializeComponent();
             ModalOverlay.PreviewMouseLeftButtonDown += ModalOverlay_Click;
