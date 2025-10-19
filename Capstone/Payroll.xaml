@@ -209,7 +209,7 @@
                                     <TextBox x:Name="txtName" VerticalContentAlignment="Center" IsReadOnly="True" FontSize="20" Height="40" Width="205" 
                                              HorizontalAlignment="Left" Margin="0,37,0,0" VerticalAlignment="Top"/>
                                     <TextBlock x:Name="txtNameError" Foreground="Red" FontSize="12" 
-                                               Margin="0,90,0,0" VerticalAlignment="Top" Visibility="Collapsed"/>
+                                               Margin="10,60,0,0" VerticalAlignment="Top" Visibility="Collapsed"/>
                                 </Grid>
 
                                 <Grid Grid.Column="1">
@@ -496,7 +496,7 @@
                         </Grid>
 
                         <!-- Buttons Section -->
-                        <Grid Margin="60,20,20,0" Height="120">
+                        <Grid Margin="60,20,20,0" Height="160">
                             <Button Content="Clear" Cursor="Hand" Click="Clear_Click" Width="160" Height="40"
                                     Margin="0,30,0,0" HorizontalAlignment="Left" VerticalAlignment="Top"
                                     Foreground="white">
@@ -530,10 +530,12 @@
                                         Tag="Select Release Date"
                                         Width="205" Height="40" 
                                         Margin="810,10,0,0" HorizontalAlignment="Left" VerticalAlignment="Top"/>
-
+                            <TextBlock x:Name="txtReleasDateError" Foreground="Red" FontSize="12" Margin="815,53,0,0" VerticalAlignment="Top" Visibility="Collapsed"/>
+                            <TextBlock x:Name="txtReleasDateSame" Foreground="Red" FontSize="12" Margin="815,53,0,0" VerticalAlignment="Top" Visibility="Collapsed"/>
                             <Button Content="Release" Cursor="Hand" Width="205" Height="40"
-                                    Margin="810,70,0,0" HorizontalAlignment="Left" VerticalAlignment="Top"
-                                    Foreground="white">
+                                    Margin="810,90,0,0" HorizontalAlignment="Left" VerticalAlignment="Top"
+                                    Foreground="white" Click="Release_Click">
+
                                 <Button.Template>
                                     <ControlTemplate TargetType="Button">
                                         <Border Background="Blue" CornerRadius="20" BorderBrush="Blue" BorderThickness="1">

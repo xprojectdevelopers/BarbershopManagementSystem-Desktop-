@@ -1,5 +1,4 @@
 ﻿using Supabase;
-using Supabase;
 using Supabase.Postgrest.Attributes;
 using Supabase.Postgrest.Models;
 using System;
@@ -7,26 +6,22 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Configuration;
 using System.Linq;
-using System.Reflection;
-using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Shapes;
 
 namespace Capstone
 {
     public partial class Payroll : Window
     {
         private Client supabase;
-        private ObservableCollection<BarbershopManagementSystem> employees;
+        private ObservableCollection<Employee> employees;
         private Window currentModalWindow;
         private bool isSavingFundEnabled = true;
+        private bool isSaving = false;
+
         public Payroll()
         {
             InitializeComponent();
@@ -50,10 +45,9 @@ namespace Capstone
         private async Task InitializeData()
         {
             await InitializeSupabaseAsync();
+            employees = new ObservableCollection<Employee>();
 
-            employees = new ObservableCollection<BarbershopManagementSystem>();
-
-            var result = await supabase.From<BarbershopManagementSystem>().Get();
+            var result = await supabase.From<Employee>().Get();
             foreach (var emp in result.Models)
             {
                 employees.Add(emp);
@@ -68,9 +62,10 @@ namespace Capstone
 
         private void HideAllErrorMessages()
         {
-            // Basic field validation errors
             txtEmployeeIDError.Visibility = Visibility.Collapsed;
             txtNameError.Visibility = Visibility.Collapsed;
+            txtReleasDateError.Visibility = Visibility.Collapsed;
+            txtReleasDateSame.Visibility = Visibility.Collapsed;
         }
 
         private void ClearForm()
@@ -92,18 +87,15 @@ namespace Capstone
             txtRebondLong.Clear();
             txtBraid.Clear();
 
-            // Clear deduction fields
             txtCashAdvance.Clear();
             txtLate.Clear();
             txtAbsent.Clear();
             txtSavingFund.Clear();
 
-            // Clear computation fields
             txtGrossPay.Clear();
             txtTotalDeduction.Clear();
             txtNetPay.Clear();
 
-            // Clear dates
             dpStartDate.SelectedDate = null;
             dpEndDate.SelectedDate = null;
             dpReleaseDate.SelectedDate = null;
@@ -111,38 +103,7 @@ namespace Capstone
 
         private async void Clear_Click(object sender, RoutedEventArgs e)
         {
-            txtEmployeeID.Text = string.Empty;
-            txtName.Clear();
-            txtRole.Clear();
-
-            txtHaircut.Clear();
-            txtHaircutReservation.Clear();
-            txtHaircutWash.Clear();
-            txtHaircutHotTowel.Clear();
-            txtHaircutHairDye.Clear();
-            txtHaircutHairColor.Clear();
-            txtHaircutHighlights.Clear();
-            txtHaircutHotBleaching.Clear();
-            txtHaircutPerm.Clear();
-            txtRebondShort.Clear();
-            txtRebondLong.Clear();
-            txtBraid.Clear();
-
-            // Clear deduction fields
-            txtCashAdvance.Clear();
-            txtLate.Clear();
-            txtAbsent.Clear();
-            txtSavingFund.Clear();
-
-            // Clear computation fields
-            txtGrossPay.Clear();
-            txtTotalDeduction.Clear();
-            txtNetPay.Clear();
-
-            // Clear dates
-            dpStartDate.SelectedDate = null;
-            dpEndDate.SelectedDate = null;
-            dpReleaseDate.SelectedDate = null;
+            ClearForm();
         }
 
         private async void Search_Click(object sender, RoutedEventArgs e)
@@ -155,13 +116,12 @@ namespace Capstone
                 return;
             }
 
-            // Clear Employee ID validation error when search is performed with valid ID
             txtEmployeeIDError.Visibility = Visibility.Collapsed;
 
             try
             {
                 var result = await supabase
-                    .From<BarbershopManagementSystem>()
+                    .From<Employee>()
                     .Where(x => x.Eid == employeeId)
                     .Get();
 
@@ -173,19 +133,13 @@ namespace Capstone
                 }
                 else
                 {
-                    // Hide all validation errors before showing not found dialog
                     HideAllErrorMessages();
                     ModalOverlay.Visibility = Visibility.Visible;
 
-                    // Open PurchaseOrders as a regular window
                     currentModalWindow = new notfound();
                     currentModalWindow.Owner = this;
                     currentModalWindow.WindowStartupLocation = WindowStartupLocation.CenterOwner;
-
-                    // Subscribe to Closed event
                     currentModalWindow.Closed += ModalWindow_Closed;
-
-                    // Show as regular window
                     currentModalWindow.Show();
                     ClearForm();
                 }
@@ -196,9 +150,8 @@ namespace Capstone
             }
         }
 
-        private void PopulateForm(BarbershopManagementSystem employee)
+        private void PopulateForm(Employee employee)
         {
-            // Personal Details
             txtName.Text = employee.Fname ?? "";
             txtRole.Text = employee.Role ?? "";
         }
@@ -225,33 +178,15 @@ namespace Capstone
 
                 if (isSavingFundEnabled)
                 {
-                    // Enable savings fund
                     toggleButton.Content = "On";
                     txtSavingFund.IsEnabled = true;
                     txtSavingFund.Background = Brushes.White;
-
-                    // Update button appearance for "On"
-                    var border = toggleButton.Template.FindName("ToggleBorder", toggleButton) as Border;
-                    if (border != null)
-                    {
-                        border.Background = Brushes.Blue;
-                        border.BorderBrush = Brushes.Blue;
-                    }
                 }
                 else
                 {
-                    // Disable savings fund
                     toggleButton.Content = "Off";
                     txtSavingFund.IsEnabled = true;
                     txtSavingFund.Background = Brushes.White;
-
-                    // Update button appearance for "Off"
-                    var border = toggleButton.Template.FindName("ToggleBorder", toggleButton) as Border;
-                    if (border != null)
-                    {
-                        border.Background = Brushes.Blue;
-                        border.BorderBrush = Brushes.Blue;
-                    }
                 }
             }
         }
@@ -260,7 +195,6 @@ namespace Capstone
         {
             try
             {
-                // Service prices
                 const decimal HAIRCUT_PRICE = 75;
                 const decimal HAIRCUT_RESERVATION_PRICE = 100;
                 const decimal HAIRCUT_WASH_PRICE = 125;
@@ -273,11 +207,9 @@ namespace Capstone
                 const decimal REBOND_SHORT_PRICE = 500;
                 const decimal REBOND_LONG_PRICE = 500;
 
-                // Fixed deduction amounts
                 const decimal LATE_DEDUCTION = 30;
                 const decimal ABSENT_DEDUCTION = 50;
 
-                // Parse service counts (default to 0 if empty or invalid)
                 int haircutCount = int.TryParse(txtHaircut.Text.Trim(), out int hc) ? hc : 0;
                 int haircutReservationCount = int.TryParse(txtHaircutReservation.Text.Trim(), out int hrc) ? hrc : 0;
                 int haircutWashCount = int.TryParse(txtHaircutWash.Text.Trim(), out int hwc) ? hwc : 0;
@@ -290,10 +222,8 @@ namespace Capstone
                 int rebondShortCount = int.TryParse(txtRebondShort.Text.Trim(), out int rsc) ? rsc : 0;
                 int rebondLongCount = int.TryParse(txtRebondLong.Text.Trim(), out int rlc) ? rlc : 0;
 
-                // Parse braid amount (it's already in pesos)
                 decimal braidAmount = decimal.TryParse(txtBraid.Text.Trim(), out decimal ba) ? ba : 0;
 
-                // Calculate individual service totals
                 decimal haircutTotal = haircutCount * HAIRCUT_PRICE;
                 decimal haircutReservationTotal = haircutReservationCount * HAIRCUT_RESERVATION_PRICE;
                 decimal haircutWashTotal = haircutWashCount * HAIRCUT_WASH_PRICE;
@@ -306,7 +236,6 @@ namespace Capstone
                 decimal rebondShortTotal = rebondShortCount * REBOND_SHORT_PRICE;
                 decimal rebondLongTotal = rebondLongCount * REBOND_LONG_PRICE;
 
-                // Calculate Gross Pay
                 decimal grossPay = haircutTotal + haircutReservationTotal + haircutWashTotal +
                                   haircutHotTowelTotal + haircutHairDyeTotal + haircutHairColorTotal +
                                   haircutHighlightsTotal + haircutHotBleachingTotal + haircutPermTotal +
@@ -314,34 +243,24 @@ namespace Capstone
 
                 txtGrossPay.Text = grossPay.ToString("N2");
 
-                // Parse deductions
                 decimal cashAdvance = decimal.TryParse(txtCashAdvance.Text.Trim(), out decimal ca) ? ca : 0;
-
-                // Parse late and absent counts, then multiply by fixed amounts
                 int lateCount = int.TryParse(txtLate.Text.Trim(), out int lc) ? lc : 0;
                 int absentCount = int.TryParse(txtAbsent.Text.Trim(), out int ac) ? ac : 0;
-
                 decimal lateDeduction = lateCount * LATE_DEDUCTION;
                 decimal absentDeduction = absentCount * ABSENT_DEDUCTION;
-
                 decimal savingFund = decimal.TryParse(txtSavingFund.Text.Trim(), out decimal sf) ? sf : 0;
 
-                // Calculate Total Deduction and Net Pay based on Saving Fund status
                 decimal totalDeduction;
                 decimal netPay;
 
-                if (isSavingFundEnabled) // Saving Fund is ON
+                if (isSavingFundEnabled)
                 {
-                    // Total Deduction = Cash Advance + Late + Absent + Saving Fund
                     totalDeduction = cashAdvance + lateDeduction + absentDeduction + savingFund;
-                    // Net Pay = Gross Pay - Total Deduction
                     netPay = grossPay - totalDeduction;
                 }
-                else // Saving Fund is OFF
+                else
                 {
-                    // Total Deduction = Cash Advance + Late + Absent (WITHOUT Saving Fund)
                     totalDeduction = cashAdvance + lateDeduction + absentDeduction;
-                    // Net Pay = Gross Pay - Total Deduction + Saving Fund (added back)
                     netPay = grossPay - totalDeduction + savingFund;
                 }
 
@@ -354,8 +273,104 @@ namespace Capstone
             }
         }
 
+        private async void Release_Click(object sender, RoutedEventArgs e)
+        {
+            if (isSaving) return;
+
+            try
+            {
+                isSaving = true;
+                Button saveButton = (Button)sender;
+                saveButton.IsEnabled = false;
+                HideAllErrorMessages();
+
+                // Validation
+                if (string.IsNullOrWhiteSpace(txtEmployeeID.Text.Trim()))
+                {
+                    ShowError(txtEmployeeIDError, "Employee ID is required");
+                    return;
+                }
+
+                if (!dpReleaseDate.SelectedDate.HasValue)
+                {
+                    ShowError(txtReleasDateError, "Release Date is required");
+                    return;
+                }
+
+                if (string.IsNullOrWhiteSpace(txtGrossPay.Text.Trim()))
+                {
+                    MessageBox.Show("Please compute the payroll first.", "Validation Error", MessageBoxButton.OK, MessageBoxImage.Warning);
+                    return;
+                }
+
+                string employeeId = txtEmployeeID.Text.Trim();
+                // Fix timezone issue - use Date only and specify as UTC
+                DateTime releaseDate = DateTime.SpecifyKind(dpReleaseDate.SelectedDate.Value.Date, DateTimeKind.Utc);
+
+                // Check duplicate
+                var existingPayroll = await supabase.From<PayrollRecord>().Where(x => x.EmID == employeeId).Get();
+                var duplicateRecord = existingPayroll.Models.FirstOrDefault(p => p.Release.Date == releaseDate);
+
+                if (duplicateRecord != null)
+                {
+                    ShowError(txtReleasDateError, "Release Date Same");
+                    return;
+                }
+
+                // Parse values
+                decimal grossPayDecimal = decimal.Parse(txtGrossPay.Text.Trim().Replace(",", ""));
+                decimal netPayDecimal = decimal.Parse(txtNetPay.Text.Trim().Replace(",", ""));
+                decimal cashAdvanceDecimal = decimal.TryParse(txtCashAdvance.Text.Trim(), out var ca) ? ca : 0;
+                decimal savingFundDecimal = decimal.TryParse(txtSavingFund.Text.Trim(), out var sf) ? sf : 0;
+                long absentCount = long.TryParse(txtAbsent.Text.Trim(), out var ab) ? ab : 0;
+
+                var newPayroll = new PayrollRecord
+                {
+                    EmID = employeeId,
+                    Name = txtName.Text.Trim(),
+                    BRole = txtRole.Text.Trim(),
+                    GrossPay = (long)(grossPayDecimal * 100),
+                    NetPay = (long)(netPayDecimal * 100),
+                    CashAdvance = (long)(cashAdvanceDecimal * 100),
+                    SavingFund = (long)(savingFundDecimal * 100),
+                    Absent = absentCount,
+                    Release = releaseDate
+                };
+
+                // Debug log
+                System.Diagnostics.Debug.WriteLine($"Inserting: EmID={employeeId}, GrossPay={newPayroll.GrossPay}");
+
+                var result = await supabase.From<PayrollRecord>().Insert(newPayroll);
+
+                if (result != null && result.Models.Count > 0)
+                {
+                    ModalOverlay.Visibility = Visibility.Visible;
+                    currentModalWindow = new ItemSuccessful();
+                    currentModalWindow.Owner = this;
+                    currentModalWindow.WindowStartupLocation = WindowStartupLocation.CenterOwner;
+                    currentModalWindow.Closed += ModalWindow_Closed;
+                    currentModalWindow.Show();
+                    ClearForm();
+                }
+                else
+                {
+                    MessageBox.Show("Failed to save to database.", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Error: {ex.Message}\n\nStack: {ex.StackTrace}", "Database Error", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+            finally
+            {
+                isSaving = false;
+                ((Button)sender).IsEnabled = true;
+            }
+        }
+
+        // Employee table model (Add_Employee)
         [Table("Add_Employee")]
-        public class BarbershopManagementSystem : BaseModel
+        public class Employee : BaseModel
         {
             [PrimaryKey("id", false)]
             public int Id { get; set; }
@@ -368,6 +383,41 @@ namespace Capstone
 
             [Column("Employee_ID")]
             public string Eid { get; set; }
+        }
+
+        // Payroll table model - Match Supabase int8 (bigint) types
+        [Table("Payroll")]
+        public class PayrollRecord : BaseModel
+        {
+            [PrimaryKey("id", false)]
+            public int Id { get; set; }
+
+            [Column("Employee_ID")]
+            public string EmID { get; set; }
+
+            [Column("Employee_Name")]
+            public string Name { get; set; }
+
+            [Column("Role")]
+            public string BRole { get; set; }
+
+            [Column("Gross_Pay")]
+            public long GrossPay { get; set; }
+
+            [Column("Saving_Fund")]
+            public long SavingFund { get; set; }
+
+            [Column("Cash_Advance")]
+            public long CashAdvance { get; set; }
+
+            [Column("Attendance_Deduction")]
+            public long Absent { get; set; }
+
+            [Column("Net_Pay")]
+            public long NetPay { get; set; }
+
+            [Column("Release_Date")]
+            public DateTime Release { get; set; }
         }
     }
 }
