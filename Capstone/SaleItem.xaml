@@ -203,7 +203,7 @@
 
                     <!-- Item Name -->
                     <Label Content="Processed By" FontSize="20" Grid.Row="0" Grid.Column="0" VerticalAlignment="Bottom" Margin="0,0,0,5"/>
-                    <TextBox x:Name="txtProcess" FontSize="20" Grid.Row="1" Grid.Column="0" Height="47"/>
+                    <TextBox x:Name="txtProcess" VerticalContentAlignment="Center" FontSize="20" Grid.Row="1" Grid.Column="0" Height="47"/>
                     <TextBlock x:Name="txtProcessError" Foreground="Red" FontSize="12" 
                 Grid.Row="2" Grid.Column="0" Margin="0,2,0,0"
                 VerticalAlignment="Top" Visibility="Collapsed"/>
@@ -237,14 +237,14 @@
 
                     <!-- Supplier Name -->
                     <Label Content="Item Name" FontSize="20" Grid.Row="0" Grid.Column="0" VerticalAlignment="Bottom" Margin="0,0,0,5"/>
-                    <TextBox x:Name="txtItemName" FontSize="30" Grid.Row="1" Grid.Column="0" Height="47"/>
+                    <TextBox x:Name="txtItemName" VerticalContentAlignment="Center" FontSize="20" Grid.Row="1" Grid.Column="0" Height="47"/>
                     <TextBlock x:Name="txtItemNameError" Foreground="Red" FontSize="12" 
                 Grid.Row="2" Grid.Column="0" Margin="0,2,0,0"
                 VerticalAlignment="Top" Visibility="Collapsed"/>
 
                     <!-- Supplier Contact Number -->
                     <Label Content="Quantity" FontSize="17" Grid.Row="0" Grid.Column="2" VerticalAlignment="Bottom" Margin="0,0,0,5"/>
-                    <TextBox x:Name="txtQuantity" FontSize="30" Grid.Row="1" Grid.Column="2" Height="47"/>
+                    <TextBox x:Name="txtQuantity" VerticalContentAlignment="Center" FontSize="20" Grid.Row="1" Grid.Column="2" Height="47"/>
                     <TextBlock x:Name="txtQuantityError" Foreground="Red" FontSize="12" 
                 Grid.Row="2" Grid.Column="2" Margin="0,2,0,0"
                 VerticalAlignment="Top" Visibility="Collapsed"/>
