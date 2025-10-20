@@ -1203,24 +1203,19 @@
     ]
   },
   "packageFolders": {
-    "C:\\Users\\Mezzc\\.nuget\\packages\\": {},
-    "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages": {}
+    "C:\\Users\\John Cedric Lorenzo\\.nuget\\packages\\": {}
   },
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\Mezzc\\Documents\\Capstone\\Capstone\\Capstone.csproj",
+      "projectUniqueName": "C:\\Users\\John Cedric Lorenzo\\OneDrive\\Documents\\Molave-desktop\\Capstone\\Capstone.csproj",
       "projectName": "Capstone",
-      "projectPath": "C:\\Users\\Mezzc\\Documents\\Capstone\\Capstone\\Capstone.csproj",
-      "packagesPath": "C:\\Users\\Mezzc\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\Mezzc\\Documents\\Capstone\\Capstone\\obj\\",
+      "projectPath": "C:\\Users\\John Cedric Lorenzo\\OneDrive\\Documents\\Molave-desktop\\Capstone\\Capstone.csproj",
+      "packagesPath": "C:\\Users\\John Cedric Lorenzo\\.nuget\\packages\\",
+      "outputPath": "C:\\Users\\John Cedric Lorenzo\\OneDrive\\Documents\\Molave-desktop\\Capstone\\obj\\",
       "projectStyle": "PackageReference",
-      "fallbackFolders": [
-        "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
-      ],
       "configFilePaths": [
-        "C:\\Users\\Mezzc\\AppData\\Roaming\\NuGet\\NuGet.Config",
-        "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
+        "C:\\Users\\John Cedric Lorenzo\\AppData\\Roaming\\NuGet\\NuGet.Config",
         "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
       ],
       "originalTargetFrameworks": [
@@ -1228,7 +1223,6 @@
       ],
       "sources": {
         "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
-        "C:\\Program Files\\dotnet\\library-packs": {},
         "https://api.nuget.org/v3/index.json": {}
       },
       "frameworks": {
@@ -1293,7 +1287,7 @@
             "privateAssets": "none"
           }
         },
-        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\9.0.306/PortableRuntimeIdentifierGraph.json"
+        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\9.0.305/PortableRuntimeIdentifierGraph.json"
       }
     }
   }

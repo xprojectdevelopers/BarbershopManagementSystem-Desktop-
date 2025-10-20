@@ -1,4 +1,5 @@
-﻿using Supabase;
+﻿using Microsoft.Win32;
+using Supabase;
 using Supabase.Postgrest;
 using Supabase.Postgrest.Attributes;
 using Supabase.Postgrest.Models;
@@ -6,10 +7,13 @@ using System;
 using System.Collections.ObjectModel;
 using System.Configuration;
 using System.Linq;
+using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
+using Microsoft.Win32;
+using System.IO;
 
 namespace Capstone
 {
@@ -62,24 +66,29 @@ namespace Capstone
 
             try
             {
-                // Fetch email subscribers (ID = long)
+                // Fetch email subscribers (website)
                 var emailResult = await supabase.From<SubscriberEmail>().Get();
-                var emails = emailResult.Models;
+                var emails = emailResult.Models.ToList();
 
-                // Fetch mobile subscribers (user_id = long)
+                // Fetch mobile subscribers (mobile)
                 var mobileResult = await supabase.From<SubscriberMobile>().Get();
-                var mobiles = mobileResult.Models;
+                var mobiles = mobileResult.Models.ToList();
 
-                // Combine into grid items
                 subscribersList.Clear();
-                foreach (var email in emails)
+
+                int maxCount = Math.Max(emails.Count, mobiles.Count);
+
+                // Combine them row by row
+                for (int i = 0; i < maxCount; i++)
                 {
-                    // Match mobile by user_id (long)
-                    var mobile = mobiles.FirstOrDefault(m => m.UserId == email.Id);
+                    string email = i < emails.Count ? emails[i].Email : "";
+                    string contact = i < mobiles.Count ? mobiles[i].ContactNumber : "";
+
+                    // Add combined row
                     subscribersList.Add(new SubscriberGridItem
                     {
-                        Email = email.Email,
-                        ContactNumber = mobile?.ContactNumber ?? ""
+                        Email = email,
+                        ContactNumber = contact
                     });
                 }
 
@@ -151,13 +160,17 @@ namespace Capstone
         public class SubscriberMobile : BaseModel
         {
             [PrimaryKey("id", false)]
-            public long Id { get; set; }
+            [Column("id")]
+            public Guid Id { get; set; } // UUID -> use Guid
 
             [Column("user_id")]
-            public long UserId { get; set; } // long matches subscribers.id
+            public Guid UserId { get; set; }
 
             [Column("contact_number")]
             public string ContactNumber { get; set; } = string.Empty;
+
+            [Column("created_at")]
+            public DateTime? CreatedAt { get; set; }
         }
 
         // 🔹 Grid item for DataGrid
@@ -166,5 +179,50 @@ namespace Capstone
             public string Email { get; set; } = string.Empty;
             public string ContactNumber { get; set; } = string.Empty;
         }
+
+        private void BackButton_Click(object sender, System.Windows.Input.MouseButtonEventArgs e)
+        {
+            Customers customerWindow = new Customers();
+            customerWindow.Show();
+            this.Close();
+        }
+
+        private void ExportButton_Click(object sender, RoutedEventArgs e)
+        {
+            // Ask where to save the CSV file
+            SaveFileDialog saveFileDialog = new SaveFileDialog
+            {
+                Filter = "CSV files (*.csv)|*.csv",
+                FileName = "subscribers_export.csv"
+            };
+
+            if (saveFileDialog.ShowDialog() == true)
+            {
+                try
+                {
+                    StringBuilder csvContent = new StringBuilder();
+                    csvContent.AppendLine("Email,Contact Number");
+
+                    // Loop through DataGrid items
+                    foreach (var item in SubscribersGrid.Items)
+                    {
+                        dynamic row = item;
+                        string email = row.Email != null ? row.Email.ToString() : "";
+                        string contact = row.ContactNumber != null ? row.ContactNumber.ToString() : "";
+                        csvContent.AppendLine($"{email},{contact}");
+                    }
+
+                    // Save to file
+                    File.WriteAllText(saveFileDialog.FileName, csvContent.ToString(), Encoding.UTF8);
+
+                    MessageBox.Show("Subscribers successfully exported!", "Export Complete", MessageBoxButton.OK, MessageBoxImage.Information);
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show("Error exporting data: " + ex.Message, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                }
+            }
+        }
     }
 }
+

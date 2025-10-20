@@ -4,17 +4,17 @@
 winexe
 C#
 .cs
-C:\Users\Mezzc\Documents\Capstone\Capstone\obj\Debug\net8.0-windows\
+C:\Users\John Cedric Lorenzo\OneDrive\Documents\Molave-desktop\Capstone\obj\Debug\net8.0-windows\
 Capstone
 none
 false
 TRACE;DEBUG;NET;NET8_0;NETCOREAPP;WINDOWS;WINDOWS7_0;NET5_0_OR_GREATER;NET6_0_OR_GREATER;NET7_0_OR_GREATER;NET8_0_OR_GREATER;NETCOREAPP3_0_OR_GREATER;NETCOREAPP3_1_OR_GREATER;WINDOWS7_0_OR_GREATER
-C:\Users\Mezzc\Documents\Capstone\Capstone\App.xaml
+C:\Users\John Cedric Lorenzo\OneDrive\Documents\Molave-desktop\Capstone\App.xaml
 35221776769
 
 40762132567
-217211380331
+217-168853002
 AddEmployee.xaml;AddItem.xaml;AppointmentOptions\Appointments.xaml;AppointmentOptions\Appointment_Records.xaml;AppointmentOptions\AssignNew_Service.xaml;AppointmentOptions\Book_Appointment.xaml;AppointmentOptions\Manage_Services.xaml;AppointmentOptions\Service_Description.xaml;AttendanceReport.xaml;Customers.xaml;delete.xaml;DeleteSuccessfull.xaml;EMenu.xaml;EmployeeProfile.xaml;Inventory.xaml;ItemPurchasedSuccessful.xaml;ItemSaleSuccessful.xaml;ItemSuccessful.xaml;ItemSuccessfulDelete.xaml;ItemSuccessfulUpdate.xaml;ListSubscribers.xaml;LoginForm.xaml;ManageItem.xaml;Menu.xaml;ModalsNotification.xaml;ModalsSetting.xaml;notfound.xaml;notfoundItem.xaml;Payroll.xaml;PurchaseOrders.xaml;SaleItem.xaml;succesfull.xaml;SuccessQuickMessage.xaml;UpdateSuccessful.xaml;Views\PayrollHistory.xaml;
 
-True
+False
 

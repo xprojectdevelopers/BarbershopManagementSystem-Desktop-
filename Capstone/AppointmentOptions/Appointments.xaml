@@ -6,7 +6,7 @@
         xmlns:local="clr-namespace:Capstone"
         xmlns:custom="clr-namespace:Capstone.CustomControls"
         mc:Ignorable="d"
-        Title="Inventory" Height="700" Width="1280"
+        Title="Appointments" Height="700" Width="1280"
         WindowState="Maximized"
         ResizeMode="CanResize"
         Background="White">
@@ -44,22 +44,19 @@
                 </Setter.Value>
             </Setter>
         </Style>
-        
-        <!-- Simple icon style for top bar (no converter needed) -->
+
+        <!-- Simple icon style for top bar -->
         <Style x:Key="TopBarIcon" TargetType="Image">
             <Setter Property="Width" Value="24"/>
             <Setter Property="Height" Value="24"/>
         </Style>
     </Window.Resources>
-    
+
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
-            <!-- Header Section -->
             <RowDefinition Height="Auto"/>
-            <!-- UniformGrid Section -->
             <RowDefinition Height="*"/>
-            <!-- DataGrid Section -->
         </Grid.RowDefinitions>
 
         <!-- Header Section -->
@@ -72,56 +69,47 @@
                     <ColumnDefinition Width="Auto"/>
                 </Grid.ColumnDefinitions>
 
-                <!-- Home - on the left side -->
+                <!-- Home -->
                 <StackPanel Orientation="Horizontal" Grid.Column="0" VerticalAlignment="Center"
                             MouseLeftButtonUp="Home_Click" Cursor="Hand" Margin="0,0,15,0">
                     <Image Source="/Icon/house.png" Width="30" Height="30"/>
                     <Label Content="Home" FontWeight="Bold" FontSize="20" VerticalAlignment="Center" Margin="5,0,0,0"/>
                 </StackPanel>
 
-                <!-- Empty space in middle -->
+                <!-- Spacer -->
                 <StackPanel Grid.Column="1"/>
 
-                <Grid>
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="*"/>
-                        <ColumnDefinition Width="Auto"/>
-                        <ColumnDefinition Width="Auto"/>
-                    </Grid.ColumnDefinitions>
-
-                    <!-- Notification Icon -->
-                    <Button 
-                    Margin="1060,0,0,0" 
-                    Style="{StaticResource ResponsiveButton}"
-                    ToolTip="Notifications"
-                    Click="Notification_Click" Grid.ColumnSpan="3" HorizontalAlignment="Left">
-                        <Image Source="/Icon/bell.png" Style="{StaticResource TopBarIcon}"/>
-                    </Button>
-
-                    <!-- Settings Icon -->
-                    <Button  
-                        Margin="1095,0,0,0" 
+                <!-- Notification Icon -->
+                <Button Grid.Column="2"
                         Style="{StaticResource ResponsiveButton}"
-                        ToolTip="Settings" Grid.ColumnSpan="3" HorizontalAlignment="Left" Click="Setting_Click">
-                        <Image Source="/Icon/gear.png" Style="{StaticResource TopBarIcon}"/>
-                    </Button>
-                </Grid>
+                        ToolTip="Notifications"
+                        Click="Notification_Click"
+                        Margin="0,0,15,0">
+                    <Image Source="/Icon/bell.png" Style="{StaticResource TopBarIcon}"/>
+                </Button>
+
+                <!-- Settings Icon -->
+                <Button Grid.Column="3"
+                        Style="{StaticResource ResponsiveButton}"
+                        ToolTip="Settings"
+                        Click="Setting_Click">
+                    <Image Source="/Icon/gear.png" Style="{StaticResource TopBarIcon}"/>
+                </Button>
             </Grid>
 
-            <!-- Page Title -->
             <Label Content="Appointments" FontSize="20" FontWeight="Bold" Margin="20,20,20,15"/>
         </StackPanel>
 
         <!-- UniformGrid Section -->
         <UniformGrid Grid.Row="1" Columns="3" Rows="1" Margin="55,-20,55,20" Height="200">
-            <!-- Employees Profile -->
+            <!-- Book Appointment -->
             <Border BorderBrush="#000" BorderThickness="1" CornerRadius="8" Padding="15" Margin="5">
                 <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
                     <Image Source="/Icon/Book_Appointment.png" Stretch="Uniform" Width="120" Height="100"/>
-                    <Button Content="Book Appoinment"
+                    <Button Content="Book Appointment"
                             Background="Blue" Foreground="White"
-                            FontWeight="Bold" Height="40" Width="160" Margin="0,10,0,0" Click="Book_Click"
-                            Cursor="Hand">
+                            FontWeight="Bold" Height="40" Width="160" Margin="0,10,0,0"
+                            Cursor="Hand" Click="Book_Click">
                         <Button.Template>
                             <ControlTemplate TargetType="Button">
                                 <Border Background="{TemplateBinding Background}" CornerRadius="15">
@@ -133,14 +121,14 @@
                 </StackPanel>
             </Border>
 
-            <!-- Payroll History -->
+            <!-- Appointment Records -->
             <Border BorderBrush="#000" BorderThickness="1" CornerRadius="8" Padding="15" Margin="5">
                 <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
                     <Image Source="/Icon/Appointment_Records.png" Stretch="Uniform" Width="120" Height="100"/>
-                    <Button Content="Appoinment Records"
-                            Background="Black" Foreground="White" Click="Record_Click"
+                    <Button Content="Appointment Records"
+                            Background="Black" Foreground="White"
                             FontWeight="Bold" Height="40" Width="160" Margin="0,10,0,0"
-                             Cursor="Hand">
+                            Cursor="Hand" Click="Record_Click">
                         <Button.Template>
                             <ControlTemplate TargetType="Button">
                                 <Border Background="{TemplateBinding Background}" CornerRadius="15">
@@ -152,15 +140,14 @@
                 </StackPanel>
             </Border>
 
-
-            <!-- Attendance Report -->
+            <!-- Manage Service -->
             <Border BorderBrush="#000" BorderThickness="1" CornerRadius="8" Padding="15" Margin="5">
                 <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
                     <Image Source="/Icon/Manage_Service.png" Stretch="Uniform" Width="120" Height="100"/>
-                    <Button Content="Manage Service" Click="Service_Click"
+                    <Button Content="Manage Service"
                             Background="Black" Foreground="White"
                             FontWeight="Bold" Height="40" Width="160" Margin="0,10,0,0"
-                             Cursor="Hand">
+                            Cursor="Hand" Click="Service_Click">
                         <Button.Template>
                             <ControlTemplate TargetType="Button">
                                 <Border Background="{TemplateBinding Background}" CornerRadius="15">
@@ -176,29 +163,40 @@
         <!-- DataGrid Section -->
         <Border Grid.Row="2" BorderBrush="Black" BorderThickness="1" Padding="20" CornerRadius="8" Margin="55,-10,55,30">
             <StackPanel>
-                <TextBlock Text="Appoinment Request"
-                           FontSize="20" FontWeight="Bold"
-                           HorizontalAlignment="Center" Margin="0,0,0,20"/>
+                <!-- Header with Title and Buttons -->
+                <Grid Margin="0,0,0,20">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="Auto"/>
+                    </Grid.ColumnDefinitions>
 
-                <Button Content="Refresh"
-Background="Black" Foreground="White"
-FontWeight="Bold"
-Cursor="Hand" Margin="970,-50,10,90" Grid.Row="2" Height="38" Width="140">
-                    <Button.Template>
-                        <ControlTemplate TargetType="{x:Type Button}">
-                            <Border Background="{TemplateBinding Background}" CornerRadius="15">
-                                <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                            </Border>
-                        </ControlTemplate>
-                    </Button.Template>
-                </Button>
-                
-                <DataGrid x:Name="EmployeeGrid" AutoGenerateColumns="False"
+                    <TextBlock Text="Appointment Request"
+                               FontSize="20" FontWeight="Bold"
+                               HorizontalAlignment="Left"
+                               VerticalAlignment="Center"/>
+
+                    <Button Content="Refresh"
+                            Background="Black" Foreground="White"
+                            FontWeight="Bold"
+                            Cursor="Hand" Height="38" Width="140"
+                            Click="Refresh_Click" Margin="970,0,18,0">
+                        <Button.Template>
+                            <ControlTemplate TargetType="Button">
+                                <Border Background="{TemplateBinding Background}" CornerRadius="15">
+                                    <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                </Border>
+                            </ControlTemplate>
+                        </Button.Template>
+                    </Button>
+                </Grid>
+
+                <DataGrid x:Name="AppointmentsGrid" AutoGenerateColumns="False"
                           CanUserAddRows="False" CanUserDeleteRows="False"
                           HeadersVisibility="Column"
                           RowHeight="35" FontSize="14"
                           BorderBrush="#DDD" BorderThickness="1"
-                          GridLinesVisibility="All" Margin="0,-60,0,0">
+                          GridLinesVisibility="All">
+
                     <DataGrid.ColumnHeaderStyle>
                         <Style TargetType="DataGridColumnHeader">
                             <Setter Property="Background" Value="Black"/>
@@ -208,18 +206,48 @@ Cursor="Hand" Margin="970,-50,10,90" Grid.Row="2" Height="38" Width="140">
                             <Setter Property="Padding" Value="5"/>
                         </Style>
                     </DataGrid.ColumnHeaderStyle>
+
                     <DataGrid.Columns>
-                        <DataGridTextColumn Header="Appointment Number" Binding="{Binding EmployeeID}" Width="*"/>
-                        <DataGridTextColumn Header="Customer Badge" Binding="{Binding EmployeeName}" Width="*"/>
-                        <DataGridTextColumn Header="Customer Name" Binding="{Binding EmployeeRole}" Width="*"/>
+                        <DataGridTextColumn Header="Appointment Number" Binding="{Binding ReceiptCode}" Width="*"/>
+                        <DataGridTextColumn Header="Customer Badge" Binding="{Binding CustomerBadge}" Width="*"/>
+                        <DataGridTextColumn Header="Customer Name" Binding="{Binding CustomerName}" Width="*"/>
                         <DataGridTextColumn Header="Contact Number" Binding="{Binding ContactNumber}" Width="*"/>
-                        <DataGridTextColumn Header="Assigned Barber" Binding="{Binding EmergencyContactDisplay}" Width="*"/>
-                        <DataGridTextColumn Header="Service" Binding="{Binding EmergencyContactDisplay}" Width="*"/>
-                        <DataGridTextColumn Header="Date" Binding="{Binding EmergencyContactDisplay}" Width="*"/>
-                        <DataGridTextColumn Header="Time" Binding="{Binding EmergencyContactDisplay}" Width="*"/>
-                        <DataGridTextColumn Header="Total" Binding="{Binding EmergencyContactDisplay}" Width="*"/>
-                        <DataGridTextColumn Header="Payment Method" Binding="{Binding EmergencyContactDisplay}" Width="*"/>
-                        <DataGridTextColumn Header="Action" Binding="{Binding EmergencyContactDisplay}" Width="*"/>
+                        <DataGridTextColumn Header="Assigned Barber" Binding="{Binding Barber}" Width="*"/>
+                        <DataGridTextColumn Header="Service" Binding="{Binding Service}" Width="*"/>
+                        <DataGridTextColumn Header="Date" Binding="{Binding Date, StringFormat='MM/dd/yyyy'}" Width="*"/>
+                        <DataGridTextColumn Header="Time" Binding="{Binding Time}" Width="*"/>
+                        <DataGridTextColumn Header="Total" Binding="{Binding Total, StringFormat='₱{0:F2}'}" Width="*"/>
+                        <DataGridTextColumn Header="Payment Methodism" Binding="{Binding PaymentMethod}" Width="*"/>
+
+                        <!-- Action Buttons -->
+                        <DataGridTemplateColumn Header="Action" Width="*">
+                            <DataGridTemplateColumn.CellTemplate>
+                                <DataTemplate>
+                                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                                        <!-- Reject Button -->
+                                        <Button Content="❌"
+                                                Background="Transparent"
+                                                BorderThickness="0"
+                                                Cursor="Hand"
+                                                Width="32" Height="32"
+                                                Margin="0,0,8,0"
+                                                Click="RejectAppointment_Click"
+                                                ToolTip="Reject Appointment"
+                                                FontSize="14"/>
+
+                                        <!-- Approve Button -->
+                                        <Button Content="✅"
+                                                Background="Transparent"
+                                                BorderThickness="0"
+                                                Cursor="Hand"
+                                                Width="32" Height="32"
+                                                Click="ApproveAppointment_Click"
+                                                ToolTip="Approve Appointment"
+                                                FontSize="14"/>
+                                    </StackPanel>
+                                </DataTemplate>
+                            </DataGridTemplateColumn.CellTemplate>
+                        </DataGridTemplateColumn>
                     </DataGrid.Columns>
                 </DataGrid>
 
@@ -230,10 +258,10 @@ Cursor="Hand" Margin="970,-50,10,90" Grid.Row="2" Height="38" Width="140">
 
         <!-- Gray Overlay for Modal Effect -->
         <Border x:Name="ModalOverlay"
-        Grid.RowSpan="3"
-        Background="#80000000"
-        Visibility="Collapsed"
-        IsHitTestVisible="True"
-        MouseLeftButtonDown="ModalOverlay_Click" Grid.ColumnSpan="2"/>
+                Grid.RowSpan="3"
+                Background="#80000000"
+                Visibility="Collapsed"
+                IsHitTestVisible="True"
+                MouseLeftButtonDown="ModalOverlay_Click"/>
     </Grid>
 </Window>
