@@ -96,7 +96,7 @@
                     <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center">
                         <!-- Dynamic employee count -->
                         <TextBlock x:Name="TotalEmployeesText" Text="0" FontSize="64" FontWeight="Bold"/>
-                        <TextBlock Text="Total Employees" FontSize="16" FontWeight="Bold"/>
+                        <TextBlock Text="Total Barber" FontSize="16" FontWeight="Bold"/>
                     </StackPanel>
                 </Border>
 

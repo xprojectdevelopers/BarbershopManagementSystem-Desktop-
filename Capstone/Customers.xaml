@@ -57,7 +57,7 @@
                         </Grid.ColumnDefinitions>
                         <StackPanel Grid.Column="0" VerticalAlignment="Center">
                             <TextBlock Text="List of Subscribes" FontSize="24" FontWeight="Bold"/>
-                            <TextBlock Text="Registered subscribers of Molave Street’s Barbers."
+                            <TextBlock Text="Registered subscribers of Molave Street's Barbers."
                                        FontSize="14" Foreground="Gray" Margin="0,5,0,15" TextWrapping="Wrap"/>
                             <Button Content="See All Subscribers"
                                     Padding="10,5"
@@ -65,7 +65,7 @@
                                     FontWeight="Bold" Width="170" Height="40"
                                     HorizontalAlignment="Left" Cursor="Hand"
                                     Click="SeeAllSubscribers_Click">
-                                
+
                                 <Button.Template>
                                     <ControlTemplate TargetType="Button">
                                         <Border Background="{TemplateBinding Background}" CornerRadius="15" Padding="{TemplateBinding Padding}">
@@ -103,18 +103,37 @@
             </Grid>
 
             <!-- 🔹 Customers Quick Message Table -->
-            <Border BorderBrush="Black" BorderThickness="1" Padding="20" CornerRadius="8" Margin="0,0,0,20" Height="299">
+            <Border BorderBrush="Black" BorderThickness="1" Padding="20" CornerRadius="8" Margin="0,0,0,20">
                 <StackPanel>
-                    <TextBlock Text="Customers Quick Message"
+                    <Grid Margin="0,0,0,20">
+                        <TextBlock Text="Customers Quick Message"
                                FontSize="20" FontWeight="Bold"
                                HorizontalAlignment="Center" Margin="0,0,0,20"/>
+                        <Button Content="Refresh"
+            Background="Black" Foreground="White"
+            FontWeight="Bold"
+            Cursor="Hand" Height="38" Width="140"
+            Click="Refresh_Click"
+            HorizontalAlignment="Right" VerticalAlignment="Center">
+                            <Button.Template>
+                                <ControlTemplate TargetType="Button">
+                                    <Border Background="{TemplateBinding Background}" CornerRadius="15">
+                                        <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                    </Border>
+                                </ControlTemplate>
+                            </Button.Template>
+                        </Button>
+                    </Grid>
 
                     <DataGrid x:Name="CustomerGrid" AutoGenerateColumns="False"
                               CanUserAddRows="False" CanUserDeleteRows="False"
                               HeadersVisibility="Column"
                               RowHeight="35" FontSize="14"
                               BorderBrush="#DDD" BorderThickness="1"
-                              GridLinesVisibility="All">
+                              GridLinesVisibility="All"
+                              Height="200"
+                              VerticalScrollBarVisibility="Disabled"
+                              HorizontalScrollBarVisibility="Disabled">
                         <DataGrid.ColumnHeaderStyle>
                             <Style TargetType="DataGridColumnHeader">
                                 <Setter Property="Background" Value="Black"/>
@@ -148,7 +167,7 @@
                     <StackPanel x:Name="PaginationPanel"
                         Orientation="Horizontal"
                         HorizontalAlignment="Center"
-                        Margin="0,10,0,0"/>
+                        Margin="0,15,0,0"/>
 
                 </StackPanel>
             </Border>

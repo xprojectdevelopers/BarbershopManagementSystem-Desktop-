@@ -4,7 +4,6 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Capstone"
-        xmlns:custom="clr-namespace:Capstone.CustomControls"
         mc:Ignorable="d"
         Title="Appointments" Height="700" Width="1280"
         WindowState="Maximized"
@@ -26,10 +25,10 @@
                 <Setter.Value>
                     <ControlTemplate TargetType="Button">
                         <Border Background="{TemplateBinding Background}" 
-                        BorderBrush="{TemplateBinding BorderBrush}"
-                        BorderThickness="{TemplateBinding BorderThickness}"
-                        Padding="{TemplateBinding Padding}"
-                        CornerRadius="20">
+                                BorderBrush="{TemplateBinding BorderBrush}"
+                                BorderThickness="{TemplateBinding BorderThickness}"
+                                Padding="{TemplateBinding Padding}"
+                                CornerRadius="20">
                             <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
                         </Border>
                         <ControlTemplate.Triggers>
@@ -76,7 +75,6 @@
                     <Label Content="Home" FontWeight="Bold" FontSize="20" VerticalAlignment="Center" Margin="5,0,0,0"/>
                 </StackPanel>
 
-                <!-- Spacer -->
                 <StackPanel Grid.Column="1"/>
 
                 <!-- Notification Icon -->
@@ -100,9 +98,9 @@
             <Label Content="Appointments" FontSize="20" FontWeight="Bold" Margin="20,20,20,15"/>
         </StackPanel>
 
-        <!-- UniformGrid Section -->
+        <!-- Cards Section -->
         <UniformGrid Grid.Row="1" Columns="3" Rows="1" Margin="55,-20,55,20" Height="200">
-            <!-- Book Appointment -->
+            <!-- Book Appointment Card -->
             <Border BorderBrush="#000" BorderThickness="1" CornerRadius="8" Padding="15" Margin="5">
                 <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
                     <Image Source="/Icon/Book_Appointment.png" Stretch="Uniform" Width="120" Height="100"/>
@@ -121,7 +119,7 @@
                 </StackPanel>
             </Border>
 
-            <!-- Appointment Records -->
+            <!-- Appointment Records Card -->
             <Border BorderBrush="#000" BorderThickness="1" CornerRadius="8" Padding="15" Margin="5">
                 <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
                     <Image Source="/Icon/Appointment_Records.png" Stretch="Uniform" Width="120" Height="100"/>
@@ -140,7 +138,7 @@
                 </StackPanel>
             </Border>
 
-            <!-- Manage Service -->
+            <!-- Manage Service Card -->
             <Border BorderBrush="#000" BorderThickness="1" CornerRadius="8" Padding="15" Margin="5">
                 <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
                     <Image Source="/Icon/Manage_Service.png" Stretch="Uniform" Width="120" Height="100"/>
@@ -161,9 +159,9 @@
         </UniformGrid>
 
         <!-- DataGrid Section -->
-        <Border Grid.Row="2" BorderBrush="Black" BorderThickness="1" Padding="20" CornerRadius="8" Margin="55,-10,55,30">
+        <Border x:Name="DataGridContainer" Grid.Row="2" BorderBrush="Black" BorderThickness="1" Padding="20" CornerRadius="8" Margin="55,-10,55,30">
             <StackPanel>
-                <!-- Header with Title and Buttons -->
+                <!-- Header with Title, Refresh, and Test Notification -->
                 <Grid Margin="0,0,0,20">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="*"/>
@@ -175,28 +173,47 @@
                                HorizontalAlignment="Left"
                                VerticalAlignment="Center"/>
 
-                    <Button Content="Refresh"
-                            Background="Black" Foreground="White"
-                            FontWeight="Bold"
-                            Cursor="Hand" Height="38" Width="140"
-                            Click="Refresh_Click" Margin="970,0,18,0">
-                        <Button.Template>
-                            <ControlTemplate TargetType="Button">
-                                <Border Background="{TemplateBinding Background}" CornerRadius="15">
-                                    <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                                </Border>
-                            </ControlTemplate>
-                        </Button.Template>
-                    </Button>
+                    <!-- Buttons on the right -->
+                    <StackPanel Orientation="Horizontal" Grid.Column="1" HorizontalAlignment="Right">
+                        <!-- Refresh Button -->
+                        <Button Content="Refresh"
+                                Background="Black" Foreground="White"
+                                FontWeight="Bold"
+                                Cursor="Hand" Height="38" Width="140"
+                                Click="Refresh_Click" Margin="0,0,10,0">
+                            <Button.Template>
+                                <ControlTemplate TargetType="Button">
+                                    <Border Background="{TemplateBinding Background}" CornerRadius="15">
+                                        <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                    </Border>
+                                </ControlTemplate>
+                            </Button.Template>
+                        </Button>
+
+                        <!-- Test Notification Button -->
+                        <Button Content="Test Notification"
+                                Background="DarkOrange" Foreground="White"
+                                FontWeight="Bold"
+                                Cursor="Hand" Height="38" Width="180"
+                                Click="TestNotificationButton_Click">
+                            <Button.Template>
+                                <ControlTemplate TargetType="Button">
+                                    <Border Background="{TemplateBinding Background}" CornerRadius="15">
+                                        <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                    </Border>
+                                </ControlTemplate>
+                            </Button.Template>
+                        </Button>
+                    </StackPanel>
                 </Grid>
 
+                <!-- Appointments DataGrid -->
                 <DataGrid x:Name="AppointmentsGrid" AutoGenerateColumns="False"
                           CanUserAddRows="False" CanUserDeleteRows="False"
                           HeadersVisibility="Column"
                           RowHeight="35" FontSize="14"
                           BorderBrush="#DDD" BorderThickness="1"
                           GridLinesVisibility="All">
-
                     <DataGrid.ColumnHeaderStyle>
                         <Style TargetType="DataGridColumnHeader">
                             <Setter Property="Background" Value="Black"/>
@@ -217,14 +234,13 @@
                         <DataGridTextColumn Header="Date" Binding="{Binding Date, StringFormat='MM/dd/yyyy'}" Width="*"/>
                         <DataGridTextColumn Header="Time" Binding="{Binding Time}" Width="*"/>
                         <DataGridTextColumn Header="Total" Binding="{Binding Total, StringFormat='₱{0:F2}'}" Width="*"/>
-                        <DataGridTextColumn Header="Payment Methodism" Binding="{Binding PaymentMethod}" Width="*"/>
+                        <DataGridTextColumn Header="Payment Method" Binding="{Binding PaymentMethod}" Width="*"/>
 
                         <!-- Action Buttons -->
                         <DataGridTemplateColumn Header="Action" Width="*">
                             <DataGridTemplateColumn.CellTemplate>
                                 <DataTemplate>
                                     <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
-                                        <!-- Reject Button -->
                                         <Button Content="❌"
                                                 Background="Transparent"
                                                 BorderThickness="0"
@@ -234,8 +250,6 @@
                                                 Click="RejectAppointment_Click"
                                                 ToolTip="Reject Appointment"
                                                 FontSize="14"/>
-
-                                        <!-- Approve Button -->
                                         <Button Content="✅"
                                                 Background="Transparent"
                                                 BorderThickness="0"

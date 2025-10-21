@@ -155,7 +155,7 @@ namespace Capstone
                 .From<BarbershopManagementSystem>()
                 .Get();
 
-            int total = result.Models.Count;
+            int total = result.Models.Count(e => e.EmployeeRole?.Equals("Barber", StringComparison.OrdinalIgnoreCase) == true);
             int cashierCount = result.Models.Count(e => e.EmployeeRole?.Equals("Cashier", StringComparison.OrdinalIgnoreCase) == true);
 
             TotalEmployeesText.Text = total.ToString();

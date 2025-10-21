@@ -12,7 +12,7 @@
 
     <Grid>
         <!-- Page Title -->
-        <Label Content="Payroll History" FontSize="20" FontWeight="Bold" Margin="65,100,0,15"/>
+        <Label Content="Payroll History" FontSize="20" FontWeight="Bold" Margin="65,100,0,175"/>
 
         <!-- Header Section -->
         <Grid Height="50" VerticalAlignment="Top" Margin="0,30,0,0">
@@ -41,7 +41,7 @@
             <Image Source="/Icon/gear.png" Width="30" Height="30" Grid.Column="3" VerticalAlignment="Center" Margin="0,0,60,0"/>
         </Grid>
 
-        <Border BorderBrush="Black" BorderThickness="1" Padding="20" CornerRadius="8" Margin="65,135,60,20">
+        <Border BorderBrush="Black" BorderThickness="1" Padding="20" CornerRadius="8" Margin="65,135,60,354">
             <StackPanel Margin="0,110,0,0">
                 <DataGrid x:Name="EmployeeGrid" AutoGenerateColumns="False"
       CanUserAddRows="False" CanUserDeleteRows="False"
@@ -59,15 +59,15 @@
                         </Style>
                     </DataGrid.ColumnHeaderStyle>
                     <DataGrid.Columns>
-                        <DataGridTextColumn Header="Employee ID" Binding="{Binding EmployeeID}" Width="*"/>
-                        <DataGridTextColumn Header="Employee Name" Binding="{Binding EmployeeName}" Width="*"/>
-                        <DataGridTextColumn Header="Role" Binding="{Binding EmployeeRole}" Width="*"/>
-                        <DataGridTextColumn Header="Gross Pay" Binding="{Binding ContactNumber}" Width="*"/>
-                        <DataGridTextColumn Header="Saving Fund" Binding="{Binding EmergencyContactDisplay}" Width="*"/>
-                        <DataGridTextColumn Header="Cash Advance" Binding="{Binding EmergencyContactDisplay}" Width="*"/>
-                        <DataGridTextColumn Header="Attendance Deduction" Binding="{Binding EmergencyContactDisplay}" Width="*"/>
-                        <DataGridTextColumn Header="Net Pay" Binding="{Binding EmergencyContactDisplay}" Width="*"/>
-                        <DataGridTextColumn Header="Date Release" Binding="{Binding EmergencyContactDisplay}" Width="*"/>
+                        <DataGridTextColumn Header="Employee ID" Binding="{Binding EmID}" Width="*"/>
+                        <DataGridTextColumn Header="Employee Name" Binding="{Binding Name}" Width="*"/>
+                        <DataGridTextColumn Header="Role" Binding="{Binding BRole}" Width="*"/>
+                        <DataGridTextColumn Header="Gross Pay" Binding="{Binding GrossPay ,StringFormat='₱ {0}'}" Width="*"/>
+                        <DataGridTextColumn Header="Saving Fund" Binding="{Binding SavingFund ,StringFormat='₱ {0}'}" Width="*"/>
+                        <DataGridTextColumn Header="Cash Advance" Binding="{Binding CashAdvance ,StringFormat='₱ {0}'}" Width="*"/>
+                        <DataGridTextColumn Header="Attendance Deduction" Binding="{Binding Absent ,StringFormat='₱ {0}'}" Width="*"/>
+                        <DataGridTextColumn Header="Net Pay" Binding="{Binding NetPay ,StringFormat='₱ {0}'}" Width="*"/>
+                        <DataGridTextColumn Header="Date Release" Binding="{Binding Release}" Width="*"/>
                     </DataGrid.Columns>
                 </DataGrid>
 
@@ -114,7 +114,7 @@
         Margin="1030,210,0,0"
         HorizontalAlignment="Left"
         VerticalAlignment="Top" 
-        Grid.Row="1"
+        Grid.Row="1" Click="ExportButton_Click"
         Foreground="Blue">
             <Button.Template>
                 <ControlTemplate TargetType="Button">

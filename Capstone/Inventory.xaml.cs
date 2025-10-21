@@ -234,6 +234,11 @@ namespace Capstone
             e.Handled = true;
         }
 
+        private async void Refresh_Click(object sender, RoutedEventArgs e)
+        {
+            await LoadEmployees();
+        }
+
         [Table("Item_Order")]
         public class BarbershopManagementSystem : BaseModel
         {

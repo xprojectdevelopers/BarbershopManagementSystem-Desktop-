@@ -148,7 +148,7 @@ namespace Capstone
             }
         }
 
-        // ✅ NEW: Async method to get current stock
+        // ✅ Get current stock from database
         private async Task<int> GetCurrentStock(string itemId)
         {
             try
@@ -179,7 +179,7 @@ namespace Capstone
             return 0;
         }
 
-        // ✅ UPDATED: Async validation with stock checking
+        // ✅ Async validation with stock checking
         private async Task<bool> ValidateInputs()
         {
             bool isValid = true;
@@ -234,10 +234,17 @@ namespace Capstone
                     int currentStock = await GetCurrentStock(selectedItem.Item_ID);
                     int requestedQty = int.Parse(txtQuantity.Text);
 
-                    // ✅ Validate if stock becomes 0 or negative after transaction
-                    if (currentStock == 0 || requestedQty >= currentStock)
+                    // ✅ Check if stock is 0
+                    if (currentStock == 0)
                     {
                         txtQuantityError.Text = "Cannot proceed. Item is out of stock.";
+                        txtQuantityError.Visibility = Visibility.Visible;
+                        isValid = false;
+                    }
+                    // ✅ Check if requested quantity exceeds available stock
+                    else if (requestedQty > currentStock)
+                    {
+                        txtQuantityError.Text = $"Insufficient stock. Only {currentStock} available.";
                         txtQuantityError.Visibility = Visibility.Visible;
                         isValid = false;
                     }
@@ -258,7 +265,7 @@ namespace Capstone
         {
             try
             {
-                // ✅ Now using async validation
+                // ✅ Use async validation with stock checking
                 if (!await ValidateInputs())
                 {
                     return;
@@ -278,7 +285,7 @@ namespace Capstone
                 // Get current quantity
                 int currentQuantity = await GetCurrentStock(selectedItem.Item_ID);
 
-                // Calculate new quantity (SUBTRACT)
+                // Calculate new quantity (SUBTRACT for Stock Out)
                 int newQuantity = currentQuantity - quantityToSubtract;
 
                 // Insert into Item_Order table

@@ -335,12 +335,12 @@
                         </Grid>
 
                         <!-- DataGrid -->
-                        <DataGrid AutoGenerateColumns="False"
-          CanUserAddRows="False" CanUserDeleteRows="False"
-          HeadersVisibility="Column"
-          RowHeight="35" FontSize="14"
-          BorderBrush="#DDD" BorderThickness="1"
-          GridLinesVisibility="All">
+                        <DataGrid x:Name="AppointmentDataGrid" AutoGenerateColumns="False"
+                          CanUserAddRows="False" CanUserDeleteRows="False"
+                          HeadersVisibility="Column"
+                          RowHeight="35" FontSize="14"
+                          BorderBrush="#DDD" BorderThickness="1"
+                          GridLinesVisibility="All">
                             <DataGrid.ColumnHeaderStyle>
                                 <Style TargetType="DataGridColumnHeader">
                                     <Setter Property="Background" Value="Black"/>
@@ -351,12 +351,44 @@
                                 </Style>
                             </DataGrid.ColumnHeaderStyle>
                             <DataGrid.Columns>
-                                <DataGridTextColumn Header="Date" Binding="{Binding ItemID}" Width="*"/>
-                                <DataGridTextColumn Header="Time" Binding="{Binding ItemName}" Width="*"/>
-                                <DataGridTextColumn Header="Customer Name" Binding="{Binding Category}" Width="*"/>
-                                <DataGridTextColumn Header="Contact Number" Binding="{Binding QuantityStock}" Width="*"/>
-                                <DataGridTextColumn Header="Assign Barber" Binding="{Binding SupplierName}" Width="*"/>
-                                <DataGridTextColumn Header="Appointment Status" Binding="{Binding Date}" Width="*"/>
+                                <DataGridTextColumn Header="Date" Binding="{Binding AppointmentDate}" Width="*"/>
+                                <DataGridTextColumn Header="Time" Binding="{Binding AppointmentTime}" Width="*"/>
+                                <DataGridTextColumn Header="Customer Name" Binding="{Binding CustomerName}" Width="*"/>
+                                <DataGridTextColumn Header="Contact Number" Binding="{Binding ContactNumber}" Width="*"/>
+                                <DataGridTextColumn Header="Assign Barber" Binding="{Binding BarberAssigned}" Width="*"/>
+                                <!-- Updated Appointment Status column with color -->
+                                <DataGridTextColumn Header="Appointment Status" Binding="{Binding AppointmentStatus}" Width="*">
+                                    <DataGridTextColumn.ElementStyle>
+                                        <Style TargetType="TextBlock">
+                                            <Style.Triggers>
+                                                <DataTrigger Binding="{Binding AppointmentStatus}" Value="On Going">
+                                                    <Setter Property="Foreground" Value="Black"/>
+                                                    <Setter Property="FontWeight" Value="Bold"/>
+                                                </DataTrigger>
+                                                <DataTrigger Binding="{Binding AppointmentStatus}" Value="Approved">
+                                                    <Setter Property="Foreground" Value="Blue"/>
+                                                    <Setter Property="FontWeight" Value="Bold"/>
+                                                </DataTrigger>
+                                                <DataTrigger Binding="{Binding AppointmentStatus}" Value="Declined">
+                                                    <Setter Property="Foreground" Value="Red"/>
+                                                    <Setter Property="FontWeight" Value="Bold"/>
+                                                </DataTrigger>
+                                                <DataTrigger Binding="{Binding AppointmentStatus}" Value="Cancelled">
+                                                    <Setter Property="Foreground" Value="Red"/>
+                                                    <Setter Property="FontWeight" Value="Bold"/>
+                                                </DataTrigger>
+                                                <DataTrigger Binding="{Binding AppointmentStatus}" Value="No Show">
+                                                    <Setter Property="Foreground" Value="Red"/>
+                                                    <Setter Property="FontWeight" Value="Bold"/>
+                                                </DataTrigger>
+                                                <DataTrigger Binding="{Binding AppointmentStatus}" Value="Completed">
+                                                    <Setter Property="Foreground" Value="Green"/>
+                                                    <Setter Property="FontWeight" Value="Bold"/>
+                                                </DataTrigger>
+                                            </Style.Triggers>
+                                        </Style>
+                                    </DataGridTextColumn.ElementStyle>
+                                </DataGridTextColumn>
                             </DataGrid.Columns>
                         </DataGrid>
 

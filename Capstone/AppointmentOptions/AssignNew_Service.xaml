@@ -202,14 +202,14 @@
                     </Grid.ColumnDefinitions>
 
                     <Label Content="Employee ID" FontSize="20" Grid.Row="0" Grid.Column="0" VerticalAlignment="Bottom" Margin="0,0,0,5"/>
-                    <ComboBox Grid.Row="1" Grid.Column="0" Height="47" FontSize="16" 
-                              SelectedIndex="-1" Style="{StaticResource TextBoxStyleComboBox}">
+                    <ComboBox x:Name="cmbItemID" Grid.Row="1" Grid.Column="0" Height="47" FontSize="16" 
+                              SelectedIndex="-1" Style="{StaticResource TextBoxStyleComboBox}"
+                              SelectionChanged="cmbItemID_SelectionChanged">
                         <ComboBoxItem IsEnabled="False" IsSelected="True" Foreground="Gray">Select Employee ID</ComboBoxItem>
-                        <ComboBoxItem>Aftershaves</ComboBoxItem>
                     </ComboBox>
-                    
+
                     <Label Content="Barber Nickname" FontSize="20" Grid.Row="0" Grid.Column="2" VerticalAlignment="Bottom" Margin="0,0,0,5"/>
-                    <TextBox FontSize="30" Grid.Row="1" Grid.Column="2" Height="47"/>
+                    <TextBox x:Name="txtBarberNickname" FontSize="30" Grid.Row="1" Grid.Column="2" Height="47" IsReadOnly="True"/>
                     <TextBlock x:Name="txtItemNameError" Foreground="Red" FontSize="12" 
                                Grid.Row="2" Grid.Column="0" Margin="0,2,0,0"
                                VerticalAlignment="Top" Visibility="Collapsed"/>
@@ -236,7 +236,7 @@
 
                     <!-- Supplier Name -->
                     <Label Content="Service" FontSize="20" Grid.Row="0" Grid.Column="0" VerticalAlignment="Bottom" Margin="0,0,0,5"/>
-                    <TextBox FontSize="30" Grid.Row="1" Grid.Column="0" Height="47"/>
+                    <TextBox x:Name="txtService" FontSize="30" Grid.Row="1" Grid.Column="0" Height="47"/>
 
                     <TextBlock x:Name="txtSupplierNameSame" Foreground="Red" FontSize="12" 
                                Grid.Row="2" Grid.Column="0" Margin="0,2,0,0"
@@ -244,7 +244,7 @@
 
                     <Label Content="Price" FontSize="20" Grid.Row="0" Grid.Column="2" VerticalAlignment="Bottom" Margin="0,0,0,5"/>
                     <Grid Grid.Row="1" Grid.Column="2">
-                        <TextBox 
+                        <TextBox x:Name="txtPrice"
                             FontSize="30" 
                             Height="47"
                             Padding="30,0,10,0"
@@ -287,7 +287,7 @@ Foreground="white">
                         </Button.Template>
                     </Button>
 
-                    <Button Content="Save" Cursor="Hand"
+                    <Button Content="Save" Cursor="Hand" Click="Save_Click"
 Width="205"
 Height="40"
 Margin="50,37,0,0"

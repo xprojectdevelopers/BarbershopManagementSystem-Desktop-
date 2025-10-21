@@ -1,20 +1,24 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\John Cedric Lorenzo\\OneDrive\\Documents\\Molave-desktop\\Capstone\\Capstone.csproj": {}
+    "C:\\capstone\\desktop\\Capstone\\Capstone.csproj": {}
   },
   "projects": {
-    "C:\\Users\\John Cedric Lorenzo\\OneDrive\\Documents\\Molave-desktop\\Capstone\\Capstone.csproj": {
+    "C:\\capstone\\desktop\\Capstone\\Capstone.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\John Cedric Lorenzo\\OneDrive\\Documents\\Molave-desktop\\Capstone\\Capstone.csproj",
+        "projectUniqueName": "C:\\capstone\\desktop\\Capstone\\Capstone.csproj",
         "projectName": "Capstone",
-        "projectPath": "C:\\Users\\John Cedric Lorenzo\\OneDrive\\Documents\\Molave-desktop\\Capstone\\Capstone.csproj",
-        "packagesPath": "C:\\Users\\John Cedric Lorenzo\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\John Cedric Lorenzo\\OneDrive\\Documents\\Molave-desktop\\Capstone\\obj\\",
+        "projectPath": "C:\\capstone\\desktop\\Capstone\\Capstone.csproj",
+        "packagesPath": "C:\\Users\\seanc\\.nuget\\packages\\",
+        "outputPath": "C:\\capstone\\desktop\\Capstone\\obj\\",
         "projectStyle": "PackageReference",
+        "fallbackFolders": [
+          "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
+        ],
         "configFilePaths": [
-          "C:\\Users\\John Cedric Lorenzo\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Users\\seanc\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
         ],
         "originalTargetFrameworks": [
@@ -22,6 +26,7 @@
         ],
         "sources": {
           "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
+          "C:\\Program Files\\dotnet\\library-packs": {},
           "https://api.nuget.org/v3/index.json": {}
         },
         "frameworks": {
