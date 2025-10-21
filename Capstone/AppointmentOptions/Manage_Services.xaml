@@ -353,7 +353,8 @@
                         </Grid>
 
                         <!-- DataGrid -->
-                        <DataGrid AutoGenerateColumns="False"
+                        <DataGrid x:Name="EmployeeGrid"
+          AutoGenerateColumns="False"
           CanUserAddRows="False" CanUserDeleteRows="False"
           HeadersVisibility="Column"
           RowHeight="35" FontSize="14"
@@ -369,11 +370,23 @@
                                 </Style>
                             </DataGrid.ColumnHeaderStyle>
                             <DataGrid.Columns>
-                                <DataGridTextColumn Header="Employee ID" Binding="{Binding ItemID}" Width="*"/>
-                                <DataGridTextColumn Header="Assigned Barber" Binding="{Binding ItemName}" Width="*"/>
-                                <DataGridTextColumn Header="Service" Binding="{Binding Category}" Width="*"/>
-                                <DataGridTextColumn Header="Price" Binding="{Binding QuantityStock}" Width="*"/>
-                                <DataGridTextColumn Header="Action" Binding="{Binding SupplierName}" Width="*"/>
+                                <DataGridTextColumn Header="Employee ID" Binding="{Binding EmiD}" Width="*"/>
+                                <DataGridTextColumn Header="Assigned Barber" Binding="{Binding BN}" Width="*"/>
+                                <DataGridTextColumn Header="Service" Binding="{Binding Service}" Width="*"/>
+                                <DataGridTextColumn Header="Price" Binding="{Binding Price}" Width="*"/>
+                                <DataGridTemplateColumn Header="Action" Width="1.5*">
+                                    <DataGridTemplateColumn.CellTemplate>
+                                        <DataTemplate>
+                                            <Button Width="30" Height="30"
+                                            Cursor="Hand"
+                                            Background="Transparent"
+                                            BorderThickness="0"
+                                            >
+                                                <Image Source="/Icon/PencilCircle.png" Width="20" Height="20" Cursor="Hand"/>
+                                            </Button>
+                                        </DataTemplate>
+                                    </DataGridTemplateColumn.CellTemplate>
+                                </DataGridTemplateColumn>
                             </DataGrid.Columns>
                         </DataGrid>
 

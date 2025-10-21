@@ -201,24 +201,26 @@
                         <ColumnDefinition Width="*"/>
                     </Grid.ColumnDefinitions>
 
+                    <!-- Employee ID Column -->
                     <Label Content="Employee ID" FontSize="20" Grid.Row="0" Grid.Column="0" VerticalAlignment="Bottom" Margin="0,0,0,5"/>
                     <ComboBox x:Name="cmbItemID" Grid.Row="1" Grid.Column="0" Height="47" FontSize="16" 
                               SelectedIndex="-1" Style="{StaticResource TextBoxStyleComboBox}"
                               SelectionChanged="cmbItemID_SelectionChanged">
                         <ComboBoxItem IsEnabled="False" IsSelected="True" Foreground="Gray">Select Employee ID</ComboBoxItem>
                     </ComboBox>
-
-                    <Label Content="Barber Nickname" FontSize="20" Grid.Row="0" Grid.Column="2" VerticalAlignment="Bottom" Margin="0,0,0,5"/>
-                    <TextBox x:Name="txtBarberNickname" FontSize="30" Grid.Row="1" Grid.Column="2" Height="47" IsReadOnly="True"/>
-                    <TextBlock x:Name="txtItemNameError" Foreground="Red" FontSize="12" 
+                    <TextBlock x:Name="cmbItemIDError" Foreground="Red" FontSize="12" 
                                Grid.Row="2" Grid.Column="0" Margin="0,2,0,0"
                                VerticalAlignment="Top" Visibility="Collapsed"/>
-                    <TextBlock x:Name="txtItemNameSame" Foreground="Red" FontSize="12" 
-                               Grid.Row="2" Grid.Column="0" Margin="0,2,0,0"
+
+                    <!-- Barber Nickname Column -->
+                    <Label Content="Barber Nickname" FontSize="20" Grid.Row="0" Grid.Column="2" VerticalAlignment="Bottom" Margin="0,0,0,5"/>
+                    <TextBox x:Name="txtBarberNickname" FontSize="30" Grid.Row="1" Grid.Column="2" Height="47" IsReadOnly="True"/>
+                    <TextBlock x:Name="txtBarberNicknameError" Foreground="Red" FontSize="12" 
+                               Grid.Row="2" Grid.Column="2" Margin="0,2,0,0"
                                VerticalAlignment="Top" Visibility="Collapsed"/>
                 </Grid>
 
-                <!-- Row 2: Supplier Name, Contact Number, Date -->
+                <!-- Row 2: Service and Price -->
                 <Grid Margin="200,-10,40,0">
                     <Grid.RowDefinitions>
                         <RowDefinition Height="Auto"/>
@@ -234,14 +236,32 @@
                         <ColumnDefinition Width="*"/>
                     </Grid.ColumnDefinitions>
 
-                    <!-- Supplier Name -->
+                    <!-- Service Column -->
                     <Label Content="Service" FontSize="20" Grid.Row="0" Grid.Column="0" VerticalAlignment="Bottom" Margin="0,0,0,5"/>
-                    <TextBox x:Name="txtService" FontSize="30" Grid.Row="1" Grid.Column="0" Height="47"/>
-
-                    <TextBlock x:Name="txtSupplierNameSame" Foreground="Red" FontSize="12" 
+                    <ComboBox x:Name="cmbService" Grid.Row="1" Grid.Column="0" Height="47" FontSize="16" 
+                    SelectedIndex="-1" Style="{StaticResource TextBoxStyleComboBox}">
+                        <ComboBoxItem>Haircut</ComboBoxItem>
+                        <ComboBoxItem>Haircut (Reservation)</ComboBoxItem>
+                        <ComboBoxItem>Haircut/Wash</ComboBoxItem>
+                        <ComboBoxItem>Haircut/Hot Towel</ComboBoxItem>
+                        <ComboBoxItem>Haircut/Hair Dye</ComboBoxItem>
+                        <ComboBoxItem>Haircut/Hair Color</ComboBoxItem>
+                        <ComboBoxItem>Haircut/Highlights</ComboBoxItem>
+                        <ComboBoxItem>Haircut/Bleaching</ComboBoxItem>
+                        <ComboBoxItem>Haircut/Perm</ComboBoxItem>
+                        <ComboBoxItem>Rebond/Short Hair</ComboBoxItem>
+                        <ComboBoxItem>Rebond/Long Hair</ComboBoxItem>
+                        <ComboBoxItem>Braid</ComboBoxItem>
+                        <ComboBoxItem IsEnabled="False" IsSelected="True" Foreground="Gray">Select Service</ComboBoxItem>
+                    </ComboBox>
+                    <TextBlock x:Name="cmbServiceError" Foreground="Red" FontSize="12" 
+                               Grid.Row="2" Grid.Column="0" Margin="0,2,0,0"
+                               VerticalAlignment="Top" Visibility="Collapsed"/>
+                    <TextBlock x:Name="cmbServiceSame" Foreground="Red" FontSize="12" 
                                Grid.Row="2" Grid.Column="0" Margin="0,2,0,0"
                                VerticalAlignment="Top" Visibility="Collapsed"/>
 
+                    <!-- Price Column -->
                     <Label Content="Price" FontSize="20" Grid.Row="0" Grid.Column="2" VerticalAlignment="Bottom" Margin="0,0,0,5"/>
                     <Grid Grid.Row="1" Grid.Column="2">
                         <TextBox x:Name="txtPrice"
@@ -258,6 +278,9 @@
                             Margin="10,0,0,0"
                             IsHitTestVisible="False"/>
                     </Grid>
+                    <TextBlock x:Name="txtPriceError" Foreground="Red" FontSize="12" 
+                    Grid.Row="2" Grid.Column="2" Margin="0,2,0,0"
+                    VerticalAlignment="Top" Visibility="Collapsed"/>
                 </Grid>
 
                 <StackPanel Orientation="Horizontal" Grid.Column="0" VerticalAlignment="Center" Margin="190,-10,0,0">

@@ -87,6 +87,14 @@ namespace Capstone.AppointmentOptions
                         Tag = item
                     });
                 }
+
+                // Load existing services
+                var servicesResult = await supabase.From<BarbershopManagementSystem>().Get();
+                employees.Clear();
+                foreach (var service in servicesResult.Models)
+                {
+                    employees.Add(service);
+                }
             }
             catch (Exception ex)
             {
@@ -115,6 +123,11 @@ namespace Capstone.AppointmentOptions
 
             try
             {
+                if (!await ValidateInputs())
+                {
+                    return;
+                }
+
                 // Set saving flag and disable button
                 isSaving = true;
                 Button saveButton = (Button)sender;
@@ -124,7 +137,7 @@ namespace Capstone.AppointmentOptions
                 {
                     EmiD = cmbItemID.Text.Trim(),
                     BN = txtBarberNickname.Text.Trim(),
-                    Service = txtService.Text.Trim(),
+                    Service = cmbService.Text.Trim(),
                     Price = txtPrice.Text.Trim(),
                 };
 
@@ -179,8 +192,81 @@ namespace Capstone.AppointmentOptions
         {
             cmbItemID.SelectedIndex = 0;
             txtBarberNickname.Clear();
-            txtService.Clear();
+            cmbService.SelectedIndex = 0;
             txtPrice.Clear();
+        }
+
+        private async Task<bool> ValidateInputs()
+        {
+            bool isValid = true;
+
+            // Hide all error messages first
+            cmbItemIDError.Visibility = Visibility.Collapsed;
+            txtBarberNicknameError.Visibility = Visibility.Collapsed;
+            cmbServiceError.Visibility = Visibility.Collapsed;
+            cmbServiceSame.Visibility = Visibility.Collapsed;
+            txtPriceError.Visibility = Visibility.Collapsed;
+
+            // Validate Employee ID ComboBox
+            if (cmbItemID.SelectedIndex <= 0)
+            {
+                cmbItemIDError.Text = "Please select an Employee ID";
+                cmbItemIDError.Visibility = Visibility.Visible;
+                isValid = false;
+            }
+
+            // Validate Barber Nickname TextBox
+            if (string.IsNullOrWhiteSpace(txtBarberNickname.Text))
+            {
+                txtBarberNicknameError.Text = "Barber Nickname is required";
+                txtBarberNicknameError.Visibility = Visibility.Visible;
+                isValid = false;
+            }
+
+            // Validate Service ComboBox
+            if (cmbService.SelectedIndex < 0 || cmbService.SelectedIndex >= cmbService.Items.Count - 1)
+            {
+                cmbServiceError.Text = "Please select a Service";
+                cmbServiceError.Visibility = Visibility.Visible;
+                isValid = false;
+            }
+            else
+            {
+                // Check for duplicate Employee ID + Service combination
+                string selectedEmployeeId = cmbItemID.Text.Trim();
+                string selectedService = cmbService.Text.Trim();
+
+                bool isDuplicate = employees.Any(e =>
+                    e.EmiD == selectedEmployeeId &&
+                    e.Service == selectedService);
+
+                if (isDuplicate)
+                {
+                    cmbServiceSame.Text = "Service already exists for the selected barber";
+                    cmbServiceSame.Visibility = Visibility.Visible;
+                    isValid = false;
+                }
+            }
+
+            // Validate Price TextBox
+            if (string.IsNullOrWhiteSpace(txtPrice.Text))
+            {
+                txtPriceError.Text = "Price is required";
+                txtPriceError.Visibility = Visibility.Visible;
+                isValid = false;
+            }
+            else
+            {
+                // Validate if price is a valid number (no letters allowed)
+                if (!decimal.TryParse(txtPrice.Text.Trim(), out decimal price))
+                {
+                    txtPriceError.Text = "Please enter a valid number";
+                    txtPriceError.Visibility = Visibility.Visible;
+                    isValid = false;
+                }
+            }
+
+            return isValid;
         }
 
         private void ModalWindow_Closed(object sender, EventArgs e)
