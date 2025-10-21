@@ -189,21 +189,6 @@
                                 </ControlTemplate>
                             </Button.Template>
                         </Button>
-
-                        <!-- Test Notification Button -->
-                        <Button Content="Test Notification"
-                                Background="DarkOrange" Foreground="White"
-                                FontWeight="Bold"
-                                Cursor="Hand" Height="38" Width="180"
-                                Click="TestNotificationButton_Click">
-                            <Button.Template>
-                                <ControlTemplate TargetType="Button">
-                                    <Border Background="{TemplateBinding Background}" CornerRadius="15">
-                                        <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                                    </Border>
-                                </ControlTemplate>
-                            </Button.Template>
-                        </Button>
                     </StackPanel>
                 </Grid>
 

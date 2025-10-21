@@ -102,6 +102,11 @@ namespace Capstone.AppointmentOptions
             }
         }
 
+        private void btnCancel_Click(object sender, RoutedEventArgs e)
+        {
+            this.Close();
+        }
+
         private void cmbItemID_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             if (cmbItemID.SelectedItem != null && cmbItemID.SelectedItem is ComboBoxItem selectedItem)

@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Configuration;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
@@ -15,6 +16,7 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
+using static Capstone.Customers;
 using static Supabase.Postgrest.Constants;
 
 namespace Capstone.AppointmentOptions
@@ -23,6 +25,7 @@ namespace Capstone.AppointmentOptions
     {
         private Window currentModalWindow;
         private Supabase.Client? supabase;
+        private ObservableCollection<BarbershopManagementSystem> allEmployees = new ObservableCollection<BarbershopManagementSystem>();
         private ObservableCollection<BarbershopManagementSystem> employees = new ObservableCollection<BarbershopManagementSystem>();
 
         private int CurrentPage = 1;
@@ -62,25 +65,22 @@ namespace Capstone.AppointmentOptions
             await supabase.InitializeAsync();
         }
 
-
         private async Task LoadEmployees()
         {
             if (supabase == null) return;
 
             var result = await supabase
                 .From<BarbershopManagementSystem>()
-                .Order(x => x.EmiD, Ordering.Ascending) // always in registration order
+                .Order(x => x.EmiD, Ordering.Ascending)
                 .Get();
 
-            employees = new ObservableCollection<BarbershopManagementSystem>(result.Models);
+            allEmployees = new ObservableCollection<BarbershopManagementSystem>(result.Models);
+            employees = new ObservableCollection<BarbershopManagementSystem>(allEmployees);
 
-            // compute total pages
             TotalPages = (int)Math.Ceiling(employees.Count / (double)PageSize);
-
             LoadPage(CurrentPage);
             GeneratePaginationButtons();
         }
-
 
         private void LoadPage(int pageNumber)
         {
@@ -91,7 +91,7 @@ namespace Capstone.AppointmentOptions
                 .Take(PageSize)
                 .ToList();
 
-            // Add blank rows if kulang sa PageSize
+            // Add blank rows if less than PageSize
             while (pageData.Count < PageSize)
             {
                 pageData.Add(new BarbershopManagementSystem
@@ -106,8 +106,6 @@ namespace Capstone.AppointmentOptions
             EmployeeGrid.ItemsSource = pageData;
         }
 
-
-        // Generate ng buttons
         private void GeneratePaginationButtons()
         {
             PaginationPanel.Children.Clear();
@@ -119,13 +117,12 @@ namespace Capstone.AppointmentOptions
                     Content = i.ToString(),
                     Margin = new Thickness(5, 0, 5, 0),
                     Padding = new Thickness(10, 5, 10, 5),
-                    Foreground = System.Windows.Media.Brushes.Gray, // Default gray color
-                    FontWeight = (i == CurrentPage) ? FontWeights.Bold : FontWeights.Normal, // Bold for current page
+                    Foreground = System.Windows.Media.Brushes.Gray,
+                    FontWeight = (i == CurrentPage) ? FontWeights.Bold : FontWeights.Normal,
                     FontSize = 20,
                     Cursor = Cursors.Hand
                 };
 
-                // Custom template to remove default hover effects
                 var template = new ControlTemplate(typeof(Button));
                 var border = new FrameworkElementFactory(typeof(Border));
                 border.SetValue(Border.BackgroundProperty, System.Windows.Media.Brushes.Transparent);
@@ -140,7 +137,6 @@ namespace Capstone.AppointmentOptions
 
                 btn.Template = template;
 
-                // Add hover effect
                 btn.MouseEnter += (s, e) => btn.Foreground = System.Windows.Media.Brushes.Black;
                 btn.MouseLeave += (s, e) => btn.Foreground = System.Windows.Media.Brushes.Gray;
 
@@ -166,7 +162,6 @@ namespace Capstone.AppointmentOptions
         {
             ModalOverlay.Visibility = Visibility.Collapsed;
             currentModalWindow = null;
-
         }
 
         private void ModalOverlay_Click(object sender, MouseButtonEventArgs e)
@@ -218,6 +213,136 @@ namespace Capstone.AppointmentOptions
 
             currentModalWindow.Closed += ModalWindow_Closed;
             currentModalWindow.Show();
+        }
+
+        private async void DeleteService_Click(object sender, RoutedEventArgs e)
+        {
+            try
+            {
+                Button btn = sender as Button;
+                if (btn == null) return;
+
+                var service = btn.DataContext as BarbershopManagementSystem;
+                if (service == null || string.IsNullOrEmpty(service.EmiD))
+                {
+                    MessageBox.Show("Invalid service selected.");
+                    return;
+                }
+
+                var result = MessageBox.Show("⚠️ Do you want to delete this service?", "Confirm", MessageBoxButton.YesNo);
+
+                if (result == MessageBoxResult.Yes)
+                {
+                    if (supabase == null)
+                    {
+                        MessageBox.Show("Database connection not initialized.");
+                        return;
+                    }
+
+                    await supabase
+                        .From<BarbershopManagementSystem>()
+                        .Where(x => x.Id == service.Id)
+                        .Delete();
+
+                    await LoadEmployees();
+
+                    MessageBox.Show("✅ Service deleted successfully!");
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"❌ Error deleting service: {ex.Message}");
+            }
+        }
+
+        private void ServiceDes_Click(object sender, RoutedEventArgs e)
+        {
+            try
+            {
+                Button btn = sender as Button;
+                if (btn == null) return;
+
+                var service = btn.DataContext as BarbershopManagementSystem;
+                if (service == null || string.IsNullOrEmpty(service.EmiD))
+                {
+                    MessageBox.Show("Invalid service selected.");
+                    return;
+                }
+
+                ModalOverlay.Visibility = Visibility.Visible;
+
+                currentModalWindow = new Service_Description();
+                currentModalWindow.Owner = this;
+                currentModalWindow.WindowStartupLocation = WindowStartupLocation.CenterOwner;
+
+                currentModalWindow.Closed += ModalWindow_Closed;
+                currentModalWindow.Show();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"❌ Error opening service details: {ex.Message}");
+            }
+        }
+
+        private void Sort_Click(object sender, RoutedEventArgs e)
+        {
+            string searchText = txtEmployeeID.Text.Trim();
+
+            // If empty, show all
+            if (string.IsNullOrEmpty(searchText))
+            {
+                employees = new ObservableCollection<BarbershopManagementSystem>(allEmployees);
+
+                CurrentPage = 1;
+                TotalPages = (int)Math.Ceiling(employees.Count / (double)PageSize);
+                if (TotalPages == 0) TotalPages = 1;
+
+                LoadPage(CurrentPage);
+                GeneratePaginationButtons();
+                return;
+            }
+
+            // Search by Employee ID (works for single character or full ID)
+            var searchResults = allEmployees.Where(emp =>
+                !string.IsNullOrEmpty(emp.EmiD) &&
+                emp.EmiD.Contains(searchText, StringComparison.OrdinalIgnoreCase)).ToList();
+
+            // If NO results found - show notfound modal
+            if (searchResults.Count == 0)
+            {
+                ModalOverlay.Visibility = Visibility.Visible;
+
+                currentModalWindow = new notfound();
+                currentModalWindow.Owner = this;
+                currentModalWindow.WindowStartupLocation = WindowStartupLocation.CenterOwner;
+
+                currentModalWindow.Closed += ModalWindow_Closed;
+                currentModalWindow.Show();
+
+                ClearForm();
+                return; // Don't update table
+            }
+
+            // If results found - update table
+            employees = new ObservableCollection<BarbershopManagementSystem>(searchResults);
+
+            CurrentPage = 1;
+            TotalPages = (int)Math.Ceiling(employees.Count / (double)PageSize);
+            if (TotalPages == 0) TotalPages = 1;
+
+            LoadPage(CurrentPage);
+            GeneratePaginationButtons();
+        }
+
+        private void ClearForm()
+        {
+            txtEmployeeID.Text = string.Empty;
+            txtEmployeeIDError.Text = string.Empty;
+        }
+
+        private async void Refresh_Click(object sender, RoutedEventArgs e)
+        {
+            await LoadEmployees();
         }
 
         [Table("AssignNew_Service")]

@@ -118,7 +118,7 @@ namespace Capstone.AppointmentOptions
             }
         }
 
-        // ✅ Navigation handlers like your employee example
+        // ✅ Navigation handlers
         private void Home_Click(object sender, MouseButtonEventArgs e)
         {
             Menu menu = new Menu();
@@ -223,27 +223,60 @@ namespace Capstone.AppointmentOptions
 
             try
             {
-                selected.Status = newStatus;
+                // Create a new instance with updated status
+                var updatedAppointment = new AppointmentModel
+                {
+                    Id = selected.Id,
+                    CustomerId = selected.CustomerId,
+                    CustomerName = selected.CustomerName,
+                    ContactNumber = selected.ContactNumber,
+                    CustomerBadge = selected.CustomerBadge,
+                    Service = selected.Service,
+                    Barber = selected.Barber,
+                    Date = selected.Date,
+                    Time = selected.Time,
+                    Subtotal = selected.Subtotal,
+                    AppointmentFee = selected.AppointmentFee,
+                    Total = selected.Total,
+                    PaymentMethod = selected.PaymentMethod,
+                    ReceiptCode = selected.ReceiptCode,
+                    Status = newStatus,  // ✅ Updated status
+                    PushToken = selected.PushToken,
+                    CreatedAt = selected.CreatedAt
+                };
 
                 var updated = await supabase
                     .From<AppointmentModel>()
                     .Where(x => x.Id == selected.Id)
-                    .Update(selected);
+                    .Update(updatedAppointment);
 
                 if (updated.Models != null && updated.Models.Count > 0)
                 {
+                    // Remove from the current list and refresh
                     appointments.Remove(selected);
+
+                    // Recalculate pagination
+                    TotalPages = (int)Math.Ceiling(appointments.Count / (double)PageSize);
+
+                    // Adjust current page if needed
+                    if (CurrentPage > TotalPages && TotalPages > 0)
+                    {
+                        CurrentPage = TotalPages;
+                    }
+
                     LoadPage(CurrentPage);
-                    MessageBox.Show($"{newStatus} ✅ Appointment ID: {selected.Id}");
+                    GeneratePaginationButtons();
+
+                    MessageBox.Show($"✅ Appointment {newStatus}!\nID: {selected.Id}");
                 }
                 else
                 {
-                    MessageBox.Show("⚠️ Failed to update appointment. Check ID and column name.");
+                    MessageBox.Show("⚠️ Failed to update appointment. No rows affected.");
                 }
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"❌ Error updating appointment: {ex.Message}");
+                MessageBox.Show($"❌ Error updating appointment: {ex.Message}\n\nDetails: {ex.InnerException?.Message}");
             }
         }
 

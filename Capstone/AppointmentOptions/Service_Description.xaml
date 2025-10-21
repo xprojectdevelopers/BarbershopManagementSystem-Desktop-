@@ -181,7 +181,7 @@
     <Grid>
         <Border BorderBrush="Black" BorderThickness="1" Padding="20" CornerRadius="8" Margin="35,20,35,30">
             <StackPanel Margin="-20,20,0,0">
-                <TextBlock Text="Assign New Service"
+                <TextBlock Text="Service Description"
                    FontSize="30" FontWeight="Bold"
                    HorizontalAlignment="Center" Margin="0,10,0,20"/>
 
@@ -202,19 +202,19 @@
                     </Grid.ColumnDefinitions>
 
                     <Label Content="Employee ID" FontSize="20" Grid.Row="0" Grid.Column="0" VerticalAlignment="Bottom" Margin="0,0,0,5"/>
-                    <ComboBox Grid.Row="1" Grid.Column="0" Height="47" FontSize="16" 
-                              SelectedIndex="-1" Style="{StaticResource TextBoxStyleComboBox}">
+                    <ComboBox x:Name="cmbItemID" Grid.Row="1" Grid.Column="0" Height="47" FontSize="16" 
+          SelectedIndex="-1" Style="{StaticResource TextBoxStyleComboBox}"
+          SelectionChanged="cmbItemID_SelectionChanged">
                         <ComboBoxItem IsEnabled="False" IsSelected="True" Foreground="Gray">Select Employee ID</ComboBoxItem>
-                        <ComboBoxItem>Aftershaves</ComboBoxItem>
                     </ComboBox>
-
-                    <Label Content="Barber Nickname" FontSize="20" Grid.Row="0" Grid.Column="2" VerticalAlignment="Bottom" Margin="0,0,0,5"/>
-                    <TextBox FontSize="30" Grid.Row="1" Grid.Column="2" Height="47"/>
-                    <TextBlock x:Name="txtItemNameError" Foreground="Red" FontSize="12" 
+                    <TextBlock x:Name="cmbItemIDError" Foreground="Red" FontSize="12" 
                                Grid.Row="2" Grid.Column="0" Margin="0,2,0,0"
                                VerticalAlignment="Top" Visibility="Collapsed"/>
-                    <TextBlock x:Name="txtItemNameSame" Foreground="Red" FontSize="12" 
-                               Grid.Row="2" Grid.Column="0" Margin="0,2,0,0"
+
+                    <Label Content="Barber Nickname" FontSize="20" Grid.Row="0" Grid.Column="2" VerticalAlignment="Bottom" Margin="0,0,0,5"/>
+                    <TextBox x:Name="txtBarberNickname" FontSize="30" Grid.Row="1" Grid.Column="2" Height="47"/>
+                    <TextBlock x:Name="txtBarberNicknameError" Foreground="Red" FontSize="12" 
+                               Grid.Row="2" Grid.Column="2" Margin="0,2,0,0"
                                VerticalAlignment="Top" Visibility="Collapsed"/>
                 </Grid>
 
@@ -234,9 +234,31 @@
                         <ColumnDefinition Width="*"/>
                     </Grid.ColumnDefinitions>
 
-                    <!-- Supplier Name -->
+                    <!-- Service Column -->
                     <Label Content="Service" FontSize="20" Grid.Row="0" Grid.Column="0" VerticalAlignment="Bottom" Margin="0,0,0,5"/>
-                    <TextBox FontSize="30" Grid.Row="1" Grid.Column="0" Height="47"/>
+                    <ComboBox x:Name="cmbService" Grid.Row="1" Grid.Column="0" Height="47" FontSize="16" 
+SelectedIndex="-1" Style="{StaticResource TextBoxStyleComboBox}">
+                        <ComboBoxItem>Haircut</ComboBoxItem>
+                        <ComboBoxItem>Haircut (Reservation)</ComboBoxItem>
+                        <ComboBoxItem>Haircut/Wash</ComboBoxItem>
+                        <ComboBoxItem>Haircut/Hot Towel</ComboBoxItem>
+                        <ComboBoxItem>Haircut/Hair Dye</ComboBoxItem>
+                        <ComboBoxItem>Haircut/Hair Color</ComboBoxItem>
+                        <ComboBoxItem>Haircut/Highlights</ComboBoxItem>
+                        <ComboBoxItem>Haircut/Bleaching</ComboBoxItem>
+                        <ComboBoxItem>Haircut/Perm</ComboBoxItem>
+                        <ComboBoxItem>Rebond/Short Hair</ComboBoxItem>
+                        <ComboBoxItem>Rebond/Long Hair</ComboBoxItem>
+                        <ComboBoxItem>Braid</ComboBoxItem>
+                        <ComboBoxItem IsEnabled="False" IsSelected="True" Foreground="Gray">Select Service</ComboBoxItem>
+                    </ComboBox>
+                    <TextBlock x:Name="cmbServiceError" Foreground="Red" FontSize="12" 
+           Grid.Row="2" Grid.Column="0" Margin="0,2,0,0"
+           VerticalAlignment="Top" Visibility="Collapsed"/>
+                    <TextBlock x:Name="cmbServiceSame" Foreground="Red" FontSize="12" 
+           Grid.Row="2" Grid.Column="0" Margin="0,2,0,0"
+           VerticalAlignment="Top" Visibility="Collapsed"/>
+
 
                     <TextBlock x:Name="txtSupplierNameSame" Foreground="Red" FontSize="12" 
                                Grid.Row="2" Grid.Column="0" Margin="0,2,0,0"
@@ -244,7 +266,7 @@
 
                     <Label Content="Price" FontSize="20" Grid.Row="0" Grid.Column="2" VerticalAlignment="Bottom" Margin="0,0,0,5"/>
                     <Grid Grid.Row="1" Grid.Column="2">
-                        <TextBox 
+                        <TextBox x:Name="txtPrice"
                             FontSize="30" 
                             Height="47"
                             Padding="30,0,10,0"
@@ -258,6 +280,9 @@
                             Margin="10,0,0,0"
                             IsHitTestVisible="False"/>
                     </Grid>
+                    <TextBlock x:Name="txtPriceError" Foreground="Red" FontSize="12" 
+                    Grid.Row="2" Grid.Column="2" Margin="0,2,0,0"
+                    VerticalAlignment="Top" Visibility="Collapsed"/>
                 </Grid>
 
                 <StackPanel Orientation="Horizontal" Grid.Column="0" VerticalAlignment="Center" Margin="190,-10,0,0">
@@ -287,7 +312,7 @@ Foreground="white">
                         </Button.Template>
                     </Button>
 
-                    <Button Content="Update" Cursor="Hand"
+                    <Button Content="Update" Cursor="Hand" Click="Update_Click"
 Width="205"
 Height="40"
 Margin="50,37,0,0"
@@ -314,5 +339,12 @@ Foreground="white">
                 </StackPanel>
             </StackPanel>
         </Border>
+
+        <!-- Gray Overlay for Modal Effect -->
+        <Border x:Name="ModalOverlay"
+Grid.RowSpan="3"
+Background="#80000000"
+Visibility="Collapsed"
+IsHitTestVisible="True"/>
     </Grid>
 </Window>

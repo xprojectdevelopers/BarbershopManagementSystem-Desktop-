@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\Mezzc\\OneDrive\\Documents\\Desktop Barber\\Capstone\\Capstone.csproj": {}
+    "C:\\Users\\Mezzc\\Documents\\New folder (2)\\Capstone\\Capstone.csproj": {}
   },
   "projects": {
-    "C:\\Users\\Mezzc\\OneDrive\\Documents\\Desktop Barber\\Capstone\\Capstone.csproj": {
+    "C:\\Users\\Mezzc\\Documents\\New folder (2)\\Capstone\\Capstone.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\Mezzc\\OneDrive\\Documents\\Desktop Barber\\Capstone\\Capstone.csproj",
+        "projectUniqueName": "C:\\Users\\Mezzc\\Documents\\New folder (2)\\Capstone\\Capstone.csproj",
         "projectName": "Capstone",
-        "projectPath": "C:\\Users\\Mezzc\\OneDrive\\Documents\\Desktop Barber\\Capstone\\Capstone.csproj",
+        "projectPath": "C:\\Users\\Mezzc\\Documents\\New folder (2)\\Capstone\\Capstone.csproj",
         "packagesPath": "C:\\Users\\Mezzc\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\Mezzc\\OneDrive\\Documents\\Desktop Barber\\Capstone\\obj\\",
+        "outputPath": "C:\\Users\\Mezzc\\Documents\\New folder (2)\\Capstone\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
