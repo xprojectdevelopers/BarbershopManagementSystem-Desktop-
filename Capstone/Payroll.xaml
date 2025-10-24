@@ -174,14 +174,14 @@
                             </Button>
 
                             <Button Content="Export" Cursor="Hand" Width="205" Height="40"
-                                    Margin="830,37,0,0"
+                                    Margin="830,37,0,0" Click="ExportButton_Click"
                                     HorizontalAlignment="Left" VerticalAlignment="Top"
                                     Foreground="Blue">
                                 <Button.Template>
                                     <ControlTemplate TargetType="Button">
                                         <Border Background="White" BorderBrush="gray" BorderThickness="1">
                                             <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center">
-                                                <Image Source="/Icon/export (1).png" Width="16" Height="16" Margin="0,0,8,0" VerticalAlignment="Center"/>
+                                                <Image Source="/Icon/export.png" Width="16" Height="16" Margin="0,0,8,0" VerticalAlignment="Center"/>
                                                 <TextBlock Text="{TemplateBinding Content}" Foreground="{TemplateBinding Foreground}" VerticalAlignment="Center"/>
                                             </StackPanel>
                                         </Border>

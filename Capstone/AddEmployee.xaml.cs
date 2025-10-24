@@ -31,8 +31,27 @@ namespace Capstone
         public AddEmployee()
         {
             InitializeComponent();
-            Loaded += async (s, e) => await InitializeData(); // Initialize when window is loaded
-         
+            Loaded += async (s, e) => await InitializeData();
+
+            // Prevent leading zero removal
+            txtContactNumber.PreviewKeyDown += PhoneNumber_PreviewKeyDown;
+            txtEmergencyNumber.PreviewKeyDown += PhoneNumber_PreviewKeyDown;
+        }
+
+        // Add this method to handle phone number input
+        private void PhoneNumber_PreviewKeyDown(object sender, KeyEventArgs e)
+        {
+            TextBox textBox = sender as TextBox;
+
+            // Allow only numbers, backspace, delete, and navigation keys
+            if (!(e.Key >= Key.D0 && e.Key <= Key.D9) &&
+                !(e.Key >= Key.NumPad0 && e.Key <= Key.NumPad9) &&
+                e.Key != Key.Back && e.Key != Key.Delete &&
+                e.Key != Key.Left && e.Key != Key.Right &&
+                e.Key != Key.Tab)
+            {
+                e.Handled = true;
+            }
         }
 
         private async Task InitializeSupabaseAsync()
@@ -251,7 +270,7 @@ namespace Capstone
 
                     // Enable barber-related controls
                     cmbBarberExpertise.IsEnabled = true;
-                    
+
                     // Reset barber control colors to normal
                     cmbBarberExpertise.Foreground = Brushes.Black;
 
@@ -288,7 +307,7 @@ namespace Capstone
             }
         }
 
-        
+
         private static T FindVisualChild<T>(DependencyObject parent, string childName) where T : DependencyObject
         {
             if (parent != null)
@@ -382,20 +401,35 @@ namespace Capstone
                 isValid = false;
             }
 
+            // Enhanced Contact Number Validation
             if (string.IsNullOrWhiteSpace(newEmployee.Cnumber))
             {
                 ShowValidationError(txtContactNumberError, "Contact Number is required");
                 isValid = false;
             }
-            else if (!Regex.IsMatch(newEmployee.Cnumber, @"^[0-9]+$"))
+            else
             {
-                ShowValidationError(txtContactNumberError, "No special character and alphabet");
-                isValid = false;
-            }
-            else if (!Regex.IsMatch(newEmployee.Cnumber, @"^[0-9]{11}$"))
-            {
-                ShowValidationError(txtContactNumberError, "Contact Number must be 11 digits only");
-                isValid = false;
+                // Remove any whitespace
+                string cleanNumber = newEmployee.Cnumber.Trim();
+
+                // Check if it contains only digits
+                if (!Regex.IsMatch(cleanNumber, @"^[0-9]+$"))
+                {
+                    ShowValidationError(txtContactNumberError, "No special character and alphabet");
+                    isValid = false;
+                }
+                // Check if it's exactly 11 digits
+                else if (cleanNumber.Length != 11)
+                {
+                    ShowValidationError(txtContactNumberError, "Contact Number must be 11 digits only");
+                    isValid = false;
+                }
+                // Check if it starts with 0
+                else if (!cleanNumber.StartsWith("0"))
+                {
+                    ShowValidationError(txtContactNumberError, "Contact Number must start with 0");
+                    isValid = false;
+                }
             }
 
             if (string.IsNullOrWhiteSpace(newEmployee.Email))
@@ -415,20 +449,35 @@ namespace Capstone
                 isValid = false;
             }
 
+            // Enhanced Emergency Contact Number Validation
             if (string.IsNullOrWhiteSpace(newEmployee.ECnumber))
             {
                 ShowValidationError(txtEmergencyNumberError, "Emergency Contact Number is required");
                 isValid = false;
             }
-            else if (!Regex.IsMatch(newEmployee.ECnumber, @"^[0-9]+$"))
+            else
             {
-                ShowValidationError(txtEmergencyNumberError, "No special character and alphabet");
-                isValid = false;
-            }
-            else if (newEmployee.ECnumber.Length != 11)
-            {
-                ShowValidationError(txtEmergencyNumberError, "Emergency Contact Number must be 11 digits only");
-                isValid = false;
+                // Remove any whitespace
+                string cleanNumber = newEmployee.ECnumber.Trim();
+
+                // Check if it contains only digits
+                if (!Regex.IsMatch(cleanNumber, @"^[0-9]+$"))
+                {
+                    ShowValidationError(txtEmergencyNumberError, "No special character and alphabet");
+                    isValid = false;
+                }
+                // Check if it's exactly 11 digits
+                else if (cleanNumber.Length != 11)
+                {
+                    ShowValidationError(txtEmergencyNumberError, "Emergency Contact Number must be 11 digits only");
+                    isValid = false;
+                }
+                // Check if it starts with 0
+                else if (!cleanNumber.StartsWith("0"))
+                {
+                    ShowValidationError(txtEmergencyNumberError, "Emergency Contact Number must start with 0");
+                    isValid = false;
+                }
             }
 
             if (string.IsNullOrWhiteSpace(newEmployee.Eid))
@@ -583,10 +632,12 @@ namespace Capstone
                     Bdate = bdate.SelectedDate,
                     Gender = GetSelectedComboBoxValue(Gender),
                     Address = txtAddress.Text.Trim(),
-                    Cnumber = string.IsNullOrWhiteSpace(txtContactNumber.Text.Trim()) ? null : txtContactNumber.Text.Trim(),
+                    // Keep the leading zero by storing as string - trim but preserve the zero
+                    Cnumber = string.IsNullOrWhiteSpace(txtContactNumber.Text) ? null : txtContactNumber.Text.Trim(),
                     Email = txtEmail.Text.Trim(),
                     ECname = txtEmergencyName.Text.Trim(),
-                    ECnumber = string.IsNullOrWhiteSpace(txtEmergencyNumber.Text.Trim()) ? null : txtEmergencyNumber.Text.Trim(),
+                    // Keep the leading zero by storing as string - trim but preserve the zero
+                    ECnumber = string.IsNullOrWhiteSpace(txtEmergencyNumber.Text) ? null : txtEmergencyNumber.Text.Trim(),
                     DateHired = dateHiredPicker.SelectedDate,
                     Estatus = GetSelectedComboBoxValue(cmbEmploymentStatus),
                     Wsched = GetSelectedWorkSchedule()
@@ -617,6 +668,12 @@ namespace Capstone
                     isSaving = false;
                     return;
                 }
+
+                // Debug: Check what's actually being saved
+                System.Diagnostics.Debug.WriteLine($"Contact Number being saved: '{newEmployee.Cnumber}'");
+                System.Diagnostics.Debug.WriteLine($"Emergency Number being saved: '{newEmployee.ECnumber}'");
+                System.Diagnostics.Debug.WriteLine($"Contact Number Length: {newEmployee.Cnumber?.Length}");
+                System.Diagnostics.Debug.WriteLine($"Emergency Number Length: {newEmployee.ECnumber?.Length}");
 
                 // Save to Supabase database
                 var result = await supabase.From<BarbershopManagementSystem>().Insert(newEmployee);
@@ -680,7 +737,7 @@ namespace Capstone
             return null;
         }
 
-        
+
 
         private string GetSelectedWorkSchedule()
         {
@@ -728,7 +785,7 @@ namespace Capstone
             selectedPhotoPath = string.Empty;
             photoBase64 = string.Empty;
 
-           
+
 
             // ===== Work schedule =====
             foreach (var child in workSchedulePanel.Children)

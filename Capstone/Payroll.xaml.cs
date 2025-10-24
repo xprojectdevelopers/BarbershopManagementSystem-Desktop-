@@ -1,11 +1,13 @@
-﻿using Supabase;
+﻿using Microsoft.Win32;
+using Supabase;
 using Supabase.Postgrest.Attributes;
 using Supabase.Postgrest.Models;
-using System;
+using System.IO;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Configuration;
 using System.Linq;
+using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
@@ -101,10 +103,112 @@ namespace Capstone
             dpReleaseDate.SelectedDate = null;
         }
 
-        private async void Clear_Click(object sender, RoutedEventArgs e)
+        private void Clear_Click(object sender, RoutedEventArgs e)
         {
             ClearForm();
         }
+
+        private async void ExportButton_Click(object sender, RoutedEventArgs e)
+        {
+            SaveFileDialog saveFileDialog = new SaveFileDialog
+            {
+                Filter = "CSV files (*.csv)|*.csv",
+                FileName = $"Payroll_History_{DateTime.Now:yyyy-MM-dd}.csv"
+            };
+
+            if (saveFileDialog.ShowDialog() != true)
+                return;
+
+            try
+            {
+                // Fetch PayrollRecord data
+                var payrollResult = await supabase.From<PayrollRecord>().Get();
+
+                var validPayrolls = payrollResult.Models
+                    .Where(p => !string.IsNullOrWhiteSpace(p.EmID))
+                    .OrderByDescending(p => p.Id)
+                    .ToList();
+
+                if (!validPayrolls.Any())
+                {
+                    MessageBox.Show("No payroll data to export.", "Empty Data", MessageBoxButton.OK, MessageBoxImage.Information);
+                    return;
+                }
+
+                var csv = new StringBuilder();
+
+                // Header info
+                csv.AppendLine("PAYROLL HISTORY REPORT");
+                csv.AppendLine($"\"Generated on: {DateTime.Now:MMMM dd, yyyy hh:mm tt}\"");
+                csv.AppendLine($"\"Total Records: {validPayrolls.Count}\"");
+                csv.AppendLine();
+
+                // Column headers
+                csv.AppendLine("\"Employee ID\",\"Employee Name\",\"Role\",\"Gross Pay\",\"Saving Fund\",\"Cash Advance\",\"Attendance Deduction\",\"Net Pay\",\"Release Date\"");
+
+                // Rows
+                foreach (var payroll in validPayrolls)
+                {
+                    string[] row = new string[]
+                    {
+                CsvEscape(payroll.EmID ?? ""),
+                CsvEscape(payroll.Name ?? ""),
+                CsvEscape(payroll.BRole ?? ""),
+                FormatAmount(payroll.GrossPay),
+                FormatAmount(payroll.SavingFund),
+                FormatAmount(payroll.CashAdvance),
+                FormatAmount(payroll.Absent),
+                FormatAmount(payroll.NetPay),
+                payroll.Release != default(DateTime) ? payroll.Release.ToLocalTime().ToString("yyyy-MM-dd") : ""
+                    };
+
+                    csv.AppendLine(string.Join(",", row));
+                }
+
+                // Write file with BOM for UTF8 to support Excel
+                File.WriteAllText(saveFileDialog.FileName, csv.ToString(), new UTF8Encoding(true));
+
+                MessageBox.Show("✅ Payroll history successfully exported!", "Export Complete", MessageBoxButton.OK, MessageBoxImage.Information);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Error exporting data:\n{ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+        }
+
+        /// <summary>
+        /// Formats amount values for CSV export
+        /// </summary>
+        private string FormatAmount(string amount)
+        {
+            if (string.IsNullOrWhiteSpace(amount))
+                return "0";
+
+            // Try to parse as decimal and format with 2 decimal places
+            if (decimal.TryParse(amount, out decimal value))
+            {
+                return value.ToString("0.00");
+            }
+
+            return CsvEscape(amount);
+        }
+
+        /// <summary>
+        /// Escapes CSV field values to handle commas, quotes, or line breaks
+        /// </summary>
+        private string CsvEscape(string field)
+        {
+            if (string.IsNullOrEmpty(field))
+                return "\"\"";
+
+            // Always quote fields to ensure proper alignment in Excel
+            if (field.Contains(",") || field.Contains("\"") || field.Contains("\n") || field.Contains("\r"))
+                return $"\"{field.Replace("\"", "\"\"")}\"";
+
+            // Quote all text fields for consistent formatting
+            return $"\"{field}\"";
+        }
+
 
         private async void Search_Click(object sender, RoutedEventArgs e)
         {
@@ -122,7 +226,7 @@ namespace Capstone
             {
                 var result = await supabase
                     .From<Employee>()
-                    .Where(x => x.Eid == employeeId)
+                    .Where(x => x.EmID == employeeId)
                     .Get();
 
                 if (result.Models.Count > 0)
@@ -273,6 +377,12 @@ namespace Capstone
             }
         }
 
+        // Helper to auto "0" when empty
+        private string SafeValue(TextBox txt)
+        {
+            return string.IsNullOrWhiteSpace(txt.Text) ? "0" : txt.Text.Trim();
+        }
+
         private async void Release_Click(object sender, RoutedEventArgs e)
         {
             if (isSaving) return;
@@ -284,7 +394,6 @@ namespace Capstone
                 saveButton.IsEnabled = false;
                 HideAllErrorMessages();
 
-                // Validation
                 if (string.IsNullOrWhiteSpace(txtEmployeeID.Text.Trim()))
                 {
                     ShowError(txtEmployeeIDError, "Employee ID is required");
@@ -304,10 +413,8 @@ namespace Capstone
                 }
 
                 string employeeId = txtEmployeeID.Text.Trim();
-                // Fix timezone issue - use Date only and specify as UTC
                 DateTime releaseDate = DateTime.SpecifyKind(dpReleaseDate.SelectedDate.Value.Date, DateTimeKind.Utc);
 
-                // Check duplicate
                 var existingPayroll = await supabase.From<PayrollRecord>().Where(x => x.EmID == employeeId).Get();
                 var duplicateRecord = existingPayroll.Models.FirstOrDefault(p => p.Release.Date == releaseDate);
 
@@ -317,28 +424,18 @@ namespace Capstone
                     return;
                 }
 
-                // Parse values
-                decimal grossPayDecimal = decimal.Parse(txtGrossPay.Text.Trim().Replace(",", ""));
-                decimal netPayDecimal = decimal.Parse(txtNetPay.Text.Trim().Replace(",", ""));
-                decimal cashAdvanceDecimal = decimal.TryParse(txtCashAdvance.Text.Trim(), out var ca) ? ca : 0;
-                decimal savingFundDecimal = decimal.TryParse(txtSavingFund.Text.Trim(), out var sf) ? sf : 0;
-                long absentCount = long.TryParse(txtAbsent.Text.Trim(), out var ab) ? ab : 0;
-
                 var newPayroll = new PayrollRecord
                 {
                     EmID = employeeId,
                     Name = txtName.Text.Trim(),
                     BRole = txtRole.Text.Trim(),
-                    GrossPay = (long)(grossPayDecimal * 100),
-                    NetPay = (long)(netPayDecimal * 100),
-                    CashAdvance = (long)(cashAdvanceDecimal * 100),
-                    SavingFund = (long)(savingFundDecimal * 100),
-                    Absent = absentCount,
+                    GrossPay = SafeValue(txtGrossPay),
+                    NetPay = SafeValue(txtNetPay),
+                    CashAdvance = SafeValue(txtCashAdvance),
+                    SavingFund = SafeValue(txtSavingFund),
+                    Absent = SafeValue(txtAbsent),
                     Release = releaseDate
                 };
-
-                // Debug log
-                System.Diagnostics.Debug.WriteLine($"Inserting: EmID={employeeId}, GrossPay={newPayroll.GrossPay}");
 
                 var result = await supabase.From<PayrollRecord>().Insert(newPayroll);
 
@@ -368,7 +465,7 @@ namespace Capstone
             }
         }
 
-        // Employee table model (Add_Employee)
+        // Employee table model
         [Table("Add_Employee")]
         public class Employee : BaseModel
         {
@@ -382,10 +479,10 @@ namespace Capstone
             public string Role { get; set; }
 
             [Column("Employee_ID")]
-            public string Eid { get; set; }
+            public string EmID { get; set; }  // ✅ Changed from Eid to EmID
         }
 
-        // Payroll table model - Match Supabase int8 (bigint) types
+        // Payroll table model - all string fields
         [Table("Payroll")]
         public class PayrollRecord : BaseModel
         {
@@ -402,19 +499,19 @@ namespace Capstone
             public string BRole { get; set; }
 
             [Column("Gross_Pay")]
-            public long GrossPay { get; set; }
+            public string GrossPay { get; set; }
 
             [Column("Saving_Fund")]
-            public long SavingFund { get; set; }
+            public string SavingFund { get; set; }
 
             [Column("Cash_Advance")]
-            public long CashAdvance { get; set; }
+            public string CashAdvance { get; set; }
 
             [Column("Attendance_Deduction")]
-            public long Absent { get; set; }
+            public string Absent { get; set; }
 
             [Column("Net_Pay")]
-            public long NetPay { get; set; }
+            public string NetPay { get; set; }
 
             [Column("Release_Date")]
             public DateTime Release { get; set; }

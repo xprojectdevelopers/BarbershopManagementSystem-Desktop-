@@ -9,20 +9,41 @@ using System.Text;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
-using System.Windows.Documents;
 using System.Windows.Input;
 using static Supabase.Postgrest.Constants;
 
 namespace Capstone
 {
+    public class PesoConverter : IValueConverter
+    {
+        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            string str = value?.ToString()?.Trim();
+            if (string.IsNullOrEmpty(str))
+                return ""; // No peso sign if no value
+
+            // Format numbers with commas and decimals
+            if (decimal.TryParse(str, out decimal number))
+                return $"₱ {number:N2}";
+
+            return $"₱ {str}";
+        }
+
+        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            if (value == null) return "";
+            string str = value.ToString();
+            return str.Replace("₱", "").Trim();
+        }
+    }
 
     public partial class PayrollHistory : Window
     {
         private Supabase.Client? supabase;
-        private ObservableCollection<BarbershopManagementSystem> employees = new ObservableCollection<BarbershopManagementSystem>();
+        private ObservableCollection<BarbershopManagementSystem> employees = new();
 
         private int CurrentPage = 1;
-        private int PageSize = 5; // 5 employees per page
+        private int PageSize = 5;
         private int TotalPages = 1;
 
         public PayrollHistory()
@@ -63,15 +84,12 @@ namespace Capstone
 
             var result = await supabase
                 .From<BarbershopManagementSystem>()
-                .Order(x => x.Id, Ordering.Descending) // ✅ Pinaka-recent muna
+                .Order(x => x.Id, Ordering.Descending)
                 .Get();
 
             employees = new ObservableCollection<BarbershopManagementSystem>(result.Models);
 
-            // compute total pages
             TotalPages = (int)Math.Ceiling(employees.Count / (double)PageSize);
-
-            // Ensure at least 1 page
             if (TotalPages == 0) TotalPages = 1;
 
             LoadPage(CurrentPage);
@@ -87,21 +105,9 @@ namespace Capstone
                 .Take(PageSize)
                 .ToList();
 
-            // Add blank rows if kulang sa PageSize
             while (pageData.Count < PageSize)
             {
-                pageData.Add(new BarbershopManagementSystem
-                {
-                    EmID = "",
-                    Name = "",
-                    BRole = "",
-                    GrossPay = null,
-                    SavingFund = null,
-                    CashAdvance = null,
-                    Absent = null,
-                    NetPay = null,
-                    Release = null
-                });
+                pageData.Add(new BarbershopManagementSystem());
             }
 
             EmployeeGrid.ItemsSource = pageData;
@@ -113,18 +119,17 @@ namespace Capstone
 
             for (int i = 1; i <= TotalPages; i++)
             {
-                Button btn = new Button
+                Button btn = new()
                 {
                     Content = i.ToString(),
                     Margin = new Thickness(5, 0, 5, 0),
                     Padding = new Thickness(10, 5, 10, 5),
-                    Foreground = System.Windows.Media.Brushes.Gray, // Default gray color
-                    FontWeight = (i == CurrentPage) ? FontWeights.Bold : FontWeights.Normal, // Bold for current page
+                    Foreground = System.Windows.Media.Brushes.Gray,
+                    FontWeight = (i == CurrentPage) ? FontWeights.Bold : FontWeights.Normal,
                     FontSize = 20,
                     Cursor = Cursors.Hand
                 };
 
-                // Custom template to remove default hover effects
                 var template = new ControlTemplate(typeof(Button));
                 var border = new FrameworkElementFactory(typeof(Border));
                 border.SetValue(Border.BackgroundProperty, System.Windows.Media.Brushes.Transparent);
@@ -139,7 +144,6 @@ namespace Capstone
 
                 btn.Template = template;
 
-                // Add hover effect
                 btn.MouseEnter += (s, e) => btn.Foreground = System.Windows.Media.Brushes.Black;
                 btn.MouseLeave += (s, e) => btn.Foreground = System.Windows.Media.Brushes.Gray;
 
@@ -156,7 +160,7 @@ namespace Capstone
 
         private void ExportButton_Click(object sender, RoutedEventArgs e)
         {
-            SaveFileDialog saveFileDialog = new SaveFileDialog
+            SaveFileDialog saveFileDialog = new()
             {
                 Filter = "CSV files (*.csv)|*.csv",
                 FileName = $"Payroll_History_{DateTime.Now:yyyy-MM-dd}.csv"
@@ -177,44 +181,32 @@ namespace Capstone
                         return;
                     }
 
-                    StringBuilder csv = new StringBuilder();
-
-                    // Title and report info
+                    StringBuilder csv = new();
                     csv.AppendLine("PAYROLL HISTORY REPORT");
                     csv.AppendLine($"Generated on: {DateTime.Now:MMMM dd, yyyy hh:mm tt}");
                     csv.AppendLine($"Total Employees: {validEmployees.Count}");
                     csv.AppendLine();
-
-                    // Column headers (clean spacing)
                     csv.AppendLine("Employee ID,Employee Name,Role,Gross Pay,Saving Fund,Cash Advance,Attendance Deduction,Net Pay,Release Date");
 
-                    // Data rows
                     foreach (var emp in validEmployees)
                     {
-                        string emID = CsvEscape(emp.EmID);
-                        string name = CsvEscape(emp.Name);
-                        string role = CsvEscape(emp.BRole);
-                        string gross = emp.GrossPay.HasValue ? emp.GrossPay.Value.ToString("N2") : "";
-                        string saving = emp.SavingFund.HasValue ? emp.SavingFund.Value.ToString("N2") : "";
-                        string advance = emp.CashAdvance.HasValue ? emp.CashAdvance.Value.ToString("N2") : "";
-                        string absent = emp.Absent.HasValue ? emp.Absent.Value.ToString("N2") : "";
-                        string net = emp.NetPay.HasValue ? emp.NetPay.Value.ToString("N2") : "";
-                        string release = CsvEscape(emp.Release ?? "");
-
-                        // No peso symbols in CSV — Excel will detect as numeric
-                        csv.AppendLine($"{emID},{name},{role},{gross},{saving},{advance},{absent},{net},{release}");
+                        csv.AppendLine(string.Join(",", new[]
+                        {
+                            CsvEscape(emp.EmID),
+                            CsvEscape(emp.Name),
+                            CsvEscape(emp.BRole),
+                            CsvEscape(emp.GrossPay),
+                            CsvEscape(emp.SavingFund),
+                            CsvEscape(emp.CashAdvance),
+                            CsvEscape(emp.Absent),
+                            CsvEscape(emp.NetPay),
+                            CsvEscape(emp.Release ?? "")
+                        }));
                     }
 
-                    // Save with UTF-8 BOM for Excel compatibility
                     File.WriteAllText(saveFileDialog.FileName, csv.ToString(), new UTF8Encoding(true));
 
-                    MessageBox.Show(
-                        "✅ Payroll history successfully exported and formatted!\n\n" +
-                        "💡 Tip: In Excel, select the currency columns and apply '₱ Philippine Peso' format for best appearance.",
-                        "Export Complete",
-                        MessageBoxButton.OK,
-                        MessageBoxImage.Information
-                    );
+                    MessageBox.Show("✅ Payroll history successfully exported!", "Export Complete", MessageBoxButton.OK, MessageBoxImage.Information);
                 }
                 catch (Exception ex)
                 {
@@ -223,25 +215,18 @@ namespace Capstone
             }
         }
 
-
-        // Helper method to properly escape CSV fields
         private string CsvEscape(string field)
         {
             if (string.IsNullOrEmpty(field))
                 return "";
-
-            // If field contains comma, quote, or newline, wrap in quotes and escape quotes
             if (field.Contains(",") || field.Contains("\"") || field.Contains("\n") || field.Contains("\r"))
-            {
                 return $"\"{field.Replace("\"", "\"\"")}\"";
-            }
-
             return field;
         }
 
         private void Home_Click(object sender, MouseButtonEventArgs e)
         {
-            EMenu EMenu = new EMenu();
+            EMenu EMenu = new();
             EMenu.Show();
             this.Close();
         }
@@ -262,22 +247,22 @@ namespace Capstone
             public string BRole { get; set; } = string.Empty;
 
             [Column("Gross_Pay")]
-            public long? GrossPay { get; set; }
+            public string GrossPay { get; set; } = string.Empty;
 
             [Column("Saving_Fund")]
-            public long? SavingFund { get; set; }
+            public string SavingFund { get; set; } = string.Empty;
 
             [Column("Cash_Advance")]
-            public long? CashAdvance { get; set; }
+            public string CashAdvance { get; set; } = string.Empty;
 
             [Column("Attendance_Deduction")]
-            public long? Absent { get; set; }
+            public string Absent { get; set; } = string.Empty;
 
             [Column("Net_Pay")]
-            public long? NetPay { get; set; }
+            public string NetPay { get; set; } = string.Empty;
 
             [Column("Release_Date")]
-            public String Release { get; set; }
+            public string Release { get; set; } = string.Empty;
         }
     }
 }

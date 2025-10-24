@@ -95,7 +95,7 @@
                 <Border Grid.Column="1" BorderBrush="#000" BorderThickness="1" CornerRadius="8" Padding="15" Margin="5">
                     <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center">
                         <!-- Dynamic employee count -->
-                        <TextBlock x:Name="TotalEmployeesText" Text="0" FontSize="64" FontWeight="Bold"/>
+                        <TextBlock x:Name="TotalEmployeesText" Text="0" Margin="28,0,0,0" FontSize="64" FontWeight="Bold"/>
                         <TextBlock Text="Total Barber" FontSize="16" FontWeight="Bold"/>
                     </StackPanel>
                 </Border>
@@ -103,7 +103,7 @@
                 <!-- Absentees Card -->
                 <Border Grid.Column="2" BorderBrush="#000" BorderThickness="1" CornerRadius="8" Padding="15" Margin="5">
                     <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center">
-                        <TextBlock x:Name="TotalCashierText" Text="0" FontSize="64" FontWeight="Bold"/>
+                        <TextBlock x:Name="TotalCashierText" Text="0" Margin="28,0,0,0" FontSize="64" FontWeight="Bold"/>
                         <TextBlock Text="Total Cashier" FontSize="16" FontWeight="Bold"/>
                     </StackPanel>
                 </Border>
