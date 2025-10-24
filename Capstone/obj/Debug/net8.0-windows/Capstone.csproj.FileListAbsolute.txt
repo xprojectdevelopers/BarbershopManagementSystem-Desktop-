@@ -695,3 +695,7 @@ C:\Users\Mezzc\Source\Repos\BarbershopManagementSystem-Desktop-\Capstone\obj\Deb
 C:\Users\Mezzc\Source\Repos\BarbershopManagementSystem-Desktop-\Capstone\obj\Debug\net8.0-windows\Capstone.genruntimeconfig.cache
 C:\Users\Mezzc\Source\Repos\BarbershopManagementSystem-Desktop-\Capstone\obj\Debug\net8.0-windows\ref\Capstone.dll
 C:\Users\Mezzc\Source\Repos\BarbershopManagementSystem-Desktop-\Capstone\obj\Debug\net8.0-windows\GeneratedInternalTypeHelper.g.cs
+C:\Users\Mezzc\Source\Repos\BarbershopManagementSystem-Desktop-\Capstone\obj\Debug\net8.0-windows\ProfileAdmin.g.cs
+C:\Users\Mezzc\Source\Repos\BarbershopManagementSystem-Desktop-\Capstone\obj\Debug\net8.0-windows\ProfileAdmin.baml
+C:\Users\Mezzc\Source\Repos\BarbershopManagementSystem-Desktop-\Capstone\obj\Debug\net8.0-windows\ProfileCashier.g.cs
+C:\Users\Mezzc\Source\Repos\BarbershopManagementSystem-Desktop-\Capstone\obj\Debug\net8.0-windows\ProfileCashier.baml

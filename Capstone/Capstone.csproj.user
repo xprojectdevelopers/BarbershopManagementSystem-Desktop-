@@ -11,5 +11,11 @@
     <Compile Update="AppointmentOptions\Service_Description.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Update="ProfileAdmin.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Update="ProfileCashier.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
   </ItemGroup>
 </Project>
