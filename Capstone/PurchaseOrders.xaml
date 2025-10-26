@@ -182,7 +182,7 @@
     <Grid>
         <Border BorderBrush="Black" BorderThickness="1" Padding="20" CornerRadius="8" Margin="35,20,35,30">
             <StackPanel Margin="-20,30,-31,0">
-                <TextBlock Text="Purchase Item"
+                <TextBlock Text="Purchase Product"
                    FontSize="30" FontWeight="Bold"
                    HorizontalAlignment="Center" Margin="0,20,0,20"/>
 

@@ -176,13 +176,6 @@ namespace Capstone
             this.Close();
         }
 
-        private void AttendanceReport_Click(object sender, RoutedEventArgs e)
-        {
-            AttendanceReport AttendanceReport = new AttendanceReport();
-            AttendanceReport.Show();
-            this.Close();
-        }
-
         private void Addemployee_Click(object sender, RoutedEventArgs e)
         {
             AddEmployee AddEmployee = new AddEmployee();

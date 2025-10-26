@@ -19,26 +19,22 @@ namespace Capstone
         private ObservableCollection<BarbershopManagementSystem> employees = new ObservableCollection<BarbershopManagementSystem>();
         private Window currentModalWindow;
         public static string CurrentUserRole { get; set; }
-        public static string CurrentUserName { get; set; } // Add this
-        public static string CurrentUserPhoto { get; set; } // Add this
+        public static string CurrentUserName { get; set; }
+        public static string CurrentUserPhoto { get; set; }
 
         public Menu()
         {
             InitializeComponent();
 
-            // INSTANT: Apply role and display profile immediately
             ApplyRoleBasedAccess();
-            DisplayCurrentUserProfile(); // NEW: Instant display
+            DisplayCurrentUserProfile();
 
-            // BACKGROUND: Load full data asynchronously
             Loaded += async (s, e) => await InitializeData();
             ModalOverlay.PreviewMouseLeftButtonDown += ModalOverlay_Click;
         }
 
-        // NEW METHOD: Instant profile display using cached data
         private void DisplayCurrentUserProfile()
         {
-            // Display name and role instantly from LoginForm cache
             if (!string.IsNullOrEmpty(CurrentUserName))
             {
                 NameText.Text = CurrentUserName;
@@ -49,7 +45,6 @@ namespace Capstone
                 RoleText.Text = CurrentUserRole;
             }
 
-            // Display profile picture instantly if available
             if (!string.IsNullOrEmpty(CurrentUserPhoto))
             {
                 LoadProfilePicture(CurrentUserPhoto);
@@ -59,9 +54,25 @@ namespace Capstone
         private async Task InitializeData()
         {
             await InitializeSupabaseAsync();
-            // Refresh profile data in background (optional, for updates)
             await RefreshUserProfile();
             await LoadEmployeeCount();
+        }
+
+        private void MyProfile_Click(object sender, MouseButtonEventArgs e)
+        {
+            // Check user role and open appropriate profile window
+            if (CurrentUserRole.Equals("Admin", StringComparison.OrdinalIgnoreCase))
+            {
+                ProfileAdmin profileAdmin = new ProfileAdmin();
+                profileAdmin.Show();
+                this.Close();
+            }
+            else if (CurrentUserRole.Equals("Cashier", StringComparison.OrdinalIgnoreCase))
+            {
+                ProfileCashier profileCashier = new ProfileCashier();
+                profileCashier.Show();
+                this.Close();
+            }
         }
 
         private void ApplyRoleBasedAccess()
@@ -72,38 +83,30 @@ namespace Capstone
             bool isAdmin = CurrentUserRole.Equals("Admin", StringComparison.OrdinalIgnoreCase);
             bool isCashier = CurrentUserRole.Equals("Cashier", StringComparison.OrdinalIgnoreCase);
 
-            // For Cashier: Only Payroll and Inventory are enabled
             if (isCashier)
             {
-                // Disable Appointments
                 AppointmentsCard.IsEnabled = false;
                 AppointmentsCard.Opacity = 0.4;
                 AppointmentsCard.Cursor = Cursors.No;
 
-                // Disable Customers
                 CustomersCard.IsEnabled = false;
                 CustomersCard.Opacity = 0.4;
                 CustomersCard.Cursor = Cursors.No;
 
-                // Disable Employees
                 EmployeesCard.IsEnabled = true;
                 EmployeesCard.Opacity = 1.0;
                 EmployeesCard.Cursor = Cursors.Hand;
 
-                // Enable Payroll (keep enabled)
                 PayrollCard.IsEnabled = true;
                 PayrollCard.Opacity = 1.0;
                 PayrollCard.Cursor = Cursors.Hand;
 
-                // Enable Inventory (keep enabled)
                 InventoryCard.IsEnabled = true;
                 InventoryCard.Opacity = 1.0;
                 InventoryCard.Cursor = Cursors.Hand;
             }
-            // For Admin: All modules are enabled (default state)
             else if (isAdmin)
             {
-                // All cards remain enabled
                 AppointmentsCard.IsEnabled = true;
                 AppointmentsCard.Opacity = 1.0;
                 AppointmentsCard.Cursor = Cursors.Hand;
@@ -126,7 +129,6 @@ namespace Capstone
             }
         }
 
-        // RENAMED: This now refreshes data in background
         private async Task RefreshUserProfile()
         {
             if (supabase == null) return;
@@ -138,7 +140,6 @@ namespace Capstone
                 if (string.IsNullOrEmpty(employeeId))
                     return;
 
-                // Try to get from Employee table first
                 var employeeResult = await supabase
                     .From<BarbershopManagementSystem>()
                     .Where(e => e.EmployeeID == employeeId)
@@ -148,7 +149,6 @@ namespace Capstone
                 {
                     var employee = employeeResult.Models[0];
 
-                    // Update display if data changed
                     if (NameText.Text != employee.EmployeeName)
                         NameText.Text = employee.EmployeeName;
 
@@ -159,11 +159,10 @@ namespace Capstone
                         CurrentUserPhoto != employee.ProfilePicture)
                     {
                         LoadProfilePicture(employee.ProfilePicture);
-                    } 
+                    }
                 }
                 else
                 {
-                    // Try Admin table
                     var adminResult = await supabase
                         .From<AdminAccount>()
                         .Where(a => a.AdminLogin == employeeId)
@@ -202,15 +201,12 @@ namespace Capstone
                     BitmapImage bitmap = new BitmapImage();
                     bitmap.BeginInit();
 
-                    // Check if it's a URL or base64 data
                     if (imageData.StartsWith("http://") || imageData.StartsWith("https://"))
                     {
-                        // It's a URL
                         bitmap.UriSource = new Uri(imageData, UriKind.Absolute);
                     }
                     else
                     {
-                        // It's base64 data
                         byte[] imageBytes = Convert.FromBase64String(imageData);
                         using (var ms = new System.IO.MemoryStream(imageBytes))
                         {
@@ -227,7 +223,6 @@ namespace Capstone
                         bitmap.EndInit();
                     }
 
-                    // Find the Image control in the Border
                     var profileBorder = FindName("ProfileImageBorder") as Border;
                     if (profileBorder != null)
                     {

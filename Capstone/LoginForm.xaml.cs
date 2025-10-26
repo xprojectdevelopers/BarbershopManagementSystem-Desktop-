@@ -1,10 +1,8 @@
 ﻿using System;
 using System.Configuration;
 using System.Net.Http;
-using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
-using System.Windows.Controls;
 using Newtonsoft.Json.Linq;
 
 namespace Capstone
@@ -14,29 +12,55 @@ namespace Capstone
         private readonly HttpClient httpClient;
         private readonly string supabaseUrl;
         private readonly string supabaseKey;
-        public static string CurrentEmployeeId { get; set; } // Static property to store current user
-        public static string CurrentUserRole { get; set; } // Static property to store current user role
+        private bool isPasswordVisible = false;
+
+        public static string CurrentEmployeeId { get; set; }
+        public static string CurrentUserRole { get; set; }
 
         public LoginForm()
         {
             InitializeComponent();
             httpClient = new HttpClient();
 
-            // Get Supabase configuration from App.config
             supabaseUrl = ConfigurationManager.AppSettings["SupabaseUrl"];
             supabaseKey = ConfigurationManager.AppSettings["SupabaseKey"];
 
-            // Debug: Check if config values are loaded
             if (string.IsNullOrEmpty(supabaseUrl) || string.IsNullOrEmpty(supabaseKey))
             {
                 MessageBox.Show("Error: Supabase configuration not found in App.config", "Configuration Error");
                 return;
             }
 
-            // Set default headers for Supabase
             httpClient.DefaultRequestHeaders.Clear();
             httpClient.DefaultRequestHeaders.Add("apikey", supabaseKey);
             httpClient.DefaultRequestHeaders.Add("Authorization", $"Bearer {supabaseKey}");
+        }
+
+        private void TogglePasswordVisibility_Click(object sender, RoutedEventArgs e)
+        {
+            if (isPasswordVisible)
+            {
+                // Hide password
+                txtPassword.Password = txtPasswordVisible.Text;
+                txtPassword.Visibility = Visibility.Visible;
+                txtPasswordVisible.Visibility = Visibility.Collapsed;
+                txtToggleIcon.Text = "👁";
+                isPasswordVisible = false;
+            }
+            else
+            {
+                // Show password
+                txtPasswordVisible.Text = txtPassword.Password;
+                txtPassword.Visibility = Visibility.Collapsed;
+                txtPasswordVisible.Visibility = Visibility.Visible;
+                txtToggleIcon.Text = "👁‍🗨";
+                isPasswordVisible = true;
+            }
+        }
+
+        private string GetCurrentPassword()
+        {
+            return isPasswordVisible ? txtPasswordVisible.Text : txtPassword.Password;
         }
 
         private async void Button_Click_1(object sender, RoutedEventArgs e)
@@ -44,11 +68,10 @@ namespace Capstone
             lblStatus.Content = "";
 
             string employeeId = txtEmployeeId.Text.Trim();
-            string password = txtPassword.Password;
+            string password = GetCurrentPassword();
 
             System.Diagnostics.Debug.WriteLine($"Attempting login with Employee ID: {employeeId}");
 
-            // Validate input
             if (string.IsNullOrEmpty(employeeId))
             {
                 lblStatus.Content = "Please enter Employee ID";
@@ -66,22 +89,24 @@ namespace Capstone
 
             try
             {
-                // Try to authenticate as Admin first, then as Employee
-                var (isAuthenticated, userType, userRole) = await AuthenticateUser(employeeId, password);
+                var (isAuthenticated, userType, userRole, userName, userPhoto) = await AuthenticateUser(employeeId, password);
 
                 if (isAuthenticated)
                 {
                     lblStatus.Content = $"Login successful as {userType}!";
                     lblStatus.Foreground = System.Windows.Media.Brushes.Green;
 
-                    // Store the logged-in employee ID and role
+                    // Store the logged-in user data
                     CurrentEmployeeId = employeeId;
                     CurrentUserRole = userRole;
-                    Menu.CurrentUserRole = userRole; // Set role BEFORE opening window
+
+                    // Cache user data in Menu static properties
+                    Menu.CurrentUserRole = userRole;
+                    Menu.CurrentUserName = userName;
+                    Menu.CurrentUserPhoto = userPhoto;
 
                     System.Diagnostics.Debug.WriteLine($"Logged in as: {userType} with role: {userRole}");
 
-                    // Wait a moment then open Menu window
                     await Task.Delay(1000);
                     Menu menuWindow = new Menu();
                     menuWindow.Show();
@@ -91,7 +116,10 @@ namespace Capstone
                 {
                     lblStatus.Content = "Invalid Employee ID or Password";
                     lblStatus.Foreground = System.Windows.Media.Brushes.Red;
-                    txtPassword.Password = ""; // Clear password field
+
+                    // Clear both password fields
+                    txtPassword.Password = "";
+                    txtPasswordVisible.Text = "";
                 }
             }
             catch (Exception ex)
@@ -99,7 +127,6 @@ namespace Capstone
                 lblStatus.Content = "Connection error. Please try again.";
                 lblStatus.Foreground = System.Windows.Media.Brushes.Red;
 
-                // Show detailed error in debug
                 System.Diagnostics.Debug.WriteLine($"Login error: {ex.Message}");
                 System.Diagnostics.Debug.WriteLine($"Full exception: {ex}");
 
@@ -111,7 +138,7 @@ namespace Capstone
             }
         }
 
-        private async Task<(bool isAuthenticated, string userType, string userRole)> AuthenticateUser(string employeeId, string password)
+        private async Task<(bool isAuthenticated, string userType, string userRole, string userName, string userPhoto)> AuthenticateUser(string employeeId, string password)
         {
             try
             {
@@ -131,8 +158,11 @@ namespace Capstone
                     if (adminUsers.Count > 0)
                     {
                         string adminRole = adminUsers[0]["Admin_Role"]?.ToString() ?? "Admin";
-                        System.Diagnostics.Debug.WriteLine($"Admin login successful! Role: {adminRole}");
-                        return (true, "Admin", adminRole);
+                        string adminName = adminUsers[0]["Admin_Name"]?.ToString() ?? "Admin";
+                        string adminPhoto = adminUsers[0]["Photo"]?.ToString() ?? "";
+
+                        System.Diagnostics.Debug.WriteLine($"Admin login successful! Role: {adminRole}, Name: {adminName}");
+                        return (true, "Admin", adminRole, adminName, adminPhoto);
                     }
                 }
 
@@ -151,9 +181,12 @@ namespace Capstone
 
                     if (employeeUsers.Count > 0)
                     {
-                        string employeeRole = employeeUsers[0]["Employee_Role"]?.ToString() ?? "Employee";
-                        System.Diagnostics.Debug.WriteLine($"Employee login successful! Role: {employeeRole}");
-                        return (true, "Employee", employeeRole);
+                        string employeeRole = employeeUsers[0]["Employee_Role"]?.ToString() ?? "Cashier";
+                        string employeeName = employeeUsers[0]["Employee_Name"]?.ToString() ?? "Employee";
+                        string employeePhoto = employeeUsers[0]["Photo"]?.ToString() ?? "";
+
+                        System.Diagnostics.Debug.WriteLine($"Employee login successful! Role: {employeeRole}, Name: {employeeName}");
+                        return (true, "Employee", employeeRole, employeeName, employeePhoto);
                     }
                 }
                 else
@@ -162,9 +195,8 @@ namespace Capstone
                     System.Diagnostics.Debug.WriteLine($"Employee table error: {employeeResponse.StatusCode} - {errorContent}");
                 }
 
-                // No match found in either table
                 System.Diagnostics.Debug.WriteLine("No matching credentials found in either table");
-                return (false, null, null);
+                return (false, null, null, null, null);
             }
             catch (Exception ex)
             {

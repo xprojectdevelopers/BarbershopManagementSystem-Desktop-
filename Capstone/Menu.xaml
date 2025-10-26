@@ -12,9 +12,6 @@
         ResizeMode="CanResizeWithGrip">
 
     <Window.Resources>
-
-
-        <!-- Responsive card style -->
         <Style x:Key="MenuCard" TargetType="Border">
             <Setter Property="BorderThickness" Value="1"/>
             <Setter Property="CornerRadius" Value="8"/>
@@ -34,7 +31,6 @@
             </Style.Triggers>
         </Style>
 
-        <!-- Icon style -->
         <Style x:Key="MenuIcon" TargetType="Image">
             <Setter Property="Width" Value="40"/>
             <Setter Property="Height" Value="40"/>
@@ -42,7 +38,6 @@
             <Setter Property="VerticalAlignment" Value="Top"/>
         </Style>
 
-        <!-- Description -->
         <Style x:Key="MenuTitle" TargetType="TextBlock">
             <Setter Property="FontSize" Value="18"/>
             <Setter Property="FontWeight" Value="SemiBold"/>
@@ -50,14 +45,12 @@
             <Setter Property="Margin" Value="0,5,0,5"/>
         </Style>
 
-        <!-- Description Text -->
         <Style x:Key="MenuSubtitle" TargetType="TextBlock">
             <Setter Property="FontSize" Value="13"/>
             <Setter Property="Foreground" Value="#757575"/>
             <Setter Property="TextWrapping" Value="Wrap"/>
         </Style>
 
-        <!-- Profile styles -->
         <Style x:Key="ProfileImage" TargetType="Border">
             <Setter Property="Width" Value="120"/>
             <Setter Property="Height" Value="120"/>
@@ -66,7 +59,6 @@
             <Setter Property="HorizontalAlignment" Value="Center"/>
         </Style>
 
-        <!-- Responsive profile text styles -->
         <Style x:Key="ResponsiveProfileName" TargetType="TextBlock">
             <Setter Property="FontSize" Value="28"/>
             <Setter Property="FontWeight" Value="Bold"/>
@@ -92,7 +84,6 @@
             <Setter Property="Cursor" Value="Hand"/>
         </Style>
 
-        <!-- Responsive button style for notification and settings -->
         <Style x:Key="ResponsiveButton" TargetType="Button">
             <Setter Property="Background" Value="Transparent"/>
             <Setter Property="BorderThickness" Value="0"/>
@@ -124,7 +115,7 @@
                 </Setter.Value>
             </Setter>
         </Style>
-        <!-- Simple icon style for top bar (no converter needed) -->
+
         <Style x:Key="TopBarIcon" TargetType="Image">
             <Setter Property="Width" Value="24"/>
             <Setter Property="Height" Value="24"/>
@@ -138,29 +129,19 @@
         </Grid.ColumnDefinitions>
         <Grid.RowDefinitions>
             <RowDefinition Height="60"/>
-            <!-- Top bar -->
             <RowDefinition Height="*"/>
-            <!-- Main content -->
         </Grid.RowDefinitions>
 
-
-
-        <!-- Main Content Area -->
-        <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto" Margin="-5,39,5,21" Grid.RowSpan="2" Grid.ColumnSpan="2">
+        <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto" 
+                      Margin="-5,39,5,21" Grid.RowSpan="2" Grid.ColumnSpan="2">
             <Grid Margin="20">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto"/>
-                    <!-- Profile section -->
                     <RowDefinition Height="40"/>
-                    <!-- Spacer -->
                     <RowDefinition Height="Auto"/>
-                    <!-- Menu cards -->
                 </Grid.RowDefinitions>
 
-                <!-- Top Navigation Bar - Fixed positioning -->
-                <Border Grid.Row="0" 
-                        Height="60"
-                        VerticalAlignment="Top">
+                <Border Grid.Row="0" Height="60" VerticalAlignment="Top">
                     <Grid>
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="*"/>
@@ -168,56 +149,54 @@
                             <ColumnDefinition Width="Auto"/>
                         </Grid.ColumnDefinitions>
 
-                        <!-- Notification Icon -->
-                        <Button 
-        Margin="1015,0,0,0" 
-        Style="{StaticResource ResponsiveButton}"
-        ToolTip="Notifications"
-        Click="Notification_Click" Grid.ColumnSpan="3" HorizontalAlignment="Left">
+                        <Button Margin="1015,0,0,0" 
+                                Style="{StaticResource ResponsiveButton}"
+                                ToolTip="Notifications"
+                                Click="Notification_Click" 
+                                Grid.ColumnSpan="3" 
+                                HorizontalAlignment="Left">
                             <Image Source="/Icon/bell.png" Style="{StaticResource TopBarIcon}"/>
                         </Button>
 
-                        <!-- Settings Icon -->
-                        <Button  
-                                Margin="1045,0,0,0" 
+                        <Button Margin="1045,0,0,0" 
                                 Style="{StaticResource ResponsiveButton}"
-                                ToolTip="Settings" Grid.ColumnSpan="3" HorizontalAlignment="Left" Click="Setting_Click">
+                                ToolTip="Settings" 
+                                Grid.ColumnSpan="3" 
+                                HorizontalAlignment="Left" 
+                                Click="Setting_Click">
                             <Image Source="/Icon/gear.png" Style="{StaticResource TopBarIcon}"/>
                         </Button>
                     </Grid>
                 </Border>
 
-                <!-- Profile Section -->
                 <Grid Grid.Row="0" HorizontalAlignment="Center" Margin="0,20,0,0">
                     <Viewbox Stretch="Uniform" MaxWidth="350" MaxHeight="300" StretchDirection="DownOnly">
                         <StackPanel Orientation="Vertical">
-                            <!-- Profile Image Container -->
                             <Border x:Name="ProfileImageBorder" Width="120" Height="120" 
-                                       CornerRadius="60"
-                                       Background="LightGray" 
-                                       HorizontalAlignment="Center"
-                                       Margin="0,0,0,15"
-                                       ClipToBounds="True">
+                                    CornerRadius="60"
+                                    Background="LightGray" 
+                                    HorizontalAlignment="Center"
+                                    Margin="0,0,0,15"
+                                    ClipToBounds="True">
                                 <Image Source="/Icon/profile.png" 
                                        Stretch="UniformToFill"
                                        VerticalAlignment="Center"
                                        HorizontalAlignment="Center"/>
                             </Border>
 
-                            <!-- Profile Info -->
                             <StackPanel>
                                 <TextBlock Text="Name" x:Name="NameText"
                                           Style="{StaticResource ResponsiveProfileName}"/>
                                 <TextBlock Text="Role" x:Name="RoleText"
                                           Style="{StaticResource ResponsiveProfileRole}"/>
-                                <TextBlock Text="My Account" 
-                                          Style="{StaticResource ResponsiveProfileLink}"/>
+                                <TextBlock Text="My Profile" 
+                                          Style="{StaticResource ResponsiveProfileLink}"
+                                          MouseLeftButtonUp="MyProfile_Click"/>
                             </StackPanel>
                         </StackPanel>
                     </Viewbox>
                 </Grid>
 
-                <!-- Menu Cards Section -->
                 <Grid Grid.Row="2" Margin="55,20,55,20">
                     <Grid.RowDefinitions>
                         <RowDefinition Height="Auto"/>
@@ -229,9 +208,8 @@
                         <ColumnDefinition Width="*"/>
                     </Grid.ColumnDefinitions>
 
-                    <!-- First Row Cards -->
-                    <!-- Appointments Card -->
-                    <Border x:Name="AppointmentsCard" Grid.Row="0" Grid.Column="0" Style="{StaticResource MenuCard}" MouseLeftButtonDown="Appointments_Click">
+                    <Border x:Name="AppointmentsCard" Grid.Row="0" Grid.Column="0" 
+                            Style="{StaticResource MenuCard}" MouseLeftButtonDown="Appointments_Click">
                         <Grid>
                             <Grid.RowDefinitions>
                                 <RowDefinition Height="Auto"/>
@@ -243,7 +221,7 @@
                             </Grid.ColumnDefinitions>
 
                             <Image Grid.Row="0" Grid.Column="0" Source="/Icon/bell-ringing.png" 
-                                  Style="{StaticResource MenuIcon}" Margin="0,0,15,0"/>
+                                   Style="{StaticResource MenuIcon}" Margin="0,0,15,0"/>
                             <StackPanel Grid.Row="0" Grid.Column="1" Grid.RowSpan="2" VerticalAlignment="Center">
                                 <TextBlock Text="Appointments" Style="{StaticResource MenuTitle}"/>
                                 <TextBlock Text="Manage bookings, schedules, approvals." 
@@ -252,9 +230,8 @@
                         </Grid>
                     </Border>
 
-                    <!-- Customers Card -->
-                    <Border x:Name="CustomersCard" Grid.Row="0" Grid.Column="1" Style="{StaticResource MenuCard}"
-                            MouseLeftButtonDown="Customers_Click">
+                    <Border x:Name="CustomersCard" Grid.Row="0" Grid.Column="1" 
+                            Style="{StaticResource MenuCard}" MouseLeftButtonDown="Customers_Click">
                         <Grid>
                             <Grid.RowDefinitions>
                                 <RowDefinition Height="Auto"/>
@@ -266,7 +243,7 @@
                             </Grid.ColumnDefinitions>
 
                             <Image Grid.Row="0" Grid.Column="0" Source="/Icon/headset.png" 
-                                  Style="{StaticResource MenuIcon}" Margin="0,0,15,0"/>
+                                   Style="{StaticResource MenuIcon}" Margin="0,0,15,0"/>
                             <StackPanel Grid.Row="0" Grid.Column="1" Grid.RowSpan="2" VerticalAlignment="Center">
                                 <TextBlock Text="Customers" Style="{StaticResource MenuTitle}"/>
                                 <TextBlock Text="Maintain client records and contact details." 
@@ -275,9 +252,8 @@
                         </Grid>
                     </Border>
 
-                    <!-- Employees Card -->
-                    <Border x:Name="EmployeesCard" Grid.Row="0" Grid.Column="2" Style="{StaticResource MenuCard}"
-                           MouseLeftButtonDown="Employees_Click">
+                    <Border x:Name="EmployeesCard" Grid.Row="0" Grid.Column="2" 
+                            Style="{StaticResource MenuCard}" MouseLeftButtonDown="Employees_Click">
                         <Grid>
                             <Grid.RowDefinitions>
                                 <RowDefinition Height="Auto"/>
@@ -289,7 +265,7 @@
                             </Grid.ColumnDefinitions>
 
                             <Image Grid.Row="0" Grid.Column="0" Source="/Icon/folder-user.png" 
-                                  Style="{StaticResource MenuIcon}" Margin="0,0,15,0"/>
+                                   Style="{StaticResource MenuIcon}" Margin="0,0,15,0"/>
                             <StackPanel Grid.Row="0" Grid.Column="1" Grid.RowSpan="2" VerticalAlignment="Center">
                                 <TextBlock Text="Employees" Style="{StaticResource MenuTitle}"/>
                                 <TextBlock Text="Team profiles, roles, permissions." 
@@ -298,10 +274,8 @@
                         </Grid>
                     </Border>
 
-                    <!-- Second Row Cards -->
-                    <!-- Payroll Card -->
-                    <Border x:Name="PayrollCard" Grid.Row="1" Grid.Column="0" Style="{StaticResource MenuCard}"
-                            MouseLeftButtonDown="Payroll_Click">
+                    <Border x:Name="PayrollCard" Grid.Row="1" Grid.Column="0" 
+                            Style="{StaticResource MenuCard}" MouseLeftButtonDown="Payroll_Click">
                         <Grid>
                             <Grid.RowDefinitions>
                                 <RowDefinition Height="Auto"/>
@@ -313,7 +287,7 @@
                             </Grid.ColumnDefinitions>
 
                             <Image Grid.Row="0" Grid.Column="0" Source="/Icon/wallet.png" 
-                                  Style="{StaticResource MenuIcon}" Margin="0,0,15,0"/>
+                                   Style="{StaticResource MenuIcon}" Margin="0,0,15,0"/>
                             <StackPanel Grid.Row="0" Grid.Column="1" Grid.RowSpan="2" VerticalAlignment="Center">
                                 <TextBlock Text="Payroll" Style="{StaticResource MenuTitle}"/>
                                 <TextBlock Text="Handle salaries and staff compensation." 
@@ -322,9 +296,8 @@
                         </Grid>
                     </Border>
 
-                    <!-- Inventory Card -->
-                    <Border x:Name="InventoryCard" Grid.Row="1" Grid.Column="1" Style="{StaticResource MenuCard}"
-                            MouseLeftButtonDown="Inventory_Click">
+                    <Border x:Name="InventoryCard" Grid.Row="1" Grid.Column="1" 
+                            Style="{StaticResource MenuCard}" MouseLeftButtonDown="Inventory_Click">
                         <Grid>
                             <Grid.RowDefinitions>
                                 <RowDefinition Height="Auto"/>
@@ -336,25 +309,24 @@
                             </Grid.ColumnDefinitions>
 
                             <Image Grid.Row="0" Grid.Column="0" Source="/Icon/bell-ringing.png" 
-                                  Style="{StaticResource MenuIcon}" Margin="0,0,15,0"/>
+                                   Style="{StaticResource MenuIcon}" Margin="0,0,15,0"/>
                             <StackPanel Grid.Row="0" Grid.Column="1" Grid.RowSpan="2" VerticalAlignment="Center">
                                 <TextBlock Text="Inventory" Style="{StaticResource MenuTitle}"/>
                                 <TextBlock Text="Maintain stock records and control details." 
-                                      Style="{StaticResource MenuSubtitle}"/>
+                                          Style="{StaticResource MenuSubtitle}"/>
                             </StackPanel>
                         </Grid>
                     </Border>
-
-
                 </Grid>
             </Grid>
         </ScrollViewer>
-        <!-- Gray Overlay for Modal Effect -->
+
         <Border x:Name="ModalOverlay"
-    Grid.RowSpan="2"
-    Background="#80000000"
-    Visibility="Collapsed"
-    IsHitTestVisible="True"
-    MouseLeftButtonDown="ModalOverlay_Click" Grid.ColumnSpan="2"/>
+                Grid.RowSpan="2"
+                Background="#80000000"
+                Visibility="Collapsed"
+                IsHitTestVisible="True"
+                MouseLeftButtonDown="ModalOverlay_Click" 
+                Grid.ColumnSpan="2"/>
     </Grid>
 </Window>

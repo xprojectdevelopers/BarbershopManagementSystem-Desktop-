@@ -28,6 +28,61 @@ namespace Capstone
         {
             InitializeComponent();
             Loaded += async (s, e) => await InitializeData();
+            SetupPlaceholders();
+        }
+
+        private void SetupPlaceholders()
+        {
+            // Service Count textboxes
+            SetupPlaceholder(txtHaircut);
+            SetupPlaceholder(txtHaircutReservation);
+            SetupPlaceholder(txtHaircutWash);
+            SetupPlaceholder(txtHaircutHotTowel);
+            SetupPlaceholder(txtHaircutHairDye);
+            SetupPlaceholder(txtHaircutHairColor);
+            SetupPlaceholder(txtHaircutHighlights);
+            SetupPlaceholder(txtHaircutHotBleaching);
+            SetupPlaceholder(txtHaircutPerm);
+            SetupPlaceholder(txtRebondShort);
+            SetupPlaceholder(txtRebondLong);
+            SetupPlaceholder(txtBraid);
+
+            // Employee Deduction textboxes
+            SetupPlaceholder(txtCashAdvance);
+            SetupPlaceholder(txtLate);
+            SetupPlaceholder(txtAbsent);
+            SetupPlaceholder(txtSavingFund);
+        }
+
+        private void SetupPlaceholder(TextBox textBox)
+        {
+            // Set initial placeholder
+            textBox.Text = "0";
+            textBox.Foreground = Brushes.Gray;
+
+            // GotFocus: Remove placeholder
+            textBox.GotFocus += (s, e) =>
+            {
+                if (textBox.Text == "0" && textBox.Foreground == Brushes.Gray)
+                {
+                    textBox.Text = "";
+                    textBox.Foreground = Brushes.Black;
+                }
+            };
+
+            // LostFocus: Restore placeholder if empty
+            textBox.LostFocus += (s, e) =>
+            {
+                if (string.IsNullOrWhiteSpace(textBox.Text))
+                {
+                    textBox.Text = "0";
+                    textBox.Foreground = Brushes.Gray;
+                }
+                else
+                {
+                    textBox.Foreground = Brushes.Black;
+                }
+            };
         }
 
         private async Task InitializeSupabaseAsync()
@@ -76,23 +131,24 @@ namespace Capstone
             txtName.Clear();
             txtRole.Clear();
 
-            txtHaircut.Clear();
-            txtHaircutReservation.Clear();
-            txtHaircutWash.Clear();
-            txtHaircutHotTowel.Clear();
-            txtHaircutHairDye.Clear();
-            txtHaircutHairColor.Clear();
-            txtHaircutHighlights.Clear();
-            txtHaircutHotBleaching.Clear();
-            txtHaircutPerm.Clear();
-            txtRebondShort.Clear();
-            txtRebondLong.Clear();
-            txtBraid.Clear();
+            // Reset to placeholder "0"
+            ResetToPlaceholder(txtHaircut);
+            ResetToPlaceholder(txtHaircutReservation);
+            ResetToPlaceholder(txtHaircutWash);
+            ResetToPlaceholder(txtHaircutHotTowel);
+            ResetToPlaceholder(txtHaircutHairDye);
+            ResetToPlaceholder(txtHaircutHairColor);
+            ResetToPlaceholder(txtHaircutHighlights);
+            ResetToPlaceholder(txtHaircutHotBleaching);
+            ResetToPlaceholder(txtHaircutPerm);
+            ResetToPlaceholder(txtRebondShort);
+            ResetToPlaceholder(txtRebondLong);
+            ResetToPlaceholder(txtBraid);
 
-            txtCashAdvance.Clear();
-            txtLate.Clear();
-            txtAbsent.Clear();
-            txtSavingFund.Clear();
+            ResetToPlaceholder(txtCashAdvance);
+            ResetToPlaceholder(txtLate);
+            ResetToPlaceholder(txtAbsent);
+            ResetToPlaceholder(txtSavingFund);
 
             txtGrossPay.Clear();
             txtTotalDeduction.Clear();
@@ -101,6 +157,12 @@ namespace Capstone
             dpStartDate.SelectedDate = null;
             dpEndDate.SelectedDate = null;
             dpReleaseDate.SelectedDate = null;
+        }
+
+        private void ResetToPlaceholder(TextBox textBox)
+        {
+            textBox.Text = "0";
+            textBox.Foreground = Brushes.Gray;
         }
 
         private void Clear_Click(object sender, RoutedEventArgs e)
@@ -121,7 +183,6 @@ namespace Capstone
 
             try
             {
-                // Fetch PayrollRecord data
                 var payrollResult = await supabase.From<PayrollRecord>().Get();
 
                 var validPayrolls = payrollResult.Models
@@ -137,35 +198,31 @@ namespace Capstone
 
                 var csv = new StringBuilder();
 
-                // Header info
                 csv.AppendLine("PAYROLL HISTORY REPORT");
                 csv.AppendLine($"\"Generated on: {DateTime.Now:MMMM dd, yyyy hh:mm tt}\"");
                 csv.AppendLine($"\"Total Records: {validPayrolls.Count}\"");
                 csv.AppendLine();
 
-                // Column headers
                 csv.AppendLine("\"Employee ID\",\"Employee Name\",\"Role\",\"Gross Pay\",\"Saving Fund\",\"Cash Advance\",\"Attendance Deduction\",\"Net Pay\",\"Release Date\"");
 
-                // Rows
                 foreach (var payroll in validPayrolls)
                 {
                     string[] row = new string[]
                     {
-                CsvEscape(payroll.EmID ?? ""),
-                CsvEscape(payroll.Name ?? ""),
-                CsvEscape(payroll.BRole ?? ""),
-                FormatAmount(payroll.GrossPay),
-                FormatAmount(payroll.SavingFund),
-                FormatAmount(payroll.CashAdvance),
-                FormatAmount(payroll.Absent),
-                FormatAmount(payroll.NetPay),
-                payroll.Release != default(DateTime) ? payroll.Release.ToLocalTime().ToString("yyyy-MM-dd") : ""
+                        CsvEscape(payroll.EmID ?? ""),
+                        CsvEscape(payroll.Name ?? ""),
+                        CsvEscape(payroll.BRole ?? ""),
+                        FormatAmount(payroll.GrossPay),
+                        FormatAmount(payroll.SavingFund),
+                        FormatAmount(payroll.CashAdvance),
+                        FormatAmount(payroll.Absent),
+                        FormatAmount(payroll.NetPay),
+                        payroll.Release != default(DateTime) ? payroll.Release.ToLocalTime().ToString("yyyy-MM-dd") : ""
                     };
 
                     csv.AppendLine(string.Join(",", row));
                 }
 
-                // Write file with BOM for UTF8 to support Excel
                 File.WriteAllText(saveFileDialog.FileName, csv.ToString(), new UTF8Encoding(true));
 
                 MessageBox.Show("✅ Payroll history successfully exported!", "Export Complete", MessageBoxButton.OK, MessageBoxImage.Information);
@@ -176,15 +233,11 @@ namespace Capstone
             }
         }
 
-        /// <summary>
-        /// Formats amount values for CSV export
-        /// </summary>
         private string FormatAmount(string amount)
         {
             if (string.IsNullOrWhiteSpace(amount))
                 return "0";
 
-            // Try to parse as decimal and format with 2 decimal places
             if (decimal.TryParse(amount, out decimal value))
             {
                 return value.ToString("0.00");
@@ -193,22 +246,16 @@ namespace Capstone
             return CsvEscape(amount);
         }
 
-        /// <summary>
-        /// Escapes CSV field values to handle commas, quotes, or line breaks
-        /// </summary>
         private string CsvEscape(string field)
         {
             if (string.IsNullOrEmpty(field))
                 return "\"\"";
 
-            // Always quote fields to ensure proper alignment in Excel
             if (field.Contains(",") || field.Contains("\"") || field.Contains("\n") || field.Contains("\r"))
                 return $"\"{field.Replace("\"", "\"\"")}\"";
 
-            // Quote all text fields for consistent formatting
             return $"\"{field}\"";
         }
-
 
         private async void Search_Click(object sender, RoutedEventArgs e)
         {
@@ -314,19 +361,19 @@ namespace Capstone
                 const decimal LATE_DEDUCTION = 30;
                 const decimal ABSENT_DEDUCTION = 50;
 
-                int haircutCount = int.TryParse(txtHaircut.Text.Trim(), out int hc) ? hc : 0;
-                int haircutReservationCount = int.TryParse(txtHaircutReservation.Text.Trim(), out int hrc) ? hrc : 0;
-                int haircutWashCount = int.TryParse(txtHaircutWash.Text.Trim(), out int hwc) ? hwc : 0;
-                int haircutHotTowelCount = int.TryParse(txtHaircutHotTowel.Text.Trim(), out int hhtc) ? hhtc : 0;
-                int haircutHairDyeCount = int.TryParse(txtHaircutHairDye.Text.Trim(), out int hhdc) ? hhdc : 0;
-                int haircutHairColorCount = int.TryParse(txtHaircutHairColor.Text.Trim(), out int hhcc) ? hhcc : 0;
-                int haircutHighlightsCount = int.TryParse(txtHaircutHighlights.Text.Trim(), out int hhlc) ? hhlc : 0;
-                int haircutHotBleachingCount = int.TryParse(txtHaircutHotBleaching.Text.Trim(), out int hhbc) ? hhbc : 0;
-                int haircutPermCount = int.TryParse(txtHaircutPerm.Text.Trim(), out int hpc) ? hpc : 0;
-                int rebondShortCount = int.TryParse(txtRebondShort.Text.Trim(), out int rsc) ? rsc : 0;
-                int rebondLongCount = int.TryParse(txtRebondLong.Text.Trim(), out int rlc) ? rlc : 0;
+                int haircutCount = GetNumericValue(txtHaircut);
+                int haircutReservationCount = GetNumericValue(txtHaircutReservation);
+                int haircutWashCount = GetNumericValue(txtHaircutWash);
+                int haircutHotTowelCount = GetNumericValue(txtHaircutHotTowel);
+                int haircutHairDyeCount = GetNumericValue(txtHaircutHairDye);
+                int haircutHairColorCount = GetNumericValue(txtHaircutHairColor);
+                int haircutHighlightsCount = GetNumericValue(txtHaircutHighlights);
+                int haircutHotBleachingCount = GetNumericValue(txtHaircutHotBleaching);
+                int haircutPermCount = GetNumericValue(txtHaircutPerm);
+                int rebondShortCount = GetNumericValue(txtRebondShort);
+                int rebondLongCount = GetNumericValue(txtRebondLong);
 
-                decimal braidAmount = decimal.TryParse(txtBraid.Text.Trim(), out decimal ba) ? ba : 0;
+                decimal braidAmount = GetDecimalValue(txtBraid);
 
                 decimal haircutTotal = haircutCount * HAIRCUT_PRICE;
                 decimal haircutReservationTotal = haircutReservationCount * HAIRCUT_RESERVATION_PRICE;
@@ -347,12 +394,12 @@ namespace Capstone
 
                 txtGrossPay.Text = grossPay.ToString("N2");
 
-                decimal cashAdvance = decimal.TryParse(txtCashAdvance.Text.Trim(), out decimal ca) ? ca : 0;
-                int lateCount = int.TryParse(txtLate.Text.Trim(), out int lc) ? lc : 0;
-                int absentCount = int.TryParse(txtAbsent.Text.Trim(), out int ac) ? ac : 0;
+                decimal cashAdvance = GetDecimalValue(txtCashAdvance);
+                int lateCount = GetNumericValue(txtLate);
+                int absentCount = GetNumericValue(txtAbsent);
                 decimal lateDeduction = lateCount * LATE_DEDUCTION;
                 decimal absentDeduction = absentCount * ABSENT_DEDUCTION;
-                decimal savingFund = decimal.TryParse(txtSavingFund.Text.Trim(), out decimal sf) ? sf : 0;
+                decimal savingFund = GetDecimalValue(txtSavingFund);
 
                 decimal totalDeduction;
                 decimal netPay;
@@ -377,10 +424,28 @@ namespace Capstone
             }
         }
 
-        // Helper to auto "0" when empty
+        private int GetNumericValue(TextBox textBox)
+        {
+            string text = textBox.Text.Trim();
+            if (string.IsNullOrWhiteSpace(text) || (text == "0" && textBox.Foreground == Brushes.Gray))
+                return 0;
+            return int.TryParse(text, out int value) ? value : 0;
+        }
+
+        private decimal GetDecimalValue(TextBox textBox)
+        {
+            string text = textBox.Text.Trim();
+            if (string.IsNullOrWhiteSpace(text) || (text == "0" && textBox.Foreground == Brushes.Gray))
+                return 0;
+            return decimal.TryParse(text, out decimal value) ? value : 0;
+        }
+
         private string SafeValue(TextBox txt)
         {
-            return string.IsNullOrWhiteSpace(txt.Text) ? "0" : txt.Text.Trim();
+            string text = txt.Text.Trim();
+            if (string.IsNullOrWhiteSpace(text) || (text == "0" && txt.Foreground == Brushes.Gray))
+                return "0";
+            return text;
         }
 
         private async void Release_Click(object sender, RoutedEventArgs e)
@@ -465,7 +530,6 @@ namespace Capstone
             }
         }
 
-        // Employee table model
         [Table("Add_Employee")]
         public class Employee : BaseModel
         {
@@ -479,10 +543,9 @@ namespace Capstone
             public string Role { get; set; }
 
             [Column("Employee_ID")]
-            public string EmID { get; set; }  // ✅ Changed from Eid to EmID
+            public string EmID { get; set; }
         }
 
-        // Payroll table model - all string fields
         [Table("Payroll")]
         public class PayrollRecord : BaseModel
         {

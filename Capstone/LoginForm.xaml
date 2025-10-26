@@ -100,16 +100,39 @@
                          Margin="0,0,0,20"
                          FontSize="23"/>
 
-                <!-- Password Section -->
+                <!-- Password Section with Toggle -->
                 <Label Content="Password" Margin="-5,0,0,0" Style="{StaticResource LabelStyle}"/>
-                <PasswordBox x:Name="txtPassword" 
+                <Grid Width="278" Margin="0,0,0,30">
+                    <PasswordBox x:Name="txtPassword" 
+                                 Height="35"
+                                 FontSize="20"
+                                 Background="#E8E9EB"
+                                 BorderBrush="#E8E9EB"
+                                 BorderThickness="1"
+                                 Padding="10,0,40,0"/>
+
+                    <TextBox x:Name="txtPasswordVisible" 
                              Height="35"
                              FontSize="20"
                              Background="#E8E9EB"
                              BorderBrush="#E8E9EB"
                              BorderThickness="1"
-                             Padding="10,0"
-                             Margin="0,0,0,30" Width="278"/>
+                             Padding="10,0,40,0"
+                             Visibility="Collapsed"/>
+
+                    <!-- Toggle Button -->
+                    <Button x:Name="btnTogglePassword" 
+                            Click="TogglePasswordVisibility_Click"
+                            Width="30" Height="30"
+                            HorizontalAlignment="Right"
+                            Margin="0,0,5,0"
+                            Background="Transparent"
+                            BorderThickness="0"
+                            Cursor="Hand"
+                            ToolTip="Show/Hide Password">
+                        <TextBlock x:Name="txtToggleIcon" Text="👁" FontSize="16" FontFamily="Segoe UI Emoji"/>
+                    </Button>
+                </Grid>
 
                 <!-- Login Button -->
                 <Button x:Name="btnLogin" 

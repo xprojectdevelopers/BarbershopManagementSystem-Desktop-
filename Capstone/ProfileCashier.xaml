@@ -5,68 +5,13 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Capstone"
         mc:Ignorable="d"
-        Title="ProfileAdmin" Height="700" Width="1200"
+        Title="My Profile - Cashier" Height="700" Width="1200"
         WindowState="Maximized"
         MinWidth="400"
         MinHeight="400"
         ResizeMode="CanResizeWithGrip">
 
     <Window.Resources>
-
-
-        <!-- Responsive card style -->
-        <Style x:Key="MenuCard" TargetType="Border">
-            <Setter Property="BorderThickness" Value="1"/>
-            <Setter Property="CornerRadius" Value="8"/>
-            <Setter Property="Padding" Value="20"/>
-            <Setter Property="Margin" Value="10"/>
-            <Setter Property="Cursor" Value="Hand"/>
-            <Style.Triggers>
-                <Trigger Property="IsMouseOver" Value="True">
-                    <Setter Property="Background" Value="White"/>
-                    <Setter Property="BorderBrush" Value="Black"/>
-                    <Setter Property="Effect">
-                        <Setter.Value>
-                            <DropShadowEffect ShadowDepth="2" BlurRadius="8" Opacity="0.2"/>
-                        </Setter.Value>
-                    </Setter>
-                </Trigger>
-            </Style.Triggers>
-        </Style>
-
-        <!-- Icon style -->
-        <Style x:Key="MenuIcon" TargetType="Image">
-            <Setter Property="Width" Value="40"/>
-            <Setter Property="Height" Value="40"/>
-            <Setter Property="HorizontalAlignment" Value="Left"/>
-            <Setter Property="VerticalAlignment" Value="Top"/>
-        </Style>
-
-        <!-- Description -->
-        <Style x:Key="MenuTitle" TargetType="TextBlock">
-            <Setter Property="FontSize" Value="18"/>
-            <Setter Property="FontWeight" Value="SemiBold"/>
-            <Setter Property="Foreground" Value="#333333"/>
-            <Setter Property="Margin" Value="0,5,0,5"/>
-        </Style>
-
-        <!-- Description Text -->
-        <Style x:Key="MenuSubtitle" TargetType="TextBlock">
-            <Setter Property="FontSize" Value="13"/>
-            <Setter Property="Foreground" Value="#757575"/>
-            <Setter Property="TextWrapping" Value="Wrap"/>
-        </Style>
-
-        <!-- Profile styles -->
-        <Style x:Key="ProfileImage" TargetType="Border">
-            <Setter Property="Width" Value="120"/>
-            <Setter Property="Height" Value="120"/>
-            <Setter Property="CornerRadius" Value="60"/>
-            <Setter Property="Background" Value="Black"/>
-            <Setter Property="HorizontalAlignment" Value="Center"/>
-        </Style>
-
-        <!-- Responsive profile text styles -->
         <Style x:Key="ResponsiveProfileName" TargetType="TextBlock">
             <Setter Property="FontSize" Value="28"/>
             <Setter Property="FontWeight" Value="Bold"/>
@@ -83,16 +28,6 @@
             <Setter Property="Margin" Value="0,0,0,5"/>
         </Style>
 
-        <Style x:Key="ResponsiveProfileLink" TargetType="TextBlock">
-            <Setter Property="FontSize" Value="14"/>
-            <Setter Property="HorizontalAlignment" Value="Center"/>
-            <Setter Property="Foreground" Value="#0056FF"/>
-            <Setter Property="FontWeight" Value="SemiBold"/>
-            <Setter Property="TextDecorations" Value="Underline"/>
-            <Setter Property="Cursor" Value="Hand"/>
-        </Style>
-
-        <!-- Responsive button style for notification and settings -->
         <Style x:Key="ResponsiveButton" TargetType="Button">
             <Setter Property="Background" Value="Transparent"/>
             <Setter Property="BorderThickness" Value="0"/>
@@ -105,26 +40,14 @@
             <Setter Property="Template">
                 <Setter.Value>
                     <ControlTemplate TargetType="Button">
-                        <Border Background="{TemplateBinding Background}" 
-                            BorderBrush="{TemplateBinding BorderBrush}"
-                            BorderThickness="{TemplateBinding BorderThickness}"
-                            Padding="{TemplateBinding Padding}"
-                            CornerRadius="20">
-                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                        </Border>
-                        <ControlTemplate.Triggers>
-                            <Trigger Property="IsMouseOver" Value="True">
-                                <Setter Property="Background" Value="Transparent"/>
-                            </Trigger>
-                            <Trigger Property="IsPressed" Value="True">
-                                <Setter Property="Background" Value="Transparent"/>
-                            </Trigger>
-                        </ControlTemplate.Triggers>
+                        <ContentPresenter HorizontalAlignment="Center"
+                                  VerticalAlignment="Center"/>
                     </ControlTemplate>
                 </Setter.Value>
             </Setter>
         </Style>
-        <!-- Simple icon style for top bar (no converter needed) -->
+
+
         <Style x:Key="TopBarIcon" TargetType="Image">
             <Setter Property="Width" Value="24"/>
             <Setter Property="Height" Value="24"/>
@@ -133,136 +56,93 @@
 
     <Grid>
         <!-- Profile Section -->
-        <Grid Grid.Row="0" HorizontalAlignment="Center" Margin="0,-380,0,0">
+        <Grid Grid.Row="0" HorizontalAlignment="Center" Margin="0,20,0,0" VerticalAlignment="Top">
             <Viewbox Stretch="Uniform" MaxWidth="350" MaxHeight="300" StretchDirection="DownOnly">
                 <StackPanel Orientation="Vertical">
                     <!-- Profile Image Container -->
                     <Border x:Name="ProfileImageBorder" Width="120" Height="120" 
-                       CornerRadius="60"
-                       Background="LightGray" 
-                       HorizontalAlignment="Center"
-                       Margin="0,0,0,15"
-                       ClipToBounds="True">
+                           CornerRadius="60"
+                           Background="LightGray" 
+                           HorizontalAlignment="Center"
+                           Margin="0,0,0,15"
+                           ClipToBounds="True">
                         <Image Source="/Icon/profile.png" 
-                       Stretch="UniformToFill"
-                       VerticalAlignment="Center"
-                       HorizontalAlignment="Center"/>
+                               Stretch="UniformToFill"
+                               VerticalAlignment="Center"
+                               HorizontalAlignment="Center"/>
                     </Border>
 
                     <!-- Profile Info -->
                     <StackPanel>
-                        <TextBlock Text="Name" x:Name="NameText"
-                          Style="{StaticResource ResponsiveProfileName}"/>
-                        <TextBlock Text="Role" x:Name="RoleText"
-                          Style="{StaticResource ResponsiveProfileRole}"/>
+                        <TextBlock Text="Cashier Name" x:Name="NameText"
+                                  Style="{StaticResource ResponsiveProfileName}"/>
+                        <TextBlock Text="Cashier" x:Name="RoleText"
+                                  Style="{StaticResource ResponsiveProfileRole}"/>
                     </StackPanel>
                 </StackPanel>
             </Viewbox>
         </Grid>
 
-        <!-- Top Navigation Bar - Fixed positioning -->
-        <Border Grid.Row="0" 
-                Height="60">
-            <Grid Margin="-440,-200,72,-74">
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="*"/>
-                    <ColumnDefinition Width="Auto"/>
-                    <ColumnDefinition Width="Auto"/>
-                </Grid.ColumnDefinitions>
+        <!-- Top Navigation Bar -->
+        <Border Grid.Row="0" Height="60" VerticalAlignment="Top">
+            <Grid Margin="12,224,-12,-224">
 
-                <!-- Notification Icon -->
-                <Button 
-Margin="1015,0,0,0" 
-Style="{StaticResource ResponsiveButton}"
-ToolTip="Notifications"
-Grid.ColumnSpan="3" HorizontalAlignment="Left">
-                    <Image Source="/Icon/bell.png" Style="{StaticResource TopBarIcon}"/>
-                </Button>
+                <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,0,20,0">
+                    <Button Click="BackButton_Click" Style="{StaticResource ResponsiveButton}">
+                        <Image Source="/Icon/house.png" Style="{StaticResource TopBarIcon}"/>
+                    </Button>
+                    
+                    <Button Style="{StaticResource ResponsiveButton}" ToolTip="Notifications">
+                        <Image Source="/Icon/bell.png" Style="{StaticResource TopBarIcon}"/>
+                    </Button>
 
-                <!-- Settings Icon -->
-                <Button  
-                        Margin="1068,0,0,0" 
-                        Style="{StaticResource ResponsiveButton}"
-                        ToolTip="Settings" HorizontalAlignment="Left">
-                    <Image Source="/Icon/gear.png" Style="{StaticResource TopBarIcon}"/>
-                </Button>
-
-                <Button  
-        Margin="967,0,0,0" 
-        Style="{StaticResource ResponsiveButton}"
-        ToolTip="Settings" HorizontalAlignment="Left">
-                    <Image Source="/Icon/gear.png" Style="{StaticResource TopBarIcon}"/>
-                </Button>
+                    <Button Style="{StaticResource ResponsiveButton}" ToolTip="Settings">
+                        <Image Source="/Icon/gear.png" Style="{StaticResource TopBarIcon}"/>
+                    </Button>
+                </StackPanel>
             </Grid>
         </Border>
 
-        <Grid Margin="510,300,40,0">
-            <Grid.RowDefinitions>
-                <RowDefinition Height="Auto"/>
-                <RowDefinition Height="Auto"/>
-                <RowDefinition Height="30"/>
-            </Grid.RowDefinitions>
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="205"/>
-                <ColumnDefinition Width="40"/>
-                <ColumnDefinition Width="205"/>
-                <ColumnDefinition Width="40"/>
-                <ColumnDefinition Width="205"/>
-                <ColumnDefinition Width="*"/>
-            </Grid.ColumnDefinitions>
+        <!-- Form Fields (Read-Only for Cashier) -->
+        <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center" Margin="0,100,0,0" Width="450">
+            <!-- Name Field (Read-Only) -->
+            <Grid Margin="0,100,0,0">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
 
-            <!-- Item Name -->
-            <Label Content="Name" FontSize="20" Grid.Row="0" Grid.Column="0" VerticalAlignment="Bottom" Margin="0,0,0,5"/>
-            <TextBox x:Name="txtProcess" VerticalContentAlignment="Center" FontSize="20" Grid.Row="1" Grid.Column="0" Height="47"/>
-            <TextBlock x:Name="txtProcessError" Foreground="Red" FontSize="12" 
-             Grid.Row="2" Grid.Column="0" Margin="0,2,0,0"
-             VerticalAlignment="Top" Visibility="Collapsed"/>
-        </Grid>
+                <Label Content="Name" FontSize="20" Grid.Row="0" Margin="100,4,0,1"/>
+                <TextBox x:Name="txtName" VerticalContentAlignment="Center" FontSize="20" 
+                         Grid.Row="1" Height="47" Width="250" IsReadOnly="True"
+                         Cursor="Arrow"/>
+            </Grid>
 
-        <Grid Margin="510,400,40,0">
-            <Grid.RowDefinitions>
-                <RowDefinition Height="Auto"/>
-                <RowDefinition Height="Auto"/>
-                <RowDefinition Height="30"/>
-            </Grid.RowDefinitions>
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="205"/>
-                <ColumnDefinition Width="40"/>
-                <ColumnDefinition Width="205"/>
-                <ColumnDefinition Width="40"/>
-                <ColumnDefinition Width="205"/>
-                <ColumnDefinition Width="*"/>
-            </Grid.ColumnDefinitions>
+            <!-- Employee ID Field (Read-Only) -->
+            <Grid Margin="0,20,0,0">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
 
-            <!-- Item Name -->
-            <Label Content="Employee ID" FontSize="20" Grid.Row="0" Grid.Column="0" VerticalAlignment="Bottom" Margin="0,0,0,5"/>
-            <TextBox VerticalContentAlignment="Center" FontSize="20" Grid.Row="1" Grid.Column="0" Height="47"/>
-            <TextBlock Foreground="Red" FontSize="12" 
-     Grid.Row="2" Grid.Column="0" Margin="0,2,0,0"
-     VerticalAlignment="Top" Visibility="Collapsed"/>
-        </Grid>
+                <Label Content="Employee ID" FontSize="20" Grid.Row="0" Margin="100,4,0,1"/>
+                <TextBox x:Name="txtEmployeeID" VerticalContentAlignment="Center" FontSize="20" 
+                         Grid.Row="1" Height="47" Width="250" IsReadOnly="True"
+                         Cursor="Arrow"/>
+            </Grid>
 
-        <Grid Margin="510,500,40,0">
-            <Grid.RowDefinitions>
-                <RowDefinition Height="Auto"/>
-                <RowDefinition Height="Auto"/>
-                <RowDefinition Height="30"/>
-            </Grid.RowDefinitions>
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="205"/>
-                <ColumnDefinition Width="40"/>
-                <ColumnDefinition Width="205"/>
-                <ColumnDefinition Width="40"/>
-                <ColumnDefinition Width="205"/>
-                <ColumnDefinition Width="*"/>
-            </Grid.ColumnDefinitions>
+            <!-- Role Field (Read-Only) -->
+            <Grid Margin="0,20,0,0">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
 
-            <!-- Item Name -->
-            <Label Content="Role" FontSize="20" Grid.Row="0" Grid.Column="0" VerticalAlignment="Bottom" Margin="0,0,0,5"/>
-            <TextBox VerticalContentAlignment="Center" FontSize="20" Grid.Row="1" Grid.Column="0" Height="47"/>
-            <TextBlock Foreground="Red" FontSize="12" 
-Grid.Row="2" Grid.Column="0" Margin="0,2,0,0"
-VerticalAlignment="Top" Visibility="Collapsed"/>
-        </Grid>
+                <Label Content="Role" FontSize="20" Grid.Row="0" Margin="100,4,0,1"/>
+                <TextBox x:Name="txtRole" VerticalContentAlignment="Center" FontSize="20" 
+                         Grid.Row="1" Height="47" Width="250" IsReadOnly="True"
+                         Cursor="Arrow"/>
+            </Grid>
+        </StackPanel>
     </Grid>
 </Window>
