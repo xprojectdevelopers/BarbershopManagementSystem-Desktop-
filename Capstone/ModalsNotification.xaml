@@ -7,12 +7,124 @@
         mc:Ignorable="d"
         Title="ModalsNotification" Height="450" Width="270"
         ResizeMode="CanResizeWithGrip"
-WindowStartupLocation="CenterOwner"
-ShowInTaskbar="False"
-WindowStyle="None">
-    <Grid>
-        <Label Content="Notifications" FontSize="20" FontWeight="Bold" Margin="65,20,35,360"/>
+        WindowStartupLocation="CenterOwner"
+        ShowInTaskbar="False"
+        WindowStyle="None"
+        Background="White">
 
+    <Window.Resources>
+        <Style x:Key="NotificationCard" TargetType="Border">
+            <Setter Property="Background" Value="White"/>
+            <Setter Property="BorderBrush" Value="#E0E0E0"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="CornerRadius" Value="0"/>
+            <Setter Property="Padding" Value="20,16"/>
+            <Setter Property="Margin" Value="0,0,0,16"/>
+            <Setter Property="Cursor" Value="Hand"/>
+        </Style>
 
+        <Style x:Key="HoverableNotificationItem" TargetType="Border">
+            <Setter Property="Background" Value="White"/>
+            <Setter Property="BorderBrush" Value="Transparent"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="CornerRadius" Value="0"/>
+            <Setter Property="Padding" Value="12,10"/>
+            <Setter Property="Margin" Value="0,0,0,10"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Style.Triggers>
+                <Trigger Property="IsMouseOver" Value="True">
+                    <Setter Property="BorderBrush" Value="Black"/>
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+
+        <Style x:Key="NotificationIcon" TargetType="Path">
+            <Setter Property="Width" Value="22"/>
+            <Setter Property="Height" Value="22"/>
+            <Setter Property="Stretch" Value="Uniform"/>
+            <Setter Property="Fill" Value="#212121"/>
+            <Setter Property="VerticalAlignment" Value="Top"/>
+            <Setter Property="Margin" Value="0,0,0,0"/>
+        </Style>
+
+        <Style x:Key="NotificationTitle" TargetType="TextBlock">
+            <Setter Property="FontSize" Value="14"/>
+            <Setter Property="FontWeight" Value="SemiBold"/>
+            <Setter Property="Foreground" Value="#000000"/>
+            <Setter Property="VerticalAlignment" Value="Center"/>
+            <Setter Property="Margin" Value="0,0,0,0"/>
+        </Style>
+
+        <Style x:Key="NotificationStatus" TargetType="TextBlock">
+            <Setter Property="FontSize" Value="12"/>
+            <Setter Property="FontWeight" Value="Normal"/>
+            <Setter Property="Foreground" Value="#2196F3"/>
+            <Setter Property="VerticalAlignment" Value="Center"/>
+            <Setter Property="Margin" Value="0,0,0,0"/>
+        </Style>
+
+        <Style x:Key="NotificationMessage" TargetType="TextBlock">
+            <Setter Property="FontSize" Value="11"/>
+            <Setter Property="Foreground" Value="#424242"/>
+            <Setter Property="TextWrapping" Value="Wrap"/>
+            <Setter Property="LineHeight" Value="16"/>
+            <Setter Property="Margin" Value="0,4,0,0"/>
+        </Style>
+
+        <Style x:Key="HeaderTitle" TargetType="TextBlock">
+            <Setter Property="FontSize" Value="20"/>
+            <Setter Property="FontWeight" Value="Bold"/>
+            <Setter Property="Foreground" Value="#000000"/>
+            <Setter Property="HorizontalAlignment" Value="Center"/>
+            <Setter Property="Margin" Value="0,16,0,16"/>
+        </Style>
+    </Window.Resources>
+
+    <Grid Background="White">
+        <ScrollViewer VerticalScrollBarVisibility="Auto" Padding="12,0,12,12">
+            <StackPanel>
+                <!-- Header -->
+                <TextBlock Text="Notifications" Style="{StaticResource HeaderTitle}"/>
+
+              
+                <!-- Inventory Notification - no border -->
+                <Border Style="{StaticResource HoverableNotificationItem}">
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                        </Grid.RowDefinitions>
+
+                        <!-- Package Icon -->
+                        <Path Grid.Column="0" Grid.Row="0" Grid.RowSpan="2" 
+                              Style="{StaticResource NotificationIcon}" 
+                              VerticalAlignment="Top"
+                              Margin="0,0,10,0"
+                              Data="M2,10.96C1.5,10.68 1.35,10.07 1.63,9.59L3.13,7C3.24,6.8 3.41,6.66 3.6,6.58L11.43,2.18C11.59,2.06 11.79,2 12,2C12.21,2 12.41,2.06 12.57,2.18L20.47,6.62C20.66,6.72 20.82,6.88 20.91,7.08L22.36,9.6C22.64,10.08 22.47,10.69 22,10.96L21,11.54V16.5C21,16.88 20.79,17.21 20.47,17.38L12.57,21.82C12.41,21.94 12.21,22 12,22C11.79,22 11.59,21.94 11.43,21.82L3.53,17.38C3.21,17.21 3,16.88 3,16.5V11.54L2,10.96M12,4.15L6.04,7.5L12,10.85L17.96,7.5L12,4.15M5,15.91L11,19.29V12.58L5,9.21V15.91M19,15.91V9.21L13,12.58V19.29L19,15.91Z"/>
+
+                        <!-- Title and Resolved -->
+                        <Grid Grid.Column="1" Grid.Row="0">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="Auto"/>
+                            </Grid.ColumnDefinitions>
+                            <TextBlock Grid.Column="0" Text="Inventory" Style="{StaticResource NotificationTitle}"/>
+                            <TextBlock Grid.Column="1" Text="Resolved" FontWeight="Bold"
+                                       Style="{StaticResource NotificationStatus}"
+                                       Margin="10,0,0,0"/>
+                        </Grid>
+
+                        <!-- Description -->
+                        <TextBlock Grid.Column="1" Grid.Row="1"
+                                   Text="Eight Wolves (MSBI-0001) stock is low, please restock soon." 
+                                   Margin="-30,10,0,0" Style="{StaticResource NotificationMessage}"/>
+                    </Grid>
+                </Border>
+            </StackPanel>
+        </ScrollViewer>
     </Grid>
 </Window>

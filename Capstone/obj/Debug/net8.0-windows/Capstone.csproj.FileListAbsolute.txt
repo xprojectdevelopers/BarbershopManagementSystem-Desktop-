@@ -818,3 +818,5 @@ C:\Users\Mezzc\OneDrive\Documents\Desktop Barbers\Capstone\obj\Debug\net8.0-wind
 C:\Users\Mezzc\OneDrive\Documents\Desktop Barbers\Capstone\obj\Debug\net8.0-windows\Capstone.pdb
 C:\Users\Mezzc\OneDrive\Documents\Desktop Barbers\Capstone\obj\Debug\net8.0-windows\Capstone.genruntimeconfig.cache
 C:\Users\Mezzc\OneDrive\Documents\Desktop Barbers\Capstone\obj\Debug\net8.0-windows\ref\Capstone.dll
+C:\Users\Mezzc\OneDrive\Documents\Desktop Barbers\Capstone\obj\Debug\net8.0-windows\ProductDescription.g.cs
+C:\Users\Mezzc\OneDrive\Documents\Desktop Barbers\Capstone\obj\Debug\net8.0-windows\ProductDescription.baml

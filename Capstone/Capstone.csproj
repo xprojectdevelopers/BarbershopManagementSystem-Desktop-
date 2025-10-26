@@ -19,6 +19,7 @@
     <None Remove="Icon\CheckCircle.png" />
     <None Remove="magnifying-glass.png" />
     <None Remove="Manage_Service.png" />
+    <None Remove="package.png" />
     <None Remove="Paying-Taxes-1--Streamline-Milano.png" />
     <None Remove="Profile-2--Streamline-Milano-1.png" />
     <None Remove="quotes-fill.png" />
@@ -26,6 +27,7 @@
     <None Remove="Sorting-Center--Streamline-Milano.png" />
     <None Remove="stack-of-money.png" />
     <None Remove="Swarm_bee_user.png" />
+    <None Remove="w.png" />
   </ItemGroup>
 
   <ItemGroup>
@@ -61,6 +63,7 @@
     <Resource Include="Icon\Paying-Taxes-1--Streamline-Milano.png" />
     <Resource Include="Icon\magnifying-glass.png" />
     <Resource Include="Icon\Manage_Service.png" />
+    <Resource Include="package.png" />
     <Resource Include="Pop out image\marketing-target.png" />
     <Resource Include="Pop out image\Phone-Hotspot-1--Streamline-Milano.png" />
     <Resource Include="Icon\profile.png" />
@@ -72,6 +75,7 @@
     <Resource Include="Profile-2--Streamline-Milano-1.png" />
     <Resource Include="quotes-fill.png" />
     <Resource Include="Icon\Sorting-Center--Streamline-Milano.png" />
+    <Resource Include="Icon\w.png" />
   </ItemGroup>
 
 </Project>

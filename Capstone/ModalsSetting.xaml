@@ -7,9 +7,9 @@
         mc:Ignorable="d"
         Title="ModalsNotification" Height="450" Width="270"
         ResizeMode="CanResizeWithGrip"
-WindowStartupLocation="CenterOwner"
-ShowInTaskbar="False"
-WindowStyle="None">
+        WindowStartupLocation="CenterOwner"
+        ShowInTaskbar="False"
+        WindowStyle="None">
 
     <Window.Resources>
         <!-- Setting Item Style -->
@@ -48,7 +48,8 @@ WindowStyle="None">
 
             <!-- My Profile -->
             <Border x:Name="MyProfileBorder" 
-                    Style="{StaticResource SettingItem}">
+                    Style="{StaticResource SettingItem}"
+                    MouseLeftButtonDown="MyProfile_Click">
                 <StackPanel Orientation="Horizontal">
                     <Viewbox Width="20" Height="20" Margin="0,0,15,0">
                         <Canvas Width="24" Height="24">
@@ -103,8 +104,8 @@ WindowStyle="None">
 
             <!-- Log Out -->
             <Border x:Name="LogOutBorder" 
-        Style="{StaticResource SettingItem}"
-        MouseLeftButtonDown="LogOut_Click">
+                    Style="{StaticResource SettingItem}"
+                    MouseLeftButtonDown="LogOut_Click">
                 <StackPanel Orientation="Horizontal">
                     <Viewbox Width="20" Height="20" Margin="0,0,15,0">
                         <Canvas Width="24" Height="24">
@@ -113,9 +114,9 @@ WindowStyle="None">
                         </Canvas>
                     </Viewbox>
                     <TextBlock Text="Log Out" 
-                   FontSize="15" 
-                   VerticalAlignment="Center"
-                   FontWeight="Medium"/>
+                               FontSize="15" 
+                               VerticalAlignment="Center"
+                               FontWeight="Medium"/>
                 </StackPanel>
             </Border>
 

@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Capstone"
         mc:Ignorable="d" 
-        Title="PayrollHistory" Height="1300" Width="1280"
+        Title="PayrollHistory" Height="700" Width="1280"
         WindowState="Maximized"
         ResizeMode="CanResize" 
         Background="White">
@@ -211,6 +211,71 @@
                 <!-- Page Title -->
                 <Label Content="Manage Item" FontSize="20" FontWeight="Bold" Margin="20,20,20,15"/>
 
+                <!-- Top Cards -->
+                <Grid Margin="15,-20,15,20">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="2*"/>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+
+                    <!-- New Employee Card -->
+                    <Border Grid.Column="0" BorderBrush="#000" BorderThickness="1" CornerRadius="8" Padding="15" Margin="5">
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="Auto"/>
+                            </Grid.ColumnDefinitions>
+                            <StackPanel Grid.Column="0" VerticalAlignment="Center">
+                                <TextBlock Text="Update Product" FontSize="24" FontWeight="Bold"/>
+                                <TextBlock Text="Update existing product details in Molave Streets Barbers."
+           FontSize="14" Foreground="Gray" Margin="0,5,0,15" TextWrapping="Wrap"/>
+                                <Button Content="Update"
+        Padding="10,5"
+        Background="Blue" Foreground="White"
+        FontWeight="Bold" Width="140" Height="40"
+        HorizontalAlignment="Left"
+        Click="ProductUpdate_Click" Cursor="Hand">
+                                    <Button.Template>
+                                        <ControlTemplate TargetType="Button">
+                                            <Border Background="{TemplateBinding Background}" CornerRadius="15" Padding="{TemplateBinding Padding}">
+                                                <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                            </Border>
+                                        </ControlTemplate>
+                                    </Button.Template>
+                                </Button>
+                            </StackPanel>
+                            <Image Grid.Column="1" 
+   Source="Icon/w.png" 
+   Width="120" 
+   Height="120" 
+   Stretch="Fill"
+   VerticalAlignment="Center"
+   HorizontalAlignment="Right"
+   Margin="10,0,0,0"/>
+                        </Grid>
+                    </Border>
+
+                    <!-- Total Employees Card -->
+                    <Border Grid.Column="1" BorderBrush="#000" BorderThickness="1" CornerRadius="8" Padding="15" Margin="5">
+                        <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center">
+                            <!-- Dynamic employee count -->
+                            <TextBlock x:Name="TotalEmployeesText" Text="0" Margin="28,0,0,0" FontSize="64" FontWeight="Bold"/>
+                            <TextBlock Text="Total Register" FontSize="16" FontWeight="Bold"/>
+                            <TextBlock Text="Products" FontSize="16" FontWeight="Bold" Margin="20,0,0,0"/>
+                        </StackPanel>
+                    </Border>
+
+                    <!-- Absentees Card -->
+                    <Border Grid.Column="2" BorderBrush="#000" BorderThickness="1" CornerRadius="8" Padding="15" Margin="5">
+                        <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center">
+                            <TextBlock x:Name="TotalCashierText" Text="0" Margin="28,0,0,0" FontSize="64" FontWeight="Bold"/>
+                            <TextBlock Text="Total All Stock" FontSize="16" FontWeight="Bold"/>
+                            <TextBlock Text="Products" FontSize="16" FontWeight="Bold" Margin="20,0,0,0"/>
+                        </StackPanel>
+                    </Border>
+                </Grid>
+                
                 <!-- Filter and Action Section -->
                 <Border BorderBrush="Black" BorderThickness="1" Padding="20" CornerRadius="8" Margin="20,-15,20,20">
                     <StackPanel>
@@ -340,234 +405,6 @@
                         <StackPanel x:Name="PaginationPanel" Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,10,0,0"/>
                     </StackPanel>
                 </Border>
-
-                <Border BorderBrush="Black" BorderThickness="1" Padding="20" CornerRadius="8" Margin="0,20,0,60" Height="570" Width="1145">
-                    <StackPanel Margin="-30,0,0,0">
-                        <TextBlock Text="Item Description"
-                   FontSize="30" FontWeight="Bold"
-                   HorizontalAlignment="Center" Margin="0,20,0,20"/>
-                        <!-- Header Section -->
-                        <Grid Margin="400,0,40,0">
-                            <Grid.RowDefinitions>
-                                <RowDefinition Height="Auto"/>
-                                <RowDefinition Height="Auto"/>
-                                <RowDefinition Height="30"/>
-                            </Grid.RowDefinitions>
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="205"/>
-                                <ColumnDefinition Width="*"/>
-                            </Grid.ColumnDefinitions>
-
-                            <Label Content="Item ID" FontSize="20" Grid.Row="0" Grid.Column="0" VerticalAlignment="Bottom" Margin="0,0,0,5"/>
-                            <StackPanel Orientation="Horizontal" Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" Margin="00,0,0,0">
-                                <TextBox x:Name="txtItemID" FontSize="30" Width="205" Height="47" VerticalAlignment="Top"/>
-                                <Button Content="Search" Cursor="Hand"
-Width="160" Height="47" 
-Margin="20,0,0,0"
-VerticalAlignment="Top" 
-Grid.Row="1"
-Foreground="white"
-Click="Search_Click">
-                                    <Button.Template>
-                                        <ControlTemplate TargetType="Button">
-                                            <Border Background="black" 
-            CornerRadius="20" 
-            BorderBrush="Black" 
-            BorderThickness="1">
-                                                <StackPanel Orientation="Horizontal" 
-                   HorizontalAlignment="Center"
-                   VerticalAlignment="Center">
-                                                    <Image Source="/Icon/magnifying-glass.png" 
-                   Width="20" 
-                   Height="20" 
-                   Margin="0,0,8,0"/>
-                                                    <TextBlock Text="Search" 
-                      Foreground="{TemplateBinding Foreground}"
-                      VerticalAlignment="Center"/>
-                                                </StackPanel>
-                                            </Border>
-                                        </ControlTemplate>
-                                    </Button.Template>
-                                </Button>
-                            </StackPanel>
-                            <TextBlock x:Name="txtItemIDError" Foreground="Red" FontSize="12" 
-               Grid.Row="2" Grid.Column="0" Margin="0,2,0,0"
-               VerticalAlignment="Top" Visibility="Collapsed"/>
-                            <TextBlock x:Name="txtItemIDSame" Foreground="Red" FontSize="12" 
-               Grid.Row="2" Grid.Column="0" Margin="0,2,0,0"
-               VerticalAlignment="Top" Visibility="Collapsed"/>
-                        </Grid>
-
-                        <!-- Row 1: Item Name, Category, Price -->
-                        <Grid Margin="280,-10,40,0">
-                            <Grid.RowDefinitions>
-                                <RowDefinition Height="Auto"/>
-                                <RowDefinition Height="Auto"/>
-                                <RowDefinition Height="30"/>
-                            </Grid.RowDefinitions>
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="205"/>
-                                <ColumnDefinition Width="40"/>
-                                <ColumnDefinition Width="205"/>
-                                <ColumnDefinition Width="40"/>
-                                <ColumnDefinition Width="205"/>
-                                <ColumnDefinition Width="*"/>
-                            </Grid.ColumnDefinitions>
-
-                            <!-- Item Name -->
-                            <Label Content="Item Name" FontSize="20" Grid.Row="0" Grid.Column="0" VerticalAlignment="Bottom" Margin="0,0,0,5"/>
-                            <TextBox x:Name="txtItemName" FontSize="30" Grid.Row="1" Grid.Column="0" Height="47"/>
-                            <TextBlock x:Name="txtItemNameError" Foreground="Red" FontSize="12" 
-               Grid.Row="2" Grid.Column="0" Margin="0,2,0,0"
-               VerticalAlignment="Top" Visibility="Collapsed"/>
-                            <TextBlock x:Name="txtItemNameSame" Foreground="Red" FontSize="12" 
-               Grid.Row="2" Grid.Column="0" Margin="0,2,0,0"
-               VerticalAlignment="Top" Visibility="Collapsed"/>
-
-                            <!-- Category -->
-                            <Label Content="Category" FontSize="20" Grid.Row="0" Grid.Column="2" VerticalAlignment="Bottom" Margin="0,0,0,5"/>
-                            <ComboBox x:Name="Category" Grid.Row="1" Grid.Column="2" Height="47" FontSize="16" 
-              SelectedIndex="-1" Style="{StaticResource TextBoxStyleComboBox}">
-                                <ComboBoxItem IsEnabled="False" IsSelected="True" Foreground="Gray">Select Category</ComboBoxItem>
-                                <ComboBoxItem>Aftershaves</ComboBoxItem>
-                                <ComboBoxItem>Clays</ComboBoxItem>
-                                <ComboBoxItem>Clippers and trimmers</ComboBoxItem>
-                                <ComboBoxItem>Combs and brushes</ComboBoxItem>
-                                <ComboBoxItem>Conditioners</ComboBoxItem>
-                                <ComboBoxItem>Gel</ComboBoxItem>
-                                <ComboBoxItem>Hair dyes</ComboBoxItem>
-                                <ComboBoxItem>Hair sprays</ComboBoxItem>
-                                <ComboBoxItem>Pomades</ComboBoxItem>
-                                <ComboBoxItem>Razor and blades</ComboBoxItem>
-                                <ComboBoxItem>Scissors</ComboBoxItem>
-                                <ComboBoxItem>Shampoos</ComboBoxItem>
-                                <ComboBoxItem>Shavings creams</ComboBoxItem>
-                                <ComboBoxItem>Towels</ComboBoxItem>
-                                <ComboBoxItem>Waxes</ComboBoxItem>
-                            </ComboBox>
-                            <TextBlock x:Name="txtCategoryError" Foreground="Red" FontSize="12" 
-               Grid.Row="2" Grid.Column="2" Margin="0,2,0,0"
-               VerticalAlignment="Top" Visibility="Collapsed"/>
-                            <TextBlock x:Name="txtCategorySame" Foreground="Red" FontSize="12" 
-               Grid.Row="2" Grid.Column="2" Margin="0,2,0,0"
-               VerticalAlignment="Top" Visibility="Collapsed"/>
-
-                            <!-- Price with Peso Symbol -->
-                            <Label Content="Price" FontSize="20" Grid.Row="0" Grid.Column="4" VerticalAlignment="Bottom" Margin="0,0,0,5"/>
-                            <Grid Grid.Row="1" Grid.Column="4">
-                                <TextBox x:Name="txtPrice" 
-                                         FontSize="30" 
-                                         Height="47"
-                                         Padding="30,0,10,0"
-                                         VerticalContentAlignment="Center"
-                                         BorderBrush="Gray"
-                                         BorderThickness="1"/>
-                                <TextBlock Text="₱" 
-                                           FontSize="30"
-                                           Foreground="Black"
-                                           VerticalAlignment="Center"
-                                           Margin="10,0,0,0"
-                                           IsHitTestVisible="False"/>
-                            </Grid>
-                            <TextBlock x:Name="txtPriceError" Foreground="Red" FontSize="12" 
-               Grid.Row="2" Grid.Column="4" Margin="0,2,0,0"
-               VerticalAlignment="Top" Visibility="Collapsed"/>
-                        </Grid>
-
-                        <!-- Row 2: Supplier Name, Contact Number, Date -->
-                        <Grid Margin="280,-10,40,0">
-                            <Grid.RowDefinitions>
-                                <RowDefinition Height="Auto"/>
-                                <RowDefinition Height="Auto"/>
-                                <RowDefinition Height="30"/>
-                            </Grid.RowDefinitions>
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="205"/>
-                                <ColumnDefinition Width="40"/>
-                                <ColumnDefinition Width="205"/>
-                                <ColumnDefinition Width="40"/>
-                                <ColumnDefinition Width="205"/>
-                                <ColumnDefinition Width="*"/>
-                            </Grid.ColumnDefinitions>
-
-                            <!-- Supplier Name -->
-                            <Label Content="Supplier Name" FontSize="20" Grid.Row="0" Grid.Column="0" VerticalAlignment="Bottom" Margin="0,0,0,5"/>
-                            <TextBox x:Name="txtSupplierName" FontSize="30" Grid.Row="1" Grid.Column="0" Height="47"/>
-                            <TextBlock x:Name="txtSupplierNameError" Foreground="Red" FontSize="12" 
-               Grid.Row="2" Grid.Column="0" Margin="0,2,0,0"
-               VerticalAlignment="Top" Visibility="Collapsed"/>
-
-                            <!-- Supplier Contact Number -->
-                            <Label Content="Supplier Contact Number" FontSize="17" Grid.Row="0" Grid.Column="2" VerticalAlignment="Bottom" Margin="0,0,0,5"/>
-                            <TextBox x:Name="txtSCNumber" FontSize="30" Grid.Row="1" Grid.Column="2" Height="47"/>
-                            <TextBlock x:Name="txtSCNumberError" Foreground="Red" FontSize="12" 
-               Grid.Row="2" Grid.Column="2" Margin="0,2,0,0"
-               VerticalAlignment="Top" Visibility="Collapsed"/>
-
-                            <!-- Date -->
-                            <Label Content="Date" FontSize="20" Grid.Row="0" Grid.Column="4" VerticalAlignment="Bottom" Margin="0,0,0,5"/>
-                            <DatePicker Style="{StaticResource TextBoxStyleDatePicker}" x:Name="ItemDate"
-                Tag="Select Start Date" Grid.Row="1" Grid.Column="4" Width="205"/>
-                            <TextBlock x:Name="txtDateError" Foreground="Red" FontSize="12" 
-               Grid.Row="2" Grid.Column="4" Margin="0,2,0,0"
-               VerticalAlignment="Top" Visibility="Collapsed"/>
-                        </Grid>
-
-
-                        <StackPanel Orientation="Horizontal" Grid.Column="0" VerticalAlignment="Center" Margin="350,-10,0,0">
-
-                            <Button Content="Delete" Cursor="Hand"
-Width="205"
-Height="40"
-Margin="0,37,0,0"
-HorizontalAlignment="Left"
-VerticalAlignment="Top" Grid.Row="1"
-Foreground="white" Click="Delete_Click">
-                                <Button.Template>
-                                    <ControlTemplate TargetType="Button">
-                                        <Border Background="black" 
-            CornerRadius="20" 
-            BorderBrush="Black" 
-            BorderThickness="1">
-                                            <StackPanel Orientation="Horizontal" 
-                HorizontalAlignment="Center"
-                VerticalAlignment="Center">
-                                                <TextBlock Text="{TemplateBinding Content}"
-                    Foreground="{TemplateBinding Foreground}"
-                    VerticalAlignment="Center"/>
-                                            </StackPanel>
-                                        </Border>
-                                    </ControlTemplate>
-                                </Button.Template>
-                            </Button>
-
-                            <Button Content="Update" Cursor="Hand"
-Width="205"
-Height="40"
-Margin="68,37,0,0"
-HorizontalAlignment="Left"
-VerticalAlignment="Top" Grid.Row="1"
-Foreground="white" Click="Update_Click">
-                                <Button.Template>
-                                    <ControlTemplate TargetType="Button">
-                                        <Border Background="black" 
-            CornerRadius="20" 
-            BorderBrush="Black" 
-            BorderThickness="1">
-                                            <StackPanel Orientation="Horizontal" 
-                HorizontalAlignment="Center"
-                VerticalAlignment="Center">
-                                                <TextBlock Text="{TemplateBinding Content}"
-                    Foreground="{TemplateBinding Foreground}"
-                    VerticalAlignment="Center"/>
-                                            </StackPanel>
-                                        </Border>
-                                    </ControlTemplate>
-                                </Button.Template>
-                            </Button>
-                        </StackPanel>
-                    </StackPanel>
-                </Border>
             </StackPanel>
         </ScrollViewer>
 
@@ -576,6 +413,7 @@ Foreground="white" Click="Update_Click">
                 Grid.RowSpan="3"
                 Background="#80000000"
                 Visibility="Collapsed"
-                IsHitTestVisible="True"/>
+                IsHitTestVisible="True"
+                MouseLeftButtonDown="ModalOverlay_Click"/>
     </Grid>
 </Window>
