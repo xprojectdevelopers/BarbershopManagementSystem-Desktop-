@@ -37,6 +37,7 @@ namespace Capstone
             await InitializeSupabaseAsync();
             await LoadItems();
             await LoadItemCount();
+            await LoadProductCount();
         }
 
         private async Task InitializeSupabaseAsync()
@@ -77,6 +78,28 @@ namespace Capstone
             LoadPage(CurrentPage);
             GeneratePaginationButtons();
         }
+
+        private async Task LoadProductCount()
+        {
+            if (supabase == null) return;
+
+            var result = await supabase
+                .From<BarbershopManagementSystem>()
+                .Get();
+
+            // 1️⃣ Total number of products (unique Item IDs)
+            int totalProducts = result.Models.Count;
+
+            // 2️⃣ Total stock across all products (sum of Quantity_Stock)
+            int totalStock = result.Models
+                .Where(e => e.QuantityStock.HasValue) // ignore null values
+                .Sum(e => e.QuantityStock.Value);
+
+            // 3️⃣ Display in UI
+            TotalProductText.Text = totalProducts.ToString();
+            TotalStockText.Text = totalStock.ToString();
+        }
+
 
         private void Sort_Click(object sender, RoutedEventArgs e)
         {

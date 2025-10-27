@@ -3,7 +3,7 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:local="clr-namespace:Capstone"
+        xmlns:local="clr-namespace:Capstone.AppointmentOptions"
         mc:Ignorable="d" 
         Title="PayrollHistory" Height="800" Width="1280"
         WindowState="Maximized"
@@ -11,6 +11,8 @@
         Background="White">
 
     <Window.Resources>
+        <!-- ✅ ADD THE CONVERTER AS A RESOURCE -->
+        <local:EmptyStringToVisibilityConverter x:Key="EmptyStringToVisibilityConverter" xmlns:local="clr-namespace:Capstone.AppointmentOptions"/>
 
         <Style x:Key="TextBoxStyleDatePicker" TargetType="DatePicker">
             <Setter Property="Background" Value="White"/>
@@ -393,33 +395,37 @@
                                 <DataGridTemplateColumn Header="Action" Width="*">
                                     <DataGridTemplateColumn.CellTemplate>
                                         <DataTemplate>
-                                            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
-                                                <!-- Edit Button with Image -->
+                                            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center">
+                                                <!-- Delete Button - ✅ HIDDEN WHEN NO DATA -->
                                                 <Button
-                                                Background="Transparent"
-                                                BorderThickness="0"
-                                                Cursor="Hand"
-                                                Width="32" Height="32"
-                                                Margin="0,0,8,0"
-                                                ToolTip="Edit Service" Click="DeleteService_Click"
-                                                FontSize="14">
-                                                    <Image Source="/Icon/user-circle-minus (1).png" Width="20" Height="20"/>
+                                                    Background="Transparent"
+                                                    BorderThickness="0"
+                                                    Cursor="Hand"
+                                                    Width="32" Height="32"
+                                                    Margin="0,0,8,0"
+                                                    ToolTip="Remove Service"
+                                                    Click="DeleteService_Click"
+                                                    Visibility="{Binding EmiD, Converter={StaticResource EmptyStringToVisibilityConverter}}">
+                                                    <Image Source="../Icon/user-circle-minus (1).png" Height="20" Width="20" />
                                                 </Button>
 
-                                                <!-- Remove Button with Image -->
-                                                <Button 
-                                                Background="Transparent"
-                                                BorderThickness="0"
-                                                Cursor="Hand"
-                                                Width="32" Height="32"
-                                                ToolTip="Remove Service" Click="ServiceDes_Click"
-                                                FontSize="14">
-                                                    <Image Source="/Icon/pencil-circle.png" Width="20" Height="20"/>
+                                                <!-- Edit Button - ✅ HIDDEN WHEN NO DATA -->
+                                                <Button
+                                                    Background="Transparent"
+                                                    BorderThickness="0"
+                                                    Cursor="Hand"
+                                                    Width="32" Height="32"
+                                                    ToolTip="Edit Service"
+                                                    Click="ServiceDes_Click"
+                                                    Visibility="{Binding EmiD, Converter={StaticResource EmptyStringToVisibilityConverter}}">
+                                                    <Image Source="../Icon/pencil-circle.png" Height="20" Width="20"/>
                                                 </Button>
                                             </StackPanel>
                                         </DataTemplate>
                                     </DataGridTemplateColumn.CellTemplate>
                                 </DataGridTemplateColumn>
+
+
                             </DataGrid.Columns>
                         </DataGrid>
 

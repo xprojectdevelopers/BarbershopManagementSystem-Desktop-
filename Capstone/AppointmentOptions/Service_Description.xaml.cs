@@ -24,198 +24,140 @@ namespace Capstone.AppointmentOptions
 {
     public partial class Service_Description : Window
     {
-        private Client supabase;
-        private ObservableCollection<ItemData> items;
-        private ObservableCollection<BarbershopManagementSystem> services;
-        private HttpClient httpClient;
-        private string supabaseUrl;
-        private string supabaseKey;
-        private bool isSaving = false;
+        private Supabase.Client? supabase;
+        private int serviceId;
         private Window currentModalWindow;
-        private BarbershopManagementSystem currentService; // For editing existing service
-        private int? editingServiceId; // Track if we're editing
 
-        public Service_Description(BarbershopManagementSystem serviceToEdit = null)
+        public Service_Description(int id, string empId, string barberNickname, string service, string price)
         {
             InitializeComponent();
-            httpClient = new HttpClient();
-            services = new ObservableCollection<BarbershopManagementSystem>();
-            currentService = serviceToEdit;
-            editingServiceId = serviceToEdit?.Id;
-            Loaded += async (s, e) => await InitializeData();
+
+            serviceId = id;
+
+            // Auto-fill the form fields
+            FillFormData(empId, barberNickname, service, price);
+
+            Loaded += async (s, e) => await InitializeSupabaseAsync();
         }
 
         private async Task InitializeSupabaseAsync()
         {
-            supabaseUrl = ConfigurationManager.AppSettings["SupabaseUrl"];
-            supabaseKey = ConfigurationManager.AppSettings["SupabaseKey"];
+            string? supabaseUrl = ConfigurationManager.AppSettings["SupabaseUrl"];
+            string? supabaseKey = ConfigurationManager.AppSettings["SupabaseKey"];
 
-            supabase = new Client(supabaseUrl, supabaseKey, new SupabaseOptions
+            if (string.IsNullOrEmpty(supabaseUrl) || string.IsNullOrEmpty(supabaseKey))
+            {
+                MessageBox.Show("Supabase configuration missing in App.config!");
+                return;
+            }
+
+            supabase = new Supabase.Client(supabaseUrl, supabaseKey, new Supabase.SupabaseOptions
             {
                 AutoRefreshToken = true,
                 AutoConnectRealtime = false
             });
 
-            httpClient.DefaultRequestHeaders.Clear();
-            httpClient.DefaultRequestHeaders.Add("apikey", supabaseKey);
-            httpClient.DefaultRequestHeaders.Add("Authorization", $"Bearer {supabaseKey}");
-
             await supabase.InitializeAsync();
         }
 
-        private async Task InitializeData()
+        private void FillFormData(string empId, string barberNickname, string service, string price)
         {
-            try
+            // Set Employee ID in ComboBox (READ-ONLY)
+            cmbItemID.Items.Clear();
+            cmbItemID.Items.Add(new ComboBoxItem { Content = empId });
+            cmbItemID.SelectedIndex = 0;
+            cmbItemID.IsEnabled = false; // Make it read-only
+
+            // Set Barber Nickname (READ-ONLY)
+            txtBarberNickname.Text = barberNickname ?? "";
+            txtBarberNickname.IsReadOnly = true; // Make it read-only
+            txtBarberNickname.Background = new SolidColorBrush(Color.FromRgb(240, 240, 240)); // Gray background to show it's disabled
+
+            // Set Service in ComboBox (EDITABLE)
+            cmbService.Items.Clear();
+            var serviceItems = new List<string>
             {
-                await InitializeSupabaseAsync();
+                "Haircut",
+                "Haircut (Reservation)",
+                "Haircut/Wash",
+                "Haircut/Hot Towel",
+                "Haircut/Hair Dye",
+                "Haircut/Hair Color",
+                "Haircut/Highlights",
+                "Haircut/Bleaching",
+                "Haircut/Perm",
+                "Rebond/Short Hair",
+                "Rebond/Long Hair",
+                "Braid"
+            };
 
-                items = new ObservableCollection<ItemData>();
-                var result = await supabase.From<ItemData>().Get();
+            foreach (var item in serviceItems)
+            {
+                cmbService.Items.Add(new ComboBoxItem { Content = item });
+            }
 
-                cmbItemID.Items.Clear();
-                cmbItemID.Items.Add(new ComboBoxItem
+            // Select the matching service
+            for (int i = 0; i < cmbService.Items.Count; i++)
+            {
+                var item = cmbService.Items[i] as ComboBoxItem;
+                if (item?.Content?.ToString() == service)
                 {
-                    Content = "Select Employee ID",
-                    IsEnabled = false,
-                    Foreground = System.Windows.Media.Brushes.Gray
-                });
-
-                cmbItemID.SelectedIndex = 0;
-
-                foreach (var item in result.Models)
-                {
-                    items.Add(item);
-                    cmbItemID.Items.Add(new ComboBoxItem
-                    {
-                        Content = item.Item_ID,
-                        Tag = item
-                    });
-                }
-
-                // Load existing services
-                var servicesResult = await supabase.From<BarbershopManagementSystem>().Get();
-                services.Clear();
-                foreach (var service in servicesResult.Models)
-                {
-                    services.Add(service);
-                }
-
-                // If editing existing service, populate the form
-                if (currentService != null)
-                {
-                    LoadServiceForEditing();
+                    cmbService.SelectedIndex = i;
+                    break;
                 }
             }
-            catch (Exception ex)
-            {
-                MessageBox.Show($"Error loading data: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
-            }
-        }
 
-        private void LoadServiceForEditing()
-        {
-            try
-            {
-                // Find and select the Employee ID
-                for (int i = 1; i < cmbItemID.Items.Count; i++)
-                {
-                    if (cmbItemID.Items[i] is ComboBoxItem item &&
-                        item.Content?.ToString() == currentService.EmiD)
-                    {
-                        cmbItemID.SelectedIndex = i;
-                        break;
-                    }
-                }
-
-                // Set Barber Nickname (readonly)
-                txtBarberNickname.Text = currentService.BN;
-
-                // Find and select the Service
-                for (int i = 0; i < cmbService.Items.Count; i++)
-                {
-                    if (cmbService.Items[i] is ComboBoxItem serviceItem &&
-                        serviceItem.Content?.ToString() == currentService.Service)
-                    {
-                        cmbService.SelectedIndex = i;
-                        break;
-                    }
-                }
-
-                // Set Price (remove peso sign if present)
-                txtPrice.Text = currentService.Price?.Replace("₱", "").Trim();
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show($"Error loading service data: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
-            }
-        }
-
-        private void cmbItemID_SelectionChanged(object sender, SelectionChangedEventArgs e)
-        {
-            if (cmbItemID.SelectedItem != null && cmbItemID.SelectedItem is ComboBoxItem selectedItem)
-            {
-                if (selectedItem.Tag != null && selectedItem.Tag is ItemData item)
-                {
-                    // Populate the Barber Nickname field with Employee_Nickname
-                    txtBarberNickname.Text = item.Item_Name;
-                    txtBarberNickname.IsReadOnly = true;
-                }
-            }
+            // Set Price (EDITABLE - remove ₱ symbol if present)
+            txtPrice.Text = price?.Replace("₱", "").Trim() ?? "";
         }
 
         private async void Update_Click(object sender, RoutedEventArgs e)
         {
             try
             {
-                // Validate all required fields
-                if (!await ValidateInputs())
+                // Validate inputs (only Service and Price since EmpID and Name are read-only)
+                if (!ValidateInputs())
+                    return;
+
+                if (supabase == null)
                 {
+                    MessageBox.Show("Database connection not initialized.");
                     return;
                 }
 
-                if (editingServiceId == null)
-                {
-                    MessageBox.Show("No service selected for editing.", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
-                    return;
-                }
+                // Get values (EmpID and Name remain the same, only Service and Price can change)
+                var selectedEmpId = (cmbItemID.SelectedItem as ComboBoxItem)?.Content?.ToString();
+                var barberNickname = txtBarberNickname.Text.Trim();
+                var selectedService = (cmbService.SelectedItem as ComboBoxItem)?.Content?.ToString();
+                var price = txtPrice.Text.Trim();
 
-                // Get the service from database
-                var existingService = await supabase
+
+                // Update only Service and Price in database
+                await supabase
                     .From<BarbershopManagementSystem>()
-                    .Where(x => x.Id == editingServiceId.Value)
-                    .Get();
+                    .Where(x => x.Id == serviceId)
+                    .Set(x => x.Service, selectedService)
+                    .Set(x => x.Price, "₱" + price)
+                    .Update();
 
-                if (existingService.Models.Count == 0)
+                ModalOverlay.Visibility = Visibility.Visible;
+
+                currentModalWindow = new ServiceDescriptionSuccessful();
+                currentModalWindow.Owner = this;
+                currentModalWindow.WindowStartupLocation = WindowStartupLocation.CenterOwner;
+                currentModalWindow.Closed += ModalWindow_Closed;
+                currentModalWindow.Show();
+
+                // Refresh parent window
+                if (Owner is Manage_Services parentWindow)
                 {
-                    MessageBox.Show("Service not found in database.", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
-                    return;
+                    parentWindow.RefreshGrid();
                 }
 
-                var serviceToUpdate = existingService.Models.First();
-
-                // Get updated values from form
-                string selectedEmployeeId = ((ComboBoxItem)cmbItemID.SelectedItem)?.Content?.ToString();
-                string barberNickname = txtBarberNickname.Text.Trim();
-                string selectedService = ((ComboBoxItem)cmbService.SelectedItem)?.Content?.ToString();
-                string price = txtPrice.Text.Trim();
-
-                // Update the service object
-                serviceToUpdate.EmiD = selectedEmployeeId;
-                serviceToUpdate.BN = barberNickname;
-                serviceToUpdate.Service = selectedService;
-                serviceToUpdate.Price = price;
-
-                // Update in database
-                await serviceToUpdate.Update<BarbershopManagementSystem>();
-
-                MessageBox.Show("Service updated successfully!", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
-
-                // Close the window
-                this.Close();
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Error updating service: {ex.Message}", "Update Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                MessageBox.Show($"❌ Error updating service: {ex.Message}");
             }
         }
 
@@ -224,118 +166,64 @@ namespace Capstone.AppointmentOptions
             this.Close();
         }
 
-        private void ClearForm()
-        {
-            cmbItemID.SelectedIndex = 0;
-            txtBarberNickname.Clear();
-            cmbService.SelectedIndex = -1;
-            txtPrice.Clear();
-
-            // Hide all error messages
-            cmbItemIDError.Visibility = Visibility.Collapsed;
-            txtBarberNicknameError.Visibility = Visibility.Collapsed;
-            cmbServiceError.Visibility = Visibility.Collapsed;
-            cmbServiceSame.Visibility = Visibility.Collapsed;
-            txtPriceError.Visibility = Visibility.Collapsed;
-        }
-
-        private async Task<bool> ValidateInputs()
+        private bool ValidateInputs()
         {
             bool isValid = true;
 
-            // Hide all error messages first
-            cmbItemIDError.Visibility = Visibility.Collapsed;
-            txtBarberNicknameError.Visibility = Visibility.Collapsed;
-            cmbServiceError.Visibility = Visibility.Collapsed;
-            cmbServiceSame.Visibility = Visibility.Collapsed;
-            txtPriceError.Visibility = Visibility.Collapsed;
+            // Reset errors
+            if (cmbServiceError != null)
+                cmbServiceError.Visibility = Visibility.Collapsed;
 
-            // Validate Employee ID ComboBox
-            if (cmbItemID.SelectedIndex <= 0)
-            {
-                cmbItemIDError.Text = "Please select an Employee ID";
-                cmbItemIDError.Visibility = Visibility.Visible;
-                isValid = false;
-            }
+            if (txtPriceError != null)
+                txtPriceError.Visibility = Visibility.Collapsed;
 
-            // Validate Barber Nickname TextBox
-            if (string.IsNullOrWhiteSpace(txtBarberNickname.Text))
-            {
-                txtBarberNicknameError.Text = "Barber Nickname is required";
-                txtBarberNicknameError.Visibility = Visibility.Visible;
-                isValid = false;
-            }
-
-            // Validate Service ComboBox
+            // Validate Service (only editable field)
             if (cmbService.SelectedIndex < 0)
             {
-                cmbServiceError.Text = "Please select a Service";
-                cmbServiceError.Visibility = Visibility.Visible;
+                if (cmbServiceError != null)
+                {
+                    cmbServiceError.Text = "Service is required";
+                    cmbServiceError.Visibility = Visibility.Visible;
+                }
                 isValid = false;
             }
-            else
-            {
-                // Check for duplicate Employee ID + Service combination (except when editing the same record)
-                string selectedEmployeeId = ((ComboBoxItem)cmbItemID.SelectedItem)?.Content?.ToString();
-                string selectedService = ((ComboBoxItem)cmbService.SelectedItem)?.Content?.ToString();
 
-                bool isDuplicate = services.Any(s =>
-                    s.EmiD == selectedEmployeeId &&
-                    s.Service == selectedService &&
-                    s.Id != editingServiceId); // Exclude current record when editing
-
-                if (isDuplicate)
-                {
-                    cmbServiceSame.Text = "Service already exists for the selected barber";
-                    cmbServiceSame.Visibility = Visibility.Visible;
-                    isValid = false;
-                }
-            }
-
-            // Validate Price TextBox
+            // Validate Price (only editable field)
             if (string.IsNullOrWhiteSpace(txtPrice.Text))
             {
-                txtPriceError.Text = "Price is required";
-                txtPriceError.Visibility = Visibility.Visible;
+                if (txtPriceError != null)
+                {
+                    txtPriceError.Text = "Price is required";
+                    txtPriceError.Visibility = Visibility.Visible;
+                }
                 isValid = false;
             }
-            else
+            else if (!decimal.TryParse(txtPrice.Text, out _))
             {
-                // Validate if price is a valid number (no letters allowed)
-                if (!decimal.TryParse(txtPrice.Text.Trim(), out decimal price))
+                if (txtPriceError != null)
                 {
-                    txtPriceError.Text = "Please enter a valid number";
+                    txtPriceError.Text = "Price must be a valid number";
                     txtPriceError.Visibility = Visibility.Visible;
-                    isValid = false;
                 }
-                else if (price <= 0)
-                {
-                    txtPriceError.Text = "Price must be greater than zero";
-                    txtPriceError.Visibility = Visibility.Visible;
-                    isValid = false;
-                }
+                isValid = false;
             }
 
             return isValid;
+        }
+
+        private void cmbItemID_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            // Not needed since cmbItemID is now disabled, but keeping for safety
+            if (cmbItemIDError != null)
+            {
+                cmbItemIDError.Visibility = Visibility.Collapsed;
+            }
         }
 
         private void ModalWindow_Closed(object sender, EventArgs e)
         {
             ModalOverlay.Visibility = Visibility.Collapsed;
             currentModalWindow = null;
-        }
-
-        [Table("Add_Employee")]
-        public class ItemData : BaseModel
-        {
-            [PrimaryKey("id", false)]
-            public int Id { get; set; }
-
-            [Column("Employee_ID")]
-            public string Item_ID { get; set; }
-
-            [Column("Employee_Nickname")]
-            public string Item_Name { get; set; }
         }
 
         [Table("AssignNew_Service")]

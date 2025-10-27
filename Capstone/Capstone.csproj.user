@@ -8,6 +8,15 @@
     <Compile Update="AppointmentOptions\Book_Appointment.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Update="AppointmentOptions\MangeServiceDelete.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Update="AppointmentOptions\NewServiceSuccessfully.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Update="AppointmentOptions\ServiceDescriptionSuccessful.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Update="AppointmentOptions\Service_Description.xaml.cs">
       <SubType>Code</SubType>
     </Compile>

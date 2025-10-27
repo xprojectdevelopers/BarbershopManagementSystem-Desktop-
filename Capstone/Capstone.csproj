@@ -17,6 +17,8 @@
     <None Remove="emptystates-empty-cart.png" />
     <None Remove="export %281%29.png" />
     <None Remove="Icon\CheckCircle.png" />
+    <None Remove="Icon\pencil-circle.png" />
+    <None Remove="Icon\user-circle-minus %281%29.png" />
     <None Remove="magnifying-glass.png" />
     <None Remove="Manage_Service.png" />
     <None Remove="package.png" />
@@ -63,6 +65,10 @@
     <Resource Include="Icon\Paying-Taxes-1--Streamline-Milano.png" />
     <Resource Include="Icon\magnifying-glass.png" />
     <Resource Include="Icon\Manage_Service.png" />
+    <Resource Include="Icon\pencil-circle.png" />
+    <Resource Include="Icon\user-circle-minus (1).png">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Resource>
     <Resource Include="package.png" />
     <Resource Include="Pop out image\marketing-target.png" />
     <Resource Include="Pop out image\Phone-Hotspot-1--Streamline-Milano.png" />

@@ -159,7 +159,7 @@ namespace Capstone.AppointmentOptions
                     ModalOverlay.Visibility = Visibility.Visible;
 
                     // Open PurchaseOrders as a regular window
-                    currentModalWindow = new succesfull();
+                    currentModalWindow = new NewServiceSuccessfully();
                     currentModalWindow.Owner = this;
                     currentModalWindow.WindowStartupLocation = WindowStartupLocation.CenterOwner;
 

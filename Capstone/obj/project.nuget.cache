@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "nD49R5KCfmU=",
+  "dgSpecHash": "wYCQ8e7g/BU=",
   "success": true,
-  "projectFilePath": "C:\\Users\\Mezzc\\OneDrive\\Documents\\Desktop Barbers\\Capstone\\Capstone.csproj",
+  "projectFilePath": "C:\\Users\\Mezzc\\OneDrive\\Documents\\Barbershop\\Capstone\\Capstone.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\Mezzc\\.nuget\\packages\\functions-csharp\\1.3.2\\functions-csharp.1.3.2.nupkg.sha512",
     "C:\\Users\\Mezzc\\.nuget\\packages\\gotrue-csharp\\4.2.7\\gotrue-csharp.4.2.7.nupkg.sha512",

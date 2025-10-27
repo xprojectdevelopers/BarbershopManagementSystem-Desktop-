@@ -289,7 +289,7 @@ SelectedIndex="-1" Style="{StaticResource TextBoxStyleComboBox}">
 
                     <Button Content="Cancel" Cursor="Hand"
 Width="205"
-Height="40"
+Height="40" Click="Cancel_Click"
 Margin="0,37,0,0"
 HorizontalAlignment="Left"
 VerticalAlignment="Top" Grid.Row="1"

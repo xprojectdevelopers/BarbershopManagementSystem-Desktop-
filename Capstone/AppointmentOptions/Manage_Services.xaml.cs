@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Configuration;
+using System.Globalization;
 using System.Linq;
 using System.Reflection;
 using System.Text;
@@ -21,6 +22,21 @@ using static Supabase.Postgrest.Constants;
 
 namespace Capstone.AppointmentOptions
 {
+    // ✅ ADD THIS CONVERTER CLASS
+    public class EmptyStringToVisibilityConverter : IValueConverter
+    {
+        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            string str = value as string;
+            return string.IsNullOrWhiteSpace(str) ? Visibility.Collapsed : Visibility.Visible;
+        }
+
+        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            throw new NotImplementedException();
+        }
+    }
+
     public partial class Manage_Services : Window
     {
         private Window currentModalWindow;
@@ -223,15 +239,31 @@ namespace Capstone.AppointmentOptions
                 if (btn == null) return;
 
                 var service = btn.DataContext as BarbershopManagementSystem;
-                if (service == null || string.IsNullOrEmpty(service.EmiD))
+
+                // ✅ CHECK IF EMPTY ROW - Just return silently
+                if (service == null || string.IsNullOrWhiteSpace(service.EmiD))
                 {
-                    MessageBox.Show("Invalid service selected.");
                     return;
                 }
 
-                var result = MessageBox.Show("⚠️ Do you want to delete this service?", "Confirm", MessageBoxButton.YesNo);
+                // Show delete confirmation
+                ModalOverlay.Visibility = Visibility.Visible;
 
-                if (result == MessageBoxResult.Yes)
+                // Open delete confirmation as a regular window
+                currentModalWindow = new delete();
+                currentModalWindow.Owner = this;
+                currentModalWindow.WindowStartupLocation = WindowStartupLocation.CenterOwner;
+
+                // Store reference for dialog result
+                delete deleteDialog = (delete)currentModalWindow;
+
+                // Subscribe to Closed event
+                currentModalWindow.Closed += ModalWindow_Closed;
+
+                // Show as dialog
+                bool? result = deleteDialog.ShowDialog();
+
+                if (result == true)
                 {
                     if (supabase == null)
                     {
@@ -246,7 +278,13 @@ namespace Capstone.AppointmentOptions
 
                     await LoadEmployees();
 
-                    MessageBox.Show("✅ Service deleted successfully!");
+                    ModalOverlay.Visibility = Visibility.Visible;
+
+                    currentModalWindow = new MangeServiceDelete();
+                    currentModalWindow.Owner = this;
+                    currentModalWindow.WindowStartupLocation = WindowStartupLocation.CenterOwner;
+                    currentModalWindow.Closed += ModalWindow_Closed;
+                    currentModalWindow.Show();
                 }
             }
             catch (Exception ex)
@@ -263,15 +301,23 @@ namespace Capstone.AppointmentOptions
                 if (btn == null) return;
 
                 var service = btn.DataContext as BarbershopManagementSystem;
-                if (service == null || string.IsNullOrEmpty(service.EmiD))
+
+                // ✅ CHECK IF EMPTY ROW - Just return silently
+                if (service == null || string.IsNullOrWhiteSpace(service.EmiD))
                 {
-                    MessageBox.Show("Invalid service selected.");
                     return;
                 }
 
                 ModalOverlay.Visibility = Visibility.Visible;
 
-                currentModalWindow = new Service_Description();
+                // Pass all 5 required parameters
+                currentModalWindow = new Service_Description(
+                    service.Id,           // int id
+                    service.EmiD,         // string empId
+                    service.BN,           // string barberNickname
+                    service.Service,      // string service
+                    service.Price         // string price
+                );
                 currentModalWindow.Owner = this;
                 currentModalWindow.WindowStartupLocation = WindowStartupLocation.CenterOwner;
 
@@ -341,6 +387,11 @@ namespace Capstone.AppointmentOptions
         }
 
         private async void Refresh_Click(object sender, RoutedEventArgs e)
+        {
+            await LoadEmployees();
+        }
+
+        public async void RefreshGrid()
         {
             await LoadEmployees();
         }
