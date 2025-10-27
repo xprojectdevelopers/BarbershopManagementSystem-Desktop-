@@ -345,16 +345,16 @@ Margin="10,0,0,0"/>
                             </Grid.ColumnDefinitions>
 
                             <!-- Row 1: Item Name, Category, Price -->
-                            <Grid Margin="0,0,40,0">
+                            <Grid Margin="150,0,40,0">
                                 <Grid.RowDefinitions>
                                     <RowDefinition Height="Auto"/>
                                     <RowDefinition Height="Auto"/>
                                     <RowDefinition Height="30"/>
                                 </Grid.RowDefinitions>
                                 <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="205"/>
-                                    <ColumnDefinition Width="40"/>
-                                    <ColumnDefinition Width="205"/>
+                                    <ColumnDefinition Width="280"/>
+                                    <ColumnDefinition Width="Auto"/>
+                                    <ColumnDefinition Width="280"/>
                                     <ColumnDefinition Width="40"/>
                                     <ColumnDefinition Width="205"/>
                                     <ColumnDefinition Width="*"/>
@@ -377,7 +377,17 @@ Margin="10,0,0,0"/>
                                     <ComboBoxItem>No Show</ComboBoxItem>
                                 </ComboBox>
 
-                                <Label Content="Assign Barber" FontSize="20" Grid.Row="0" Grid.Column="2" VerticalAlignment="Bottom" Margin="0,0,0,5"/>
+                                <!-- & Symbol -->
+                                <TextBlock Text="&amp;" 
+                                           Grid.Row="1" 
+                                           Grid.Column="1" 
+                                           FontSize="24" 
+                                           FontWeight="Bold"
+                                           VerticalAlignment="Center" 
+                                           HorizontalAlignment="Center"
+                                           Margin="15,0,15,0"/>
+
+                                <Label Content="Assigned Barber" FontSize="20" Grid.Row="0" Grid.Column="2" VerticalAlignment="Bottom" Margin="0,0,0,5"/>
                                 <ComboBox x:Name="BarberComboBox"
                                           Grid.Row="1" 
                                           Grid.Column="2" 

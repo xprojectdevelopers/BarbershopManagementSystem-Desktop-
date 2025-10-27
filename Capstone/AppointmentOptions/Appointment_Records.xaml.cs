@@ -13,30 +13,6 @@ using System.Windows.Input;
 
 namespace Capstone.AppointmentOptions
 {
-    [Table("appointment_sched")]
-    public class AppointmentModel : BaseModel
-    {
-        [PrimaryKey("id", false)]
-        public string Id { get; set; }
-
-        [Column("sched_date")]
-        public string AppointmentDate { get; set; }
-
-        [Column("sched_time")]
-        public string AppointmentTime { get; set; }
-
-        [Column("customer_name")]
-        public string CustomerName { get; set; }
-
-        [Column("contact_number")]
-        public string ContactNumber { get; set; }
-
-        [Column("barber_id")]
-        public string BarberAssigned { get; set; }
-
-        [Column("status")]
-        public string AppointmentStatus { get; set; }
-    }
 
     public partial class Appointment_Records : Window
     {
@@ -47,7 +23,7 @@ namespace Capstone.AppointmentOptions
         private List<AppointmentModel> originalAppointments = new List<AppointmentModel>();
 
         private int CurrentPage = 1;
-        private int PageSize = 10;
+        private int PageSize = 10; // Fixed at 10 items per page
         private int TotalPages = 1;
 
         public Appointment_Records()
@@ -92,7 +68,9 @@ namespace Capstone.AppointmentOptions
                     originalAppointments = response.Models.ToList();
                     allAppointments = new List<AppointmentModel>(originalAppointments);
 
+                    // Calculate total pages based on fixed PageSize of 10
                     TotalPages = (int)Math.Ceiling(allAppointments.Count / (double)PageSize);
+
                     LoadPage(CurrentPage);
                 }
             }
@@ -115,6 +93,12 @@ namespace Capstone.AppointmentOptions
             foreach (var appt in pageData)
             {
                 appointments.Add(appt);
+            }
+
+            // Fill remaining rows with empty items to always show 10 rows
+            while (appointments.Count < PageSize)
+            {
+                appointments.Add(new AppointmentModel());
             }
         }
 
@@ -269,18 +253,12 @@ namespace Capstone.AppointmentOptions
             var filteredList = filtered.ToList();
             allAppointments = filteredList;
 
+            // Recalculate total pages based on filtered results with fixed PageSize of 10
             TotalPages = (int)Math.Ceiling(allAppointments.Count / (double)PageSize);
-            if (TotalPages == 0) TotalPages = 1;
 
             CurrentPage = 1;
             LoadPage(CurrentPage);
             GeneratePaginationButtons();
-
-            if (filteredList.Count == 0)
-            {
-                MessageBox.Show("No appointments found for the selected filters.", "No Results",
-                    MessageBoxButton.OK, MessageBoxImage.Information);
-            }
         }
 
         private void SortButton_Click(object sender, RoutedEventArgs e)
@@ -342,6 +320,31 @@ namespace Capstone.AppointmentOptions
             currentModalWindow.WindowStartupLocation = WindowStartupLocation.CenterOwner;
             currentModalWindow.Closed += ModalWindow_Closed;
             currentModalWindow.Show();
+        }
+
+        [Table("appointment_sched")]
+        public class AppointmentModel : BaseModel
+        {
+            [PrimaryKey("id", false)]
+            public string Id { get; set; }
+
+            [Column("sched_date")]
+            public string AppointmentDate { get; set; }
+
+            [Column("sched_time")]
+            public string AppointmentTime { get; set; }
+
+            [Column("customer_name")]
+            public string CustomerName { get; set; }
+
+            [Column("contact_number")]
+            public string ContactNumber { get; set; }
+
+            [Column("barber_id")]
+            public string BarberAssigned { get; set; }
+
+            [Column("status")]
+            public string AppointmentStatus { get; set; }
         }
     }
 }
