@@ -10,11 +10,11 @@ none
 false
 TRACE;DEBUG;NET;NET8_0;NETCOREAPP;WINDOWS;WINDOWS7_0;NET5_0_OR_GREATER;NET6_0_OR_GREATER;NET7_0_OR_GREATER;NET8_0_OR_GREATER;NETCOREAPP3_0_OR_GREATER;NETCOREAPP3_1_OR_GREATER;WINDOWS7_0_OR_GREATER
 C:\Users\Mezzc\OneDrive\Documents\Barbershop\Capstone\App.xaml
-40433451967
+411087716793
 
-45706764193
+461592745271
 217211380331
-AddEmployee.xaml;AddItem.xaml;AppointmentOptions\Appointments.xaml;AppointmentOptions\Appointment_Records.xaml;AppointmentOptions\AssignNew_Service.xaml;AppointmentOptions\Book_Appointment.xaml;AppointmentOptions\Manage_Services.xaml;AppointmentOptions\MangeServiceDelete.xaml;AppointmentOptions\NewServiceSuccessfully.xaml;AppointmentOptions\ServiceDescriptionSuccessful.xaml;AppointmentOptions\Service_Description.xaml;Customers.xaml;delete.xaml;DeleteSuccessfull.xaml;EMenu.xaml;EmployeeProfile.xaml;Inventory.xaml;ItemPurchasedSuccessful.xaml;ItemSaleSuccessful.xaml;ItemSuccessful.xaml;ItemSuccessfulDelete.xaml;ItemSuccessfulUpdate.xaml;ListSubscribers.xaml;LoginForm.xaml;ManageItem.xaml;Menu.xaml;ModalsNotification.xaml;ModalsSetting.xaml;notfound.xaml;notfoundItem.xaml;Payroll.xaml;ProductDescription.xaml;ProfileAdmin.xaml;ProfileCashier.xaml;PurchaseOrders.xaml;SaleItem.xaml;succesfull.xaml;SuccessQuickMessage.xaml;UpdateSuccessful.xaml;Views\PayrollHistory.xaml;
+AddEmployee.xaml;AddItem.xaml;AppointmentOptions\Appointments.xaml;AppointmentOptions\AppointmentTracker.xaml;AppointmentOptions\Appointment_Records.xaml;AppointmentOptions\AssignNew_Service.xaml;AppointmentOptions\Book_Appointment.xaml;AppointmentOptions\Manage_Services.xaml;AppointmentOptions\MangeServiceDelete.xaml;AppointmentOptions\NewServiceSuccessfully.xaml;AppointmentOptions\ServiceDescriptionSuccessful.xaml;AppointmentOptions\Service_Description.xaml;Customers.xaml;delete.xaml;DeleteSuccessfull.xaml;EMenu.xaml;EmployeeProfile.xaml;Inventory.xaml;ItemPurchasedSuccessful.xaml;ItemSaleSuccessful.xaml;ItemSuccessful.xaml;ItemSuccessfulDelete.xaml;ItemSuccessfulUpdate.xaml;ListSubscribers.xaml;LoginForm.xaml;ManageItem.xaml;Menu.xaml;ModalsNotification.xaml;ModalsSetting.xaml;notfound.xaml;notfoundItem.xaml;Payroll.xaml;ProductDescription.xaml;ProfileAdmin.xaml;ProfileCashier.xaml;PurchaseOrders.xaml;SaleItem.xaml;succesfull.xaml;SuccessQuickMessage.xaml;UpdateSuccessful.xaml;Views\PayrollHistory.xaml;
 
-False
+True
 

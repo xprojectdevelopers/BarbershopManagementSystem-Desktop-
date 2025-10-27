@@ -209,7 +209,7 @@
                 VerticalAlignment="Top" Visibility="Collapsed"/>
 
                     <!-- Category -->
-                    <Label Content="Item ID" FontSize="20" Grid.Row="0" Grid.Column="2" VerticalAlignment="Bottom" Margin="0,0,0,5"/>
+                    <Label Content="Product ID" FontSize="20" Grid.Row="0" Grid.Column="2" VerticalAlignment="Bottom" Margin="0,0,0,5"/>
                     <ComboBox x:Name="cmbItemID" SelectionChanged="cmbItemID_SelectionChanged" Grid.Row="1" Grid.Column="2" Height="47" FontSize="20" 
                SelectedIndex="-1" Style="{StaticResource TextBoxStyleComboBox}" HorizontalAlignment="Left" Margin="0,0,0,30" Grid.RowSpan="2" Width="205">
                         <ComboBoxItem IsEnabled="False" IsSelected="True" Foreground="Gray">Select Item ID</ComboBoxItem>
@@ -236,7 +236,7 @@
                     </Grid.ColumnDefinitions>
 
                     <!-- Supplier Name -->
-                    <Label Content="Item Name" FontSize="20" Grid.Row="0" Grid.Column="0" VerticalAlignment="Bottom" Margin="0,0,0,5"/>
+                    <Label Content="Product Name" FontSize="20" Grid.Row="0" Grid.Column="0" VerticalAlignment="Bottom" Margin="0,0,0,5"/>
                     <TextBox x:Name="txtItemName" VerticalContentAlignment="Center" FontSize="20" Grid.Row="1" Grid.Column="0" Height="47"/>
                     <TextBlock x:Name="txtItemNameError" Foreground="Red" FontSize="12" 
                 Grid.Row="2" Grid.Column="0" Margin="0,2,0,0"

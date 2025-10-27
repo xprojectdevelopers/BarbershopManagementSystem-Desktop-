@@ -197,7 +197,7 @@
                         <ColumnDefinition Width="*"/>
                     </Grid.ColumnDefinitions>
 
-                    <Label Content="Item ID" FontSize="20" Grid.Row="0" Grid.Column="0" VerticalAlignment="Bottom" Margin="0,0,0,5"/>
+                    <Label Content="Product ID" FontSize="20" Grid.Row="0" Grid.Column="0" VerticalAlignment="Bottom" Margin="0,0,0,5"/>
                     <StackPanel Orientation="Horizontal" Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" Margin="00,0,0,0">
                         <TextBox x:Name="txtItemID" FontSize="30" Width="205" Height="47" VerticalAlignment="Top"/>
                         <Button Content="Generate ID" Click="btnGenerateID_Click"
@@ -240,7 +240,7 @@
                     </Grid.ColumnDefinitions>
 
                     <!-- Item Name -->
-                    <Label Content="Item Name" FontSize="20" Grid.Row="0" Grid.Column="0" VerticalAlignment="Bottom" Margin="0,0,0,5"/>
+                    <Label Content="Product Name" FontSize="20" Grid.Row="0" Grid.Column="0" VerticalAlignment="Bottom" Margin="0,0,0,5"/>
                     <TextBox x:Name="txtItemName" FontSize="30" Grid.Row="1" Grid.Column="0" Height="47"/>
                     <TextBlock x:Name="txtItemNameError" Foreground="Red" FontSize="12" 
                                Grid.Row="2" Grid.Column="0" Margin="0,2,0,0"

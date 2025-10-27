@@ -270,10 +270,72 @@
                 <!-- Page Title -->
                 <Label Content="Appointment Records" FontSize="20" FontWeight="Bold" Margin="20,20,20,15"/>
 
+                <Grid Margin="15,-20,15,20">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="2*"/>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+
+                    <!-- New Employee Card -->
+                    <Border Grid.Column="0" BorderBrush="#000" BorderThickness="1" CornerRadius="8" Padding="15" Margin="5">
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="Auto"/>
+                            </Grid.ColumnDefinitions>
+                            <StackPanel Grid.Column="0" VerticalAlignment="Center">
+                                <TextBlock Text="Appointment Tracker" FontSize="24" FontWeight="Bold"/>
+                                <TextBlock Text="Monitor and manage all customer appointments efficiently."
+        FontSize="14" Foreground="Gray" Margin="0,5,0,15" TextWrapping="Wrap"/>
+                                <Button Content="Update"
+     Padding="10,5" Click="AppointmentUpdate_Click"
+     Background="Blue" Foreground="White"
+     FontWeight="Bold" Width="140" Height="40"
+     HorizontalAlignment="Left"
+     Cursor="Hand">
+                                    <Button.Template>
+                                        <ControlTemplate TargetType="Button">
+                                            <Border Background="{TemplateBinding Background}" CornerRadius="15" Padding="{TemplateBinding Padding}">
+                                                <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                            </Border>
+                                        </ControlTemplate>
+                                    </Button.Template>
+                                </Button>
+                            </StackPanel>
+                            <Image Grid.Column="1" 
+Source="/AppointmentOptions/Robot_On_Laptop_Computer.png" 
+Width="120" 
+Height="120" 
+Stretch="Fill"
+VerticalAlignment="Center"
+HorizontalAlignment="Left"
+Margin="10,0,0,0"/>
+                        </Grid>
+                    </Border>
+
+                    <!-- Total Employees Card -->
+                    <Border Grid.Column="1" BorderBrush="#000" BorderThickness="1" CornerRadius="8" Padding="15" Margin="5">
+                        <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center">
+                            <!-- Dynamic employee count -->
+                            <TextBlock x:Name="TotalApprovedText" Text="0" Margin="20,0,0,0" FontSize="64" FontWeight="Bold"/>
+                            <TextBlock Text="Approved" FontSize="16" FontWeight="Bold"/>
+                        </StackPanel>
+                    </Border>
+
+                    <!-- Absentees Card -->
+                    <Border Grid.Column="2" BorderBrush="#000" BorderThickness="1" CornerRadius="8" Padding="15" Margin="5">
+                        <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center">
+                            <TextBlock x:Name="TotalOngoingText" Text="0" Margin="20,0,0,0" FontSize="64" FontWeight="Bold"/>
+                            <TextBlock Text="Ongoing" FontSize="16" FontWeight="Bold"/>
+                        </StackPanel>
+                    </Border>
+                </Grid>
+
                 <!-- Filter and Action Section -->
                 <Border BorderBrush="Black" BorderThickness="1" Padding="20" CornerRadius="8" Margin="20,-15,20,20">
                     <StackPanel>
-                        <!-- Filrs and Buttons Row -->
+                        <!-- Filters and Buttons Row -->
                         <Grid Margin="0,0,0,20">
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="Auto"/>
@@ -283,7 +345,7 @@
                             </Grid.ColumnDefinitions>
 
                             <!-- Row 1: Item Name, Category, Price -->
-                            <Grid Margin="0,40,40,0">
+                            <Grid Margin="0,0,40,0">
                                 <Grid.RowDefinitions>
                                     <RowDefinition Height="Auto"/>
                                     <RowDefinition Height="Auto"/>
@@ -298,25 +360,43 @@
                                     <ColumnDefinition Width="*"/>
                                 </Grid.ColumnDefinitions>
 
-                                <Label Content="Date" FontSize="20" Grid.Row="0" Grid.Column="0" VerticalAlignment="Bottom" Margin="0,0,0,5"/>
-                                <DatePicker Style="{StaticResource TextBoxStyleDatePicker}"
-                                 Tag="Select Date" Grid.Row="1" Grid.Column="0" Width="205" Height="46" Margin="0,0,0,30" Grid.RowSpan="2"/>
-
-
-
-                                <Label Content="Barber Nickname" FontSize="20" Grid.Row="0" Grid.Column="2" VerticalAlignment="Bottom" Margin="0,0,0,5"/>
-                                <ComboBox Grid.Row="1" Grid.Column="02" Height="47" FontSize="16" 
-                                    SelectedIndex="0" Style="{StaticResource TextBoxStyleComboBox}">
-                                    <ComboBoxItem IsEnabled="False" IsSelected="True" Foreground="Gray">All Barber</ComboBoxItem>
-                                    <ComboBoxItem>Aftershaves</ComboBoxItem>
+                                <Label Content="Appointment Status" FontSize="20" Grid.Row="0" Grid.Column="0" VerticalAlignment="Bottom" Margin="0,0,0,5"/>
+                                <ComboBox x:Name="StatusComboBox"
+                                      Grid.Row="1" 
+                                      Grid.Column="0" 
+                                      Height="47" 
+                                      FontSize="16" 
+                                      SelectedIndex="0" 
+                                      Style="{StaticResource TextBoxStyleComboBox}">
+                                    <ComboBoxItem IsEnabled="False" IsSelected="True" Foreground="Gray">All Status</ComboBoxItem>
+                                    <ComboBoxItem>Approved</ComboBoxItem>
+                                    <ComboBoxItem>On Going</ComboBoxItem>
+                                    <ComboBoxItem>Completed</ComboBoxItem>
+                                    <ComboBoxItem>Cancelled</ComboBoxItem>
+                                    <ComboBoxItem>Declined</ComboBoxItem>
+                                    <ComboBoxItem>No Show</ComboBoxItem>
                                 </ComboBox>
 
+                                <Label Content="Assign Barber" FontSize="20" Grid.Row="0" Grid.Column="2" VerticalAlignment="Bottom" Margin="0,0,0,5"/>
+                                <ComboBox x:Name="BarberComboBox"
+                                          Grid.Row="1" 
+                                          Grid.Column="2" 
+                                          Height="47" 
+                                          FontSize="16" 
+                                          SelectedIndex="0" 
+                                          Style="{StaticResource TextBoxStyleComboBox}">
+                                    <ComboBoxItem IsEnabled="False" IsSelected="True" Foreground="Gray">All Barber</ComboBoxItem>
+                                </ComboBox>
 
                                 <!-- Sort Button -->
-                                <Button Grid.Column="4" Grid.Row="1" Content="Sort by" Cursor="Hand"
-                                    Height="47"
-                                    VerticalAlignment="Center"
-                                    Foreground="white">
+                                <Button Grid.Column="4" 
+                                        Grid.Row="1" 
+                                        Content="Sort by" 
+                                        Cursor="Hand"
+                                        Height="47"
+                                        VerticalAlignment="Center"
+                                        Foreground="white"
+                                        Click="SortButton_Click">
                                     <Button.Template>
                                         <ControlTemplate TargetType="Button">
                                             <Border Background="black" 
@@ -394,230 +474,6 @@
 
                         <!-- Pagination Controls -->
                         <StackPanel x:Name="PaginationPanel" Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,10,0,0"/>
-                    </StackPanel>
-                </Border>
-
-                <Border BorderBrush="Black" BorderThickness="1" Padding="20" CornerRadius="8" Margin="0,20,0,60" Height="670" Width="1145">
-                    <StackPanel Margin="-30,0,0,0">
-                        <TextBlock Text="Appointment Tracker"
-                   FontSize="30" FontWeight="Bold"
-                   HorizontalAlignment="Center" Margin="0,20,0,20"/>
-                        <!-- Header Section -->
-                        <Grid Margin="400,0,40,0">
-                            <Grid.RowDefinitions>
-                                <RowDefinition Height="Auto"/>
-                                <RowDefinition Height="Auto"/>
-                                <RowDefinition Height="30"/>
-                            </Grid.RowDefinitions>
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="205"/>
-                                <ColumnDefinition Width="*"/>
-                            </Grid.ColumnDefinitions>
-
-                            <Label Content="Appointment Number" FontSize="20" Grid.Row="0" Grid.Column="0" VerticalAlignment="Bottom" Margin="0,0,0,5"/>
-                            <StackPanel Orientation="Horizontal" Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" Margin="00,0,0,0">
-                                <TextBox x:Name="txtItemID" FontSize="30" Width="205" Height="47" VerticalAlignment="Top"/>
-                                <Button Content="Search" Cursor="Hand"
-                                    Width="160" Height="47" 
-                                    Margin="20,0,0,0"
-                                    VerticalAlignment="Top" 
-                                    Grid.Row="1"
-                                    Foreground="white">
-                                    <Button.Template>
-                                        <ControlTemplate TargetType="Button">
-                                            <Border Background="black" 
-            CornerRadius="20" 
-            BorderBrush="White" 
-            BorderThickness="1">
-                                                <StackPanel Orientation="Horizontal" 
-                   HorizontalAlignment="Center"
-                   VerticalAlignment="Center">
-                                                    <Image Source="/Icon/magnifying-glass.png" 
-                   Width="20" 
-                   Height="20" 
-                   Margin="0,0,8,0"/>
-                                                    <TextBlock Text="Search" 
-                      Foreground="{TemplateBinding Foreground}"
-                      VerticalAlignment="Center"/>
-                                                </StackPanel>
-                                            </Border>
-                                        </ControlTemplate>
-                                    </Button.Template>
-                                </Button>
-                            </StackPanel>
-                        </Grid>
-
-                        <!-- Row 1: Item Name, Category, Price -->
-                        <Grid Margin="280,-10,40,0">
-                            <Grid.RowDefinitions>
-                                <RowDefinition Height="Auto"/>
-                                <RowDefinition Height="Auto"/>
-                                <RowDefinition Height="30"/>
-                            </Grid.RowDefinitions>
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="205"/>
-                                <ColumnDefinition Width="40"/>
-                                <ColumnDefinition Width="205"/>
-                                <ColumnDefinition Width="40"/>
-                                <ColumnDefinition Width="205"/>
-                                <ColumnDefinition Width="*"/>
-                            </Grid.ColumnDefinitions>
-
-
-                            <Label Content="Customer Name" FontSize="20" Grid.Row="0" Grid.Column="0" VerticalAlignment="Bottom" Margin="0,0,0,5"/>
-                            <TextBox x:Name="txtItemName" FontSize="30" Grid.Row="1" Grid.Column="0" Height="47"/>
-
-                            <Label Content="Barber Assigned" FontSize="20" Grid.Row="0" Grid.Column="2" VerticalAlignment="Bottom" Margin="0,0,0,5"/>
-                            <Grid Grid.Row="1" Grid.Column="2">
-                                <TextBox x:Name="txtPrice" 
-                          FontSize="30" 
-                          Height="47"
-                          Padding="30,0,10,0"
-                          VerticalContentAlignment="Center"
-                          BorderBrush="Gray"
-                          BorderThickness="1"/>
-                            </Grid>
-
-
-                            <Label Content="Service" FontSize="20" Grid.Row="0" Grid.Column="4" VerticalAlignment="Bottom" Margin="0,0,0,5"/>
-                            <TextBox FontSize="30" Grid.Row="1" Grid.Column="4" Height="47"/>
-
-
-
-                        </Grid>
-
-                        <!-- Row 2: Supplier Name, Contact Number, Date -->
-                        <Grid Margin="280,-10,40,0">
-                            <Grid.RowDefinitions>
-                                <RowDefinition Height="Auto"/>
-                                <RowDefinition Height="Auto"/>
-                                <RowDefinition Height="30"/>
-                            </Grid.RowDefinitions>
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="205"/>
-                                <ColumnDefinition Width="40"/>
-                                <ColumnDefinition Width="205"/>
-                                <ColumnDefinition Width="40"/>
-                                <ColumnDefinition Width="93.362"/>
-                                <ColumnDefinition Width="111.638"/>
-                                <ColumnDefinition Width="*"/>
-                            </Grid.ColumnDefinitions>
-
-                            <Label Content="Date" FontSize="20" Grid.Row="0" Grid.Column="0" VerticalAlignment="Bottom" Margin="0,0,0,5"/>
-                            <TextBox FontSize="30" Grid.Row="1" Grid.Column="0" Height="47"/>
-
-                            <Label Content="Time" FontSize="20" Grid.Row="0" Grid.Column="2" VerticalAlignment="Bottom" Margin="0,0,0,5"/>
-                            <TextBox FontSize="30" Grid.Row="1" Grid.Column="2" Height="47"/>
-
-
-
-                            <Label Content="Payment Method" FontSize="20" Grid.Row="0" Grid.Column="4" VerticalAlignment="Top" Grid.ColumnSpan="2"/>
-                            <TextBox FontSize="30" Grid.Row="1" Grid.Column="4" Height="47" Grid.ColumnSpan="2" Margin="0,0,0,30" Grid.RowSpan="2"/>
-                        </Grid>
-
-                        <!-- Row 2: Supplier Name, Contact Number, Date -->
-                        <Grid Margin="280,-10,40,0">
-                            <Grid.RowDefinitions>
-                                <RowDefinition Height="Auto"/>
-                                <RowDefinition Height="Auto"/>
-                                <RowDefinition Height="30"/>
-                            </Grid.RowDefinitions>
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="205"/>
-                                <ColumnDefinition Width="40"/>
-                                <ColumnDefinition Width="205"/>
-                                <ColumnDefinition Width="40"/>
-                                <ColumnDefinition Width="93.362"/>
-                                <ColumnDefinition Width="111.638"/>
-                                <ColumnDefinition Width="*"/>
-                            </Grid.ColumnDefinitions>
-
-
-                            <Label Content="Total" FontSize="20" Grid.Row="0" Grid.Column="0" VerticalAlignment="Bottom" Margin="0,0,0,5"/>
-                            <Grid Grid.Row="1" Grid.Column="0">
-                                <TextBox
-             FontSize="30" 
-             Height="47"
-             Padding="30,0,10,0"
-             VerticalContentAlignment="Center"
-             BorderBrush="Gray"
-             BorderThickness="1"/>
-                                <TextBlock Text="₱" 
-               FontSize="30"
-               Foreground="Black"
-               VerticalAlignment="Center"
-               Margin="10,0,0,0"
-               IsHitTestVisible="False"/>
-                            </Grid>
-
-                            <Label Content="Appointment Status" FontSize="17" Grid.Column="2" VerticalAlignment="Center"/>
-                            <ComboBox Grid.Row="1" Grid.Column="2" Height="47" FontSize="16" 
-                                SelectedIndex="-1" Style="{StaticResource TextBoxStyleComboBox}" Margin="0,0,0,30" Grid.RowSpan="2">
-                                <ComboBoxItem IsEnabled="False" IsSelected="True" Foreground="Gray">Select Payment Method</ComboBoxItem>
-                                <ComboBoxItem>Aftershaves</ComboBoxItem>
-                            </ComboBox>
-
-                            <Label Content="Payment Status" FontSize="20" Grid.Row="0" Grid.Column="4" VerticalAlignment="Top" Grid.ColumnSpan="2"/>
-                            <ComboBox Grid.Row="1" Grid.Column="4" Height="47" FontSize="16" 
-                            SelectedIndex="-1" Style="{StaticResource TextBoxStyleComboBox}" Grid.ColumnSpan="2" Margin="0,0,0,30" Grid.RowSpan="2">
-                                <ComboBoxItem IsEnabled="False" IsSelected="True" Foreground="Gray">Select Appointment Status</ComboBoxItem>
-                                <ComboBoxItem>Aftershaves</ComboBoxItem>
-                            </ComboBox>
-                        </Grid>
-
-
-                        <StackPanel Orientation="Horizontal" Grid.Column="0" VerticalAlignment="Center" Margin="350,-10,0,0">
-
-                            <Button Content="Clear" Cursor="Hand"
-Width="205"
-Height="40"
-Margin="0,37,0,0"
-HorizontalAlignment="Left"
-VerticalAlignment="Top" Grid.Row="1"
-Foreground="white">
-                                <Button.Template>
-                                    <ControlTemplate TargetType="Button">
-                                        <Border Background="black" 
-            CornerRadius="20" 
-            BorderBrush="Black" 
-            BorderThickness="1">
-                                            <StackPanel Orientation="Horizontal" 
-                HorizontalAlignment="Center"
-                VerticalAlignment="Center">
-                                                <TextBlock Text="{TemplateBinding Content}"
-                    Foreground="{TemplateBinding Foreground}"
-                    VerticalAlignment="Center"/>
-                                            </StackPanel>
-                                        </Border>
-                                    </ControlTemplate>
-                                </Button.Template>
-                            </Button>
-
-                            <Button Content="Update" Cursor="Hand"
-Width="205"
-Height="40"
-Margin="68,37,0,0"
-HorizontalAlignment="Left"
-VerticalAlignment="Top" Grid.Row="1"
-Foreground="white">
-                                <Button.Template>
-                                    <ControlTemplate TargetType="Button">
-                                        <Border Background="blue" 
-            CornerRadius="20" 
-            BorderBrush="Blue" 
-            BorderThickness="1">
-                                            <StackPanel Orientation="Horizontal" 
-                HorizontalAlignment="Center"
-                VerticalAlignment="Center">
-                                                <TextBlock Text="{TemplateBinding Content}"
-                    Foreground="{TemplateBinding Foreground}"
-                    VerticalAlignment="Center"/>
-                                            </StackPanel>
-                                        </Border>
-                                    </ControlTemplate>
-                                </Button.Template>
-                            </Button>
-                        </StackPanel>
                     </StackPanel>
                 </Border>
             </StackPanel>

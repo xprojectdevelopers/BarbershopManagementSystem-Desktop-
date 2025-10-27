@@ -1,5 +1,4 @@
 ﻿using Supabase;
-using Supabase.Postgrest;
 using Supabase.Postgrest.Attributes;
 using Supabase.Postgrest.Models;
 using System;
@@ -44,50 +43,27 @@ namespace Capstone.AppointmentOptions
         private Window currentModalWindow;
         private Supabase.Client client;
         private ObservableCollection<AppointmentModel> appointments = new ObservableCollection<AppointmentModel>();
-        private List<AppointmentModel> allAppointments = new List<AppointmentModel>(); // Store all data for filtering
+        private List<AppointmentModel> allAppointments = new List<AppointmentModel>();
+        private List<AppointmentModel> originalAppointments = new List<AppointmentModel>();
+
+        private int CurrentPage = 1;
+        private int PageSize = 10;
+        private int TotalPages = 1;
 
         public Appointment_Records()
         {
             InitializeComponent();
             ModalOverlay.PreviewMouseLeftButtonDown += ModalOverlay_Click;
 
-            // Bind DataGrid
             AppointmentDataGrid.ItemsSource = appointments;
 
-            // Initialize Supabase and load data
             InitializeSupabase();
-        }
-
-        // Add this method to be called from your XAML DatePicker
-        private void DateFilter_SelectedDateChanged(object sender, SelectionChangedEventArgs e)
-        {
-            if (allAppointments.Count > 0)
-            {
-                ApplyFilters();
-            }
-        }
-
-        // Add this method to be called from your XAML ComboBox
-        private void BarberFilter_SelectionChanged(object sender, SelectionChangedEventArgs e)
-        {
-            if (allAppointments.Count > 0)
-            {
-                ApplyFilters();
-            }
-        }
-
-        // Add this method for the Sort button
-        private void SortButton_Click(object sender, RoutedEventArgs e)
-        {
-            ApplyFilters();
-            MessageBox.Show("Filters applied successfully!", "Sort Complete", MessageBoxButton.OK, MessageBoxImage.Information);
         }
 
         private async void InitializeSupabase()
         {
             try
             {
-                // Read from app.config
                 string supabaseUrl = ConfigurationManager.AppSettings["SupabaseUrl"];
                 string supabaseKey = ConfigurationManager.AppSettings["SupabaseKey"];
 
@@ -96,6 +72,8 @@ namespace Capstone.AppointmentOptions
 
                 await LoadAppointments();
                 PopulateBarberDropdown();
+                await UpdateStatistics();
+                GeneratePaginationButtons();
             }
             catch (Exception ex)
             {
@@ -111,12 +89,11 @@ namespace Capstone.AppointmentOptions
 
                 if (response.Models != null && response.Models.Count > 0)
                 {
-                    allAppointments = response.Models.ToList();
-                    appointments.Clear();
-                    foreach (var appt in allAppointments)
-                    {
-                        appointments.Add(appt);
-                    }
+                    originalAppointments = response.Models.ToList();
+                    allAppointments = new List<AppointmentModel>(originalAppointments);
+
+                    TotalPages = (int)Math.Ceiling(allAppointments.Count / (double)PageSize);
+                    LoadPage(CurrentPage);
                 }
             }
             catch (Exception ex)
@@ -125,56 +102,128 @@ namespace Capstone.AppointmentOptions
             }
         }
 
-        // Populate barber dropdown with unique barber names
+        private void LoadPage(int pageNumber)
+        {
+            CurrentPage = pageNumber;
+
+            var pageData = allAppointments
+                .Skip((pageNumber - 1) * PageSize)
+                .Take(PageSize)
+                .ToList();
+
+            appointments.Clear();
+            foreach (var appt in pageData)
+            {
+                appointments.Add(appt);
+            }
+        }
+
+        private async Task UpdateStatistics()
+        {
+            if (client == null) return;
+
+            var result = await client.From<AppointmentModel>().Get();
+
+            int approvedCount = result.Models.Count(e =>
+                e.AppointmentStatus?.Equals("Approved", StringComparison.OrdinalIgnoreCase) == true
+            );
+
+            int ongoingCount = result.Models.Count(e =>
+                e.AppointmentStatus != null &&
+                e.AppointmentStatus.Replace(" ", "", StringComparison.OrdinalIgnoreCase)
+                    .Equals("Ongoing", StringComparison.OrdinalIgnoreCase)
+            );
+
+            TotalApprovedText.Text = approvedCount.ToString();
+            TotalOngoingText.Text = ongoingCount.ToString();
+        }
+
+        private void GeneratePaginationButtons()
+        {
+            PaginationPanel.Children.Clear();
+
+            for (int i = 1; i <= TotalPages; i++)
+            {
+                Button btn = new Button
+                {
+                    Content = i.ToString(),
+                    Margin = new Thickness(5, 0, 5, 0),
+                    Padding = new Thickness(10, 5, 10, 5),
+                    Foreground = System.Windows.Media.Brushes.Gray,
+                    FontWeight = (i == CurrentPage) ? FontWeights.Bold : FontWeights.Normal,
+                    FontSize = 20,
+                    Cursor = Cursors.Hand
+                };
+
+                var template = new ControlTemplate(typeof(Button));
+                var border = new FrameworkElementFactory(typeof(Border));
+                border.SetValue(Border.BackgroundProperty, System.Windows.Media.Brushes.Transparent);
+                border.SetValue(Border.BorderThicknessProperty, new Thickness(0));
+
+                var contentPresenter = new FrameworkElementFactory(typeof(ContentPresenter));
+                contentPresenter.SetValue(ContentPresenter.HorizontalAlignmentProperty, HorizontalAlignment.Center);
+                contentPresenter.SetValue(ContentPresenter.VerticalAlignmentProperty, VerticalAlignment.Center);
+
+                border.AppendChild(contentPresenter);
+                template.VisualTree = border;
+                btn.Template = template;
+
+                btn.MouseEnter += (s, e) => btn.Foreground = System.Windows.Media.Brushes.Black;
+                btn.MouseLeave += (s, e) => btn.Foreground = System.Windows.Media.Brushes.Gray;
+
+                int pageNum = i;
+                btn.Click += (s, e) =>
+                {
+                    LoadPage(pageNum);
+                    GeneratePaginationButtons();
+                };
+
+                PaginationPanel.Children.Add(btn);
+            }
+        }
+
         private void PopulateBarberDropdown()
         {
-            // Find the ComboBox in your XAML (you need to give it x:Name)
             var barberComboBox = FindName("BarberComboBox") as ComboBox;
 
             if (barberComboBox != null)
             {
-                // Get unique barber names (sorted)
-                var uniqueBarbers = allAppointments
-                    .Where(a => !string.IsNullOrEmpty(a.BarberAssigned))
-                    .Select(a => a.BarberAssigned)
-                    .Distinct()
-                    .OrderBy(b => b)
-                    .ToList();
-
-                // Keep the first item as "All Barber"
-                barberComboBox.Items.Clear();
-
-                // Add default item
-                var defaultItem = new ComboBoxItem
-                {
-                    Content = "All Barber",
-                    IsEnabled = false,
-                    IsSelected = true,
-                    Foreground = System.Windows.Media.Brushes.Gray
-                };
-                barberComboBox.Items.Add(defaultItem);
-
-                // Add static barber list (from your database)
                 var staticBarbers = new List<string>
                 {
                     "Barber - Zer",
                     "Barber - Aurbey",
                     "Barber - Klein Eagle",
                     "Barber - Aljames",
-                    "Barber - arel",
-                    "Barber - jay r",
-                    "Barber - cube",
+                    "Barber - Arel",
+                    "Barber - Jay R",
+                    "Barber - Cube",
                     "Barber - Andrei"
                 };
 
-                // Combine static list with unique barbers from database (avoid duplicates)
+                var uniqueBarbers = originalAppointments
+                    .Where(a => !string.IsNullOrEmpty(a.BarberAssigned))
+                    .Select(a => a.BarberAssigned)
+                    .Distinct()
+                    .OrderBy(b => b)
+                    .ToList();
+
                 var allBarbers = staticBarbers
                     .Union(uniqueBarbers)
                     .Distinct()
                     .OrderBy(b => b)
                     .ToList();
 
-                // Add all barbers to dropdown
+                barberComboBox.Items.Clear();
+
+                var defaultItem = new ComboBoxItem
+                {
+                    Content = "All Barbers",
+                    IsEnabled = false,
+                    IsSelected = true,
+                    Foreground = System.Windows.Media.Brushes.Gray
+                };
+                barberComboBox.Items.Add(defaultItem);
+
                 foreach (var barber in allBarbers)
                 {
                     barberComboBox.Items.Add(new ComboBoxItem { Content = barber });
@@ -184,22 +233,26 @@ namespace Capstone.AppointmentOptions
             }
         }
 
-        // Filter appointments based on selected date and barber
         private void ApplyFilters()
         {
-            var datePicker = FindName("DateFilterPicker") as DatePicker;
+            var statusComboBox = FindName("StatusComboBox") as ComboBox;
             var barberComboBox = FindName("BarberComboBox") as ComboBox;
 
-            var filtered = allAppointments.AsEnumerable();
+            var filtered = originalAppointments.AsEnumerable();
 
-            // Filter by date
-            if (datePicker != null && datePicker.SelectedDate.HasValue)
+            if (statusComboBox != null && statusComboBox.SelectedIndex > 0)
             {
-                string selectedDate = datePicker.SelectedDate.Value.ToString("yyyy-MM-dd");
-                filtered = filtered.Where(a => a.AppointmentDate == selectedDate);
+                var selectedItem = statusComboBox.SelectedItem as ComboBoxItem;
+                if (selectedItem != null)
+                {
+                    string selectedStatus = selectedItem.Content?.ToString();
+                    if (!string.IsNullOrEmpty(selectedStatus))
+                    {
+                        filtered = filtered.Where(a => a.AppointmentStatus == selectedStatus);
+                    }
+                }
             }
 
-            // Filter by barber
             if (barberComboBox != null && barberComboBox.SelectedIndex > 0)
             {
                 var selectedItem = barberComboBox.SelectedItem as ComboBoxItem;
@@ -213,18 +266,26 @@ namespace Capstone.AppointmentOptions
                 }
             }
 
-            // Update the ObservableCollection
-            appointments.Clear();
-            foreach (var appt in filtered)
-            {
-                appointments.Add(appt);
-            }
+            var filteredList = filtered.ToList();
+            allAppointments = filteredList;
 
-            // Show message if no results
-            if (appointments.Count == 0)
+            TotalPages = (int)Math.Ceiling(allAppointments.Count / (double)PageSize);
+            if (TotalPages == 0) TotalPages = 1;
+
+            CurrentPage = 1;
+            LoadPage(CurrentPage);
+            GeneratePaginationButtons();
+
+            if (filteredList.Count == 0)
             {
-                MessageBox.Show("No appointments found for the selected filters.", "No Results", MessageBoxButton.OK, MessageBoxImage.Information);
+                MessageBox.Show("No appointments found for the selected filters.", "No Results",
+                    MessageBoxButton.OK, MessageBoxImage.Information);
             }
+        }
+
+        private void SortButton_Click(object sender, RoutedEventArgs e)
+        {
+            ApplyFilters();
         }
 
         private void Home_Click(object sender, MouseButtonEventArgs e)
@@ -271,6 +332,16 @@ namespace Capstone.AppointmentOptions
                 currentModalWindow.Close();
             }
             e.Handled = true;
+        }
+
+        private void AppointmentUpdate_Click(object sender, RoutedEventArgs e)
+        {
+            ModalOverlay.Visibility = Visibility.Visible;
+            currentModalWindow = new AppointmentTracker();
+            currentModalWindow.Owner = this;
+            currentModalWindow.WindowStartupLocation = WindowStartupLocation.CenterOwner;
+            currentModalWindow.Closed += ModalWindow_Closed;
+            currentModalWindow.Show();
         }
     }
 }

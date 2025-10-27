@@ -9,6 +9,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="AppointmentOptions\Robot_On_Laptop_Computer.png" />
     <None Remove="Appointment_Records.png" />
     <None Remove="Being-Productive-4--Streamline-Milano.png" />
     <None Remove="Book_Appointment.png" />
@@ -41,6 +42,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Resource Include="AppointmentOptions\Robot_On_Laptop_Computer.png" />
     <Resource Include="Icon\Appointment_Records.png" />
     <Resource Include="Icon\Book_Appointment.png" />
     <Resource Include="Icon\CheckCircle.png">
