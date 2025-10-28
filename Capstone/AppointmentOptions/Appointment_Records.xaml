@@ -248,14 +248,7 @@
                             <ColumnDefinition Width="Auto"/>
                         </Grid.ColumnDefinitions>
 
-                        <!-- Notification Icon -->
-                        <Button 
-        Margin="1060,0,0,0" 
-        Style="{StaticResource ResponsiveButton}"
-        ToolTip="Notifications"
-        Click="Notification_Click" Grid.ColumnSpan="3" HorizontalAlignment="Left">
-                            <Image Source="/Icon/bell.png" Style="{StaticResource TopBarIcon}"/>
-                        </Button>
+                        
 
                         <!-- Settings Icon -->
                         <Button  

@@ -77,14 +77,7 @@
 
                 <StackPanel Grid.Column="1"/>
 
-                <!-- Notification Icon -->
-                <Button Grid.Column="2"
-                        Style="{StaticResource ResponsiveButton}"
-                        ToolTip="Notifications"
-                        Click="Notification_Click"
-                        Margin="0,0,15,0">
-                    <Image Source="/Icon/bell.png" Style="{StaticResource TopBarIcon}"/>
-                </Button>
+                
 
                 <!-- Settings Icon -->
                 <Button Grid.Column="3"

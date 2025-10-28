@@ -21,11 +21,18 @@
                 </Grid.ColumnDefinitions>
 
                 <!-- Home -->
-                <StackPanel Orientation="Horizontal" VerticalAlignment="Center" Grid.Column="0"
-                            Cursor="Hand" Margin="0,0,15,0"
-                            MouseLeftButtonDown="BackButton_Click">
+                <StackPanel Orientation="Horizontal"
+            Grid.Column="0"
+            VerticalAlignment="Center"
+            MouseLeftButtonUp="Home_Click"
+            Cursor="Hand"
+            Margin="0,0,15,0">
                     <Image Source="/Icon/arrow-left.png" Width="30" Height="30"/>
-                    <Label Content="Back" FontWeight="Bold" FontSize="20" VerticalAlignment="Center" Margin="5,0,0,0"/>
+                    <Label Content="Back"
+           FontWeight="Bold"
+           FontSize="20"
+           VerticalAlignment="Center"
+           Margin="5,0,0,0"/>
                 </StackPanel>
 
                 <!-- Spacer -->
@@ -66,7 +73,6 @@
 
                         <DataGrid.Columns>
                             <DataGridTextColumn Header="Email" Binding="{Binding Email}" Width="3*"/>
-                            <DataGridTextColumn Header="Contact Number" Binding="{Binding ContactNumber}" Width="2*"/>
                         </DataGrid.Columns>
                     </DataGrid>
                     <StackPanel x:Name="PaginationPanel"

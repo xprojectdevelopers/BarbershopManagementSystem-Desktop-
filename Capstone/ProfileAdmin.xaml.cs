@@ -4,6 +4,7 @@ using System;
 using System.Configuration;
 using System.Threading.Tasks;
 using System.Windows;
+using System.Windows.Controls;
 using System.Windows.Media.Imaging;
 
 namespace Capstone
@@ -13,6 +14,7 @@ namespace Capstone
         private Supabase.Client supabase;
         private string currentAdminLogin;
         private bool isPasswordVisible = false;
+        private string pendingProfilePictureBase64 = null;
 
         public ProfileAdmin()
         {
@@ -205,14 +207,21 @@ namespace Capstone
                     }
                 }
 
-                // Update admin information
-                await supabase
+                // Update admin information including photo if changed
+                var updateQuery = supabase
                     .From<AdminAccount>()
                     .Where(a => a.AdminLogin == currentAdminLogin)
                     .Set(x => x.AdminLogin, newUsername)
                     .Set(x => x.AdminName, txtName.Text.Trim())
-                    .Set(x => x.AdminPassword, currentPassword)
-                    .Update();
+                    .Set(x => x.AdminPassword, currentPassword);
+
+                // If there's a pending profile picture, include it in the update
+                if (!string.IsNullOrEmpty(pendingProfilePictureBase64))
+                {
+                    updateQuery = updateQuery.Set(x => x.ProfilePicture, pendingProfilePictureBase64);
+                }
+
+                await updateQuery.Update();
 
                 // Update the display
                 NameText.Text = txtName.Text.Trim();
@@ -228,6 +237,9 @@ namespace Capstone
                 txtPassword.Password = currentPassword;
                 txtPasswordVisible.Text = currentPassword;
 
+                // Clear the pending photo after successful save
+                pendingProfilePictureBase64 = null;
+
                 MessageBox.Show("Profile updated successfully!", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
             }
             catch (Exception ex)
@@ -242,6 +254,52 @@ namespace Capstone
             menu.Show();
             this.Close();
         }
+
+        private void ChangePhoto_Click(object sender, RoutedEventArgs e)
+        {
+            // Open file dialog to select image
+            Microsoft.Win32.OpenFileDialog openFileDialog = new Microsoft.Win32.OpenFileDialog
+            {
+                Title = "Select Profile Photo",
+                Filter = "Image Files (*.jpg;*.jpeg;*.png;*.bmp)|*.jpg;*.jpeg;*.png;*.bmp|All Files (*.*)|*.*",
+                FilterIndex = 1,
+                Multiselect = false
+            };
+
+            if (openFileDialog.ShowDialog() == true)
+            {
+                try
+                {
+                    // Get the selected file path
+                    string selectedImagePath = openFileDialog.FileName;
+
+                    // Convert image to Base64 and store temporarily
+                    byte[] imageBytes = System.IO.File.ReadAllBytes(selectedImagePath);
+                    pendingProfilePictureBase64 = Convert.ToBase64String(imageBytes);
+
+                    // Create BitmapImage and set it to the profile image (preview only)
+                    BitmapImage bitmap = new BitmapImage();
+                    bitmap.BeginInit();
+                    bitmap.UriSource = new Uri(selectedImagePath);
+                    bitmap.CacheOption = BitmapCacheOption.OnLoad;
+                    bitmap.EndInit();
+
+                    // Find the Image control inside the Border
+                    Border profileBorder = ProfileImageBorder;
+                    if (profileBorder.Child is Image profileImage)
+                    {
+                        profileImage.Source = bitmap;
+                    }
+
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show($"Error loading image: {ex.Message}", "Error",
+                                  MessageBoxButton.OK, MessageBoxImage.Error);
+                }
+            }
+        }
+
 
         [Table("Admin_Account")]
         public class AdminAccount : BaseModel

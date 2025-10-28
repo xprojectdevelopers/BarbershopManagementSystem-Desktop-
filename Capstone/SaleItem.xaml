@@ -211,7 +211,7 @@
                     <!-- Category -->
                     <Label Content="Product ID" FontSize="20" Grid.Row="0" Grid.Column="2" VerticalAlignment="Bottom" Margin="0,0,0,5"/>
                     <ComboBox x:Name="cmbItemID" SelectionChanged="cmbItemID_SelectionChanged" Grid.Row="1" Grid.Column="2" Height="47" FontSize="16" 
-               SelectedIndex="-1" Style="{StaticResource TextBoxStyleComboBox}" HorizontalAlignment="Left" Margin="0,0,0,30" Grid.RowSpan="2" Width="205">
+                        SelectedIndex="-1" Style="{StaticResource TextBoxStyleComboBox}" HorizontalAlignment="Left" Margin="0,0,0,30" Grid.RowSpan="2" Width="205">
                         <ComboBoxItem IsEnabled="False" IsSelected="True" Foreground="Gray">Select Item ID</ComboBoxItem>
                     </ComboBox>
                     <TextBlock x:Name="cmbItemIDError" Foreground="Red" FontSize="12" 

@@ -281,6 +281,10 @@ namespace Capstone
             return "";
         }
 
+        private async void Refresh_Click(object sender, RoutedEventArgs e)
+        {
+            await LoadItems();
+        }
 
         [Table("Add_Item")]
         public class BarbershopManagementSystem : BaseModel

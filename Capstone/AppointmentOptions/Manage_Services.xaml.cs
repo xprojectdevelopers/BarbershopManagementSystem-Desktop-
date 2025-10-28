@@ -1,28 +1,47 @@
 ﻿using Supabase.Postgrest.Attributes;
 using Supabase.Postgrest.Models;
-using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Configuration;
 using System.Globalization;
-using System.Linq;
-using System.Reflection;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Shapes;
-using static Capstone.Customers;
 using static Supabase.Postgrest.Constants;
 
 namespace Capstone.AppointmentOptions
 {
-    // ✅ ADD THIS CONVERTER CLASS
+    // ✅ CONVERTERS MUST BE INSIDE THE NAMESPACE
+    public class PesoConverter : IValueConverter
+    {
+        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            string str = value?.ToString()?.Trim();
+            if (string.IsNullOrEmpty(str))
+                return "";
+
+            if (decimal.TryParse(str, out decimal number))
+            {
+                // If whole number, no decimal places. Otherwise show 2 decimals
+                if (number == Math.Floor(number))
+                    return $"₱ {number:N0}";
+                else
+                    return $"₱ {number:N2}";
+            }
+
+            return $"₱ {str}";
+        }
+
+        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            if (value == null) return "";
+            string str = value.ToString();
+            return str.Replace("₱", "").Trim();
+        }
+    }
+
     public class EmptyStringToVisibilityConverter : IValueConverter
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
@@ -96,6 +115,9 @@ namespace Capstone.AppointmentOptions
             TotalPages = (int)Math.Ceiling(employees.Count / (double)PageSize);
             LoadPage(CurrentPage);
             GeneratePaginationButtons();
+
+            // Populate the ComboBox with Employee IDs
+            PopulateComboBox();
         }
 
         private void LoadPage(int pageNumber)
@@ -330,9 +352,12 @@ namespace Capstone.AppointmentOptions
             }
         }
 
-        private void Sort_Click(object sender, RoutedEventArgs e)
+        // Replace the existing Search_Click method with this:
+
+        private void Search_Click(object sender, RoutedEventArgs e)
         {
-            string searchText = txtEmployeeID.Text.Trim();
+            // Get the text from ComboBox (either typed or selected)
+            string searchText = cmbItemID.Text.Trim();
 
             // If empty, show all
             if (string.IsNullOrEmpty(searchText))
@@ -365,7 +390,7 @@ namespace Capstone.AppointmentOptions
                 currentModalWindow.Closed += ModalWindow_Closed;
                 currentModalWindow.Show();
 
-                ClearForm();
+                // Don't clear form - keep the selection so user can try again
                 return; // Don't update table
             }
 
@@ -380,9 +405,14 @@ namespace Capstone.AppointmentOptions
             GeneratePaginationButtons();
         }
 
+        private void cmbItemID_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            txtEmployeeIDError.Visibility = Visibility.Collapsed;
+        }
+
         private void ClearForm()
         {
-            txtEmployeeID.Text = string.Empty;
+            cmbItemID.Text = string.Empty;
             txtEmployeeIDError.Text = string.Empty;
         }
 
@@ -396,6 +426,25 @@ namespace Capstone.AppointmentOptions
             await LoadEmployees();
         }
 
+        private void PopulateComboBox()
+        {
+            cmbItemID.Items.Clear();
+
+            // Get unique Employee IDs from the data
+            var uniqueEmployeeIDs = allEmployees
+                .Where(emp => !string.IsNullOrWhiteSpace(emp.EmiD))
+                .Select(emp => emp.EmiD)
+                .Distinct()
+                .OrderBy(id => id)
+                .ToList();
+
+            // Add each Employee ID to the ComboBox
+            foreach (var empId in uniqueEmployeeIDs)
+            {
+                cmbItemID.Items.Add(empId);
+            }
+        }
+
         [Table("AssignNew_Service")]
         public class BarbershopManagementSystem : BaseModel
         {
@@ -403,7 +452,7 @@ namespace Capstone.AppointmentOptions
             public int Id { get; set; }
 
             [Column("Emp_ID")]
-            public String EmiD { get; set; }
+            public string EmiD { get; set; }
 
             [Column("Barber_Nickname")]
             public string BN { get; set; }

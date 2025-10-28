@@ -1,0 +1,289 @@
+﻿<Window x:Class="Capstone.MolaveLegend"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:Capstone"
+        mc:Ignorable="d"
+        Title="MolaveLegend" Height="700" Width="1280"
+        WindowState="Maximized"
+        ResizeMode="CanResize"
+        Background="White">
+
+    <Window.Resources>
+    <Style x:Key="TextBoxStyleComboBox" TargetType="ComboBox">
+        <Setter Property="Background" Value="White"/>
+        <Setter Property="BorderBrush" Value="Gray"/>
+        <Setter Property="BorderThickness" Value="1"/>
+        <Setter Property="Padding" Value="10,5"/>
+        <Setter Property="VerticalContentAlignment" Value="Center"/>
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="ComboBox">
+                    <Grid>
+                        <Border Name="Border"
+                            Background="{TemplateBinding Background}"
+                            BorderBrush="{TemplateBinding BorderBrush}"
+                            BorderThickness="{TemplateBinding BorderThickness}"
+                            CornerRadius="4">
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="Auto"/>
+                                </Grid.ColumnDefinitions>
+
+                                <!-- Content Presenter -->
+                                <ContentPresenter Grid.Column="0"
+                                              x:Name="PART_ContentPresenter"
+                                              Margin="{TemplateBinding Padding}"
+                                              Content="{TemplateBinding SelectionBoxItem}"
+                                              ContentTemplate="{TemplateBinding SelectionBoxItemTemplate}"
+                                              VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
+                                              HorizontalAlignment="Left"
+                                              IsHitTestVisible="False"/>
+
+                                <ToggleButton Grid.Column="1"
+                                          x:Name="PART_DropDownToggle"
+                                          Background="Transparent"
+                                          BorderThickness="0"
+                                          Width="20"
+                                          Height="20"
+                                          Margin="0,0,8,0"
+                                          VerticalAlignment="Center"
+                                          IsChecked="{Binding IsDropDownOpen, RelativeSource={RelativeSource TemplatedParent}}"
+                                          ClickMode="Press">
+                                    <Path Fill="Gray"
+                                      Data="M7,10L12,15L17,10H7Z"
+                                      Stretch="Uniform"
+                                      Width="10"
+                                      Height="8"/>
+                                </ToggleButton>
+
+                                <!-- Popup -->
+                                <Popup x:Name="PART_Popup"
+                                   Grid.ColumnSpan="2"
+                                   IsOpen="{TemplateBinding IsDropDownOpen}"
+                                   Placement="Bottom"
+                                   PlacementTarget="{Binding ElementName=Border}"
+                                   StaysOpen="False">
+                                    <Border Background="White"
+                                        BorderBrush="Gray"
+                                        BorderThickness="1"
+                                        CornerRadius="4"
+                                        MinWidth="{Binding ActualWidth, ElementName=Border}">
+                                        <ScrollViewer>
+                                            <ItemsPresenter/>
+                                        </ScrollViewer>
+                                    </Border>
+                                </Popup>
+                            </Grid>
+                        </Border>
+                    </Grid>
+                    <ControlTemplate.Triggers>
+                        <!-- Hover effect -->
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter TargetName="Border" Property="BorderBrush" Value="#333"/>
+                        </Trigger>
+                        <!-- Focus effect -->
+                        <Trigger Property="IsFocused" Value="True">
+                            <Setter TargetName="Border" Property="BorderBrush" Value="#0078D4"/>
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+</Window.Resources>
+    
+            <Grid>
+        <!-- Page Title -->
+        <Label Content="Molave Sreet Legend"
+               FontSize="20"
+               FontWeight="Bold"
+               Margin="65,100,0,0"
+               VerticalAlignment="Top"
+               HorizontalAlignment="Left"/>
+
+        <!-- Header Section -->
+        <Grid Height="50" VerticalAlignment="Top" Margin="0,30,0,0">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="Auto"/>
+            </Grid.ColumnDefinitions>
+
+            <!-- Home -->
+            <StackPanel Orientation="Horizontal"
+                        Grid.Column="0"
+                        VerticalAlignment="Center"
+                        MouseLeftButtonUp="Home_Click"
+                        Cursor="Hand"
+                        Margin="60,0,15,0">
+                <Image Source="/Icon/arrow-left.png" Width="30" Height="30"/>
+                <Label Content="Back"
+                       FontWeight="Bold"
+                       FontSize="20"
+                       VerticalAlignment="Center"
+                       Margin="5,0,0,0"/>
+            </StackPanel>
+
+            <StackPanel Grid.Column="1"/>
+
+            <!-- Notification -->
+            <Image Source="/Icon/bell.png"
+                   Width="30"
+                   Height="30"
+                   Grid.Column="2"
+                   Margin="0,0,15,0"
+                   VerticalAlignment="Center"/>
+
+            <!-- Settings -->
+            <Image Source="/Icon/gear.png"
+                   Width="30"
+                   Height="30"
+                   Grid.Column="3"
+                   VerticalAlignment="Center"
+                   Margin="0,0,60,0"/>
+        </Grid>
+
+        <!-- Main Container -->
+        <Border BorderBrush="Black"
+                BorderThickness="1"
+                Padding="20"
+                CornerRadius="8"
+                Margin="65,135,60,40"
+                Background="White">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="*"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
+
+                <!-- Title -->
+                <TextBlock Text="Molave Streets Barbers Subcribers"
+                           FontSize="20"
+                           FontWeight="Bold"
+                           HorizontalAlignment="Center"
+                           Margin="0,0,0,20"/>
+
+                <Grid Margin="0,30,40,-30">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                    </Grid.RowDefinitions>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="205"/>
+                        <ColumnDefinition Width="170"/>
+                        <ColumnDefinition Width="205"/>
+                        <ColumnDefinition Width="30"/>
+                        <ColumnDefinition Width="150"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+
+                    <Label Content="Badge" FontSize="18" Grid.Row="1" Grid.Column="2" VerticalAlignment="Bottom" Margin="0,10,30,85" Grid.ColumnSpan="2"/>
+                    <ComboBox x:Name="cmbItemID" Grid.Row="1" Grid.Column="2" Height="37" FontSize="18" 
+                    SelectedIndex="-1" Style="{StaticResource TextBoxStyleComboBox}" HorizontalAlignment="Center" Grid.RowSpan="1" Width="205">
+                        <ComboBoxItem IsEnabled="False" IsSelected="True" Foreground="Gray">Molave Street Legend</ComboBoxItem>
+                    </ComboBox>
+                    <TextBlock x:Name="txtEmployeeIDError" Foreground="Red" FontSize="14" Margin="465,210,0,0" Grid.Row="1" HorizontalAlignment="Left" VerticalAlignment="Top" Visibility="Collapsed"/>
+                    
+                    <!-- Sort Button -->
+                    <Button Grid.Column="4" Grid.Row="1" Content="Sort by" Cursor="Hand"
+                        Height="37" Width="150"
+                        VerticalAlignment="Center"
+                        Foreground="white">
+                        <Button.Template>
+                            <ControlTemplate TargetType="Button">
+                                <Border Background="black"
+                                    CornerRadius="20" 
+                                    BorderBrush="Black" 
+                                    BorderThickness="1">
+                                    <StackPanel Orientation="Horizontal" 
+                                       HorizontalAlignment="Center"
+                                       VerticalAlignment="Center">
+                                        <ContentPresenter HorizontalAlignment="Center"
+                                            VerticalAlignment="Center"
+                                            RecognizesAccessKey="True"
+                                            TextElement.Foreground="{TemplateBinding Foreground}"/>
+                                    </StackPanel>
+                                </Border>
+                            </ControlTemplate>
+                        </Button.Template>
+                    </Button>
+                </Grid>
+                
+                <!-- DataGrid -->
+                <DataGrid x:Name="EmployeeGrid"
+                          AutoGenerateColumns="False"
+                          CanUserAddRows="False"
+                          CanUserDeleteRows="False"
+                          HeadersVisibility="Column"
+                          RowHeight="19.1"
+                          FontSize="14"
+                          BorderBrush="#DDD"
+                          BorderThickness="1"
+                          GridLinesVisibility="All"
+                          Grid.Row="1"
+                          AlternatingRowBackground="#F9F9F9">
+                    <DataGrid.ColumnHeaderStyle>
+                        <Style TargetType="DataGridColumnHeader">
+                            <Setter Property="Background" Value="Black"/>
+                            <Setter Property="Foreground" Value="White"/>
+                            <Setter Property="FontWeight" Value="Bold"/>
+                            <Setter Property="HorizontalContentAlignment" Value="Center"/>
+                            <Setter Property="Padding" Value="5"/>
+                        </Style>
+                    </DataGrid.ColumnHeaderStyle>
+                    <DataGrid.Columns>
+                        <DataGridTextColumn Header="Name" Binding="{Binding BadgeName}" Width="*"/>
+                        <DataGridTextColumn Header="Email" Binding="{Binding completed}" Width="*"/>
+                    </DataGrid.Columns>
+                </DataGrid>
+
+                <!-- Pagination -->
+                <StackPanel x:Name="PaginationPanel"
+                            Grid.Row="2"
+                            Orientation="Horizontal"
+                            HorizontalAlignment="Center"
+                            Background="White"
+                            Margin="0,10,0,10"/>
+
+                <Button x:Name="ExportButton"
+        Grid.Row="3"
+        Width="135"
+        Height="35"
+        HorizontalAlignment="Center"
+        VerticalAlignment="Center"
+        Background="White"
+        BorderBrush="#BFBFBF"
+        BorderThickness="1"
+        Cursor="Hand"
+        Click="ExportButton_Click">
+                    <Button.Template>
+                        <ControlTemplate TargetType="Button">
+                            <Border Background="{TemplateBinding Background}"
+                    BorderBrush="{TemplateBinding BorderBrush}"
+                    BorderThickness="{TemplateBinding BorderThickness}"
+                    CornerRadius="15"
+                    Padding="8">
+                                <ContentPresenter HorizontalAlignment="Center"
+                                  VerticalAlignment="Center"/>
+                            </Border>
+                        </ControlTemplate>
+                    </Button.Template>
+                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                        <Image Source="/Icon/export.png" Width="20" Height="20" Margin="0,0,8,0"/>
+                        <TextBlock Text="Export"
+                   Foreground="#0066FF"
+                   FontWeight="SemiBold"
+                   FontSize="14"
+                   VerticalAlignment="Center"/>
+                    </StackPanel>
+                </Button>
+
+            </Grid>
+        </Border>
+    </Grid>
+</Window>

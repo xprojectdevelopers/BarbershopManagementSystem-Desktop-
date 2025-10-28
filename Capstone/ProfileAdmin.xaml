@@ -47,7 +47,6 @@
             </Setter>
         </Style>
 
-
         <Style x:Key="TopBarIcon" TargetType="Image">
             <Setter Property="Width" Value="24"/>
             <Setter Property="Height" Value="24"/>
@@ -59,22 +58,59 @@
         <Grid Grid.Row="0" HorizontalAlignment="Center" Margin="0,20,0,0" VerticalAlignment="Top">
             <Viewbox Stretch="Uniform" MaxWidth="350" MaxHeight="300" StretchDirection="DownOnly">
                 <StackPanel Orientation="Vertical">
-                    <!-- Profile Image Container -->
-                    <Border x:Name="ProfileImageBorder" Width="120" Height="120" 
-                           CornerRadius="60"
-                           Background="LightGray" 
-                           HorizontalAlignment="Center"
-                           Margin="0,0,0,15"
-                           ClipToBounds="True">
-                        <Image Source="/Icon/profile.png" 
-                               Stretch="UniformToFill"
-                               VerticalAlignment="Center"
-                               HorizontalAlignment="Center"/>
-                    </Border>
+                    <!-- Profile Image Container with Camera Icon -->
+                    <Grid Width="120" Height="120" HorizontalAlignment="Center" Margin="0,0,0,15">
+                        <!-- Profile Image Border -->
+                        <Border x:Name="ProfileImageBorder" Width="120" Height="120" 
+                               CornerRadius="60"
+                               Background="LightGray" 
+                               ClipToBounds="True">
+                            <Image Source="/Icon/profile.png" 
+                                   Stretch="UniformToFill"
+                                   VerticalAlignment="Center"
+                                   HorizontalAlignment="Center"/>
+                        </Border>
+
+                        <!-- Camera Icon Button -->
+                        <Button x:Name="btnChangePhoto" 
+                                Click="ChangePhoto_Click"
+                                Width="36" Height="36"
+                                HorizontalAlignment="Right"
+                                VerticalAlignment="Bottom"
+                                Background="White"
+                                BorderThickness="0"
+                                Cursor="Hand"
+                                ToolTip="Change Profile Photo">
+                            <Button.Template>
+                                <ControlTemplate TargetType="Button">
+                                    <Grid>
+                                        <!-- White Circle Background -->
+                                        <Ellipse Width="36" Height="36" Fill="White">
+                                            <Ellipse.Effect>
+                                                <DropShadowEffect Color="Black" 
+                                                                  BlurRadius="8" 
+                                                                  ShadowDepth="2" 
+                                                                  Opacity="0.3"/>
+                                            </Ellipse.Effect>
+                                        </Ellipse>
+
+                                        <!-- Camera Icon -->
+                                        <Viewbox Width="20" Height="20">
+                                            <Canvas Width="24" Height="24">
+                                                <!-- Camera Body -->
+                                                <Path Fill="#333333" 
+                                                      Data="M9,2L7.17,4H4A2,2 0 0,0 2,6V18A2,2 0 0,0 4,20H20A2,2 0 0,0 22,18V6A2,2 0 0,0 20,4H16.83L15,2H9M12,7A5,5 0 0,1 17,12A5,5 0 0,1 12,17A5,5 0 0,1 7,12A5,5 0 0,1 12,7M12,9A3,3 0 0,0 9,12A3,3 0 0,0 12,15A3,3 0 0,0 15,12A3,3 0 0,0 12,9Z"/>
+                                            </Canvas>
+                                        </Viewbox>
+                                    </Grid>
+                                </ControlTemplate>
+                            </Button.Template>
+                        </Button>
+                    </Grid>
 
                     <!-- Profile Info -->
                     <StackPanel>
-                        <TextBlock Text="Melvin Patalingjug" x:Name="NameText"
+                        <TextBlock Text="Admin Name" x:Name="NameText"
                                   Style="{StaticResource ResponsiveProfileName}"/>
                         <TextBlock Text="Admin" x:Name="RoleText"
                                   Style="{StaticResource ResponsiveProfileRole}"/>

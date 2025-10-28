@@ -1,33 +1,39 @@
 ﻿using Microsoft.Win32;
-using Supabase;
-using Supabase.Postgrest;
 using Supabase.Postgrest.Attributes;
 using Supabase.Postgrest.Models;
 using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Configuration;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Data;
+using System.Windows.Documents;
 using System.Windows.Input;
-using Microsoft.Win32;
-using System.IO;
+using System.Windows.Media;
+using System.Windows.Media.Imaging;
+using System.Windows.Shapes;
+using static Supabase.Postgrest.Constants;
 
 namespace Capstone
 {
-    public partial class ListSubscribers : Window
+    /// <summary>
+    /// Interaction logic for MolaveLegend.xaml
+    /// </summary>
+    public partial class MolaveLegend : Window
     {
         private Supabase.Client? supabase;
-
-        private ObservableCollection<SubscriberGridItem> subscribersList = new ObservableCollection<SubscriberGridItem>();
+        private ObservableCollection<BarbershopManagementSystem> employees = new();
 
         private int CurrentPage = 1;
-        private int PageSize = 5;
+        private int PageSize = 10;
         private int TotalPages = 1;
 
-        public ListSubscribers()
+        public MolaveLegend()
         {
             InitializeComponent();
             Loaded += async (s, e) => await InitializeData();
@@ -36,7 +42,7 @@ namespace Capstone
         private async Task InitializeData()
         {
             await InitializeSupabaseAsync();
-            await LoadSubscribers();
+            await LoadEmployees();
         }
 
         private async Task InitializeSupabaseAsync()
@@ -59,60 +65,39 @@ namespace Capstone
             await supabase.InitializeAsync();
         }
 
-        // 🔹 Load subscribers with emails + contact numbers
-        private async Task LoadSubscribers()
+        private async Task LoadEmployees()
         {
             if (supabase == null) return;
 
-            try
-            {
-                // Fetch email subscribers (website)
-                var emailResult = await supabase.From<SubscriberEmail>().Get();
-                var emails = emailResult.Models.ToList();
+            var result = await supabase
+                .From<BarbershopManagementSystem>()
+                .Order(x => x.Id, Ordering.Descending)
+                .Get();
 
-                // Fetch mobile subscribers (mobile)
-                var mobileResult = await supabase.From<SubscriberMobile>().Get();
-                var mobiles = mobileResult.Models.ToList();
+            employees = new ObservableCollection<BarbershopManagementSystem>(result.Models);
 
-                subscribersList.Clear();
+            TotalPages = (int)Math.Ceiling(employees.Count / (double)PageSize);
+            if (TotalPages == 0) TotalPages = 1;
 
-                int maxCount = Math.Max(emails.Count, mobiles.Count);
-
-                // Combine them row by row
-                for (int i = 0; i < maxCount; i++)
-                {
-                    string email = i < emails.Count ? emails[i].Email : "";
-                    string contact = i < mobiles.Count ? mobiles[i].ContactNumber : "";
-
-                    // Add combined row
-                    subscribersList.Add(new SubscriberGridItem
-                    {
-                        Email = email,
-                        ContactNumber = contact
-                    });
-                }
-
-                // Pagination
-                TotalPages = (int)Math.Ceiling(subscribersList.Count / (double)PageSize);
-                LoadSubscriberPage(CurrentPage);
-                GeneratePaginationButtons();
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show($"Error loading subscribers: {ex.Message}");
-            }
+            LoadPage(CurrentPage);
+            GeneratePaginationButtons();
         }
 
-        private void LoadSubscriberPage(int pageNumber)
+        private void LoadPage(int pageNumber)
         {
             CurrentPage = pageNumber;
 
-            var pageData = subscribersList
+            var pageData = employees
                 .Skip((pageNumber - 1) * PageSize)
                 .Take(PageSize)
                 .ToList();
 
-            SubscribersGrid.ItemsSource = pageData;
+            while (pageData.Count < PageSize)
+            {
+                pageData.Add(new BarbershopManagementSystem());
+            }
+
+            EmployeeGrid.ItemsSource = pageData;
         }
 
         private void GeneratePaginationButtons()
@@ -121,63 +106,43 @@ namespace Capstone
 
             for (int i = 1; i <= TotalPages; i++)
             {
-                Button btn = new Button
+                Button btn = new()
                 {
                     Content = i.ToString(),
                     Margin = new Thickness(5, 0, 5, 0),
                     Padding = new Thickness(10, 5, 10, 5),
-                    Foreground = (i == CurrentPage) ? System.Windows.Media.Brushes.Black : System.Windows.Media.Brushes.Gray,
+                    Foreground = System.Windows.Media.Brushes.Gray,
                     FontWeight = (i == CurrentPage) ? FontWeights.Bold : FontWeights.Normal,
-                    FontSize = 16,
-                    Cursor = Cursors.Hand,
-                    Background = System.Windows.Media.Brushes.Transparent,
-                    BorderThickness = new Thickness(0)
+                    FontSize = 20,
+                    Cursor = Cursors.Hand
                 };
+
+                var template = new ControlTemplate(typeof(Button));
+                var border = new FrameworkElementFactory(typeof(Border));
+                border.SetValue(Border.BackgroundProperty, System.Windows.Media.Brushes.Transparent);
+                border.SetValue(Border.BorderThicknessProperty, new Thickness(0));
+
+                var contentPresenter = new FrameworkElementFactory(typeof(ContentPresenter));
+                contentPresenter.SetValue(ContentPresenter.HorizontalAlignmentProperty, HorizontalAlignment.Center);
+                contentPresenter.SetValue(ContentPresenter.VerticalAlignmentProperty, VerticalAlignment.Center);
+
+                border.AppendChild(contentPresenter);
+                template.VisualTree = border;
+
+                btn.Template = template;
+
+                btn.MouseEnter += (s, e) => btn.Foreground = System.Windows.Media.Brushes.Black;
+                btn.MouseLeave += (s, e) => btn.Foreground = System.Windows.Media.Brushes.Gray;
 
                 int pageNum = i;
                 btn.Click += (s, e) =>
                 {
-                    LoadSubscriberPage(pageNum);
+                    LoadPage(pageNum);
                     GeneratePaginationButtons();
                 };
 
                 PaginationPanel.Children.Add(btn);
             }
-        }
-
-        // 🔹 Models
-        [Table("subscribers")]
-        public class SubscriberEmail : BaseModel
-        {
-            [PrimaryKey("id", false)]
-            public long Id { get; set; } // long matches bigint in Supabase
-
-            [Column("email")]
-            public string Email { get; set; } = string.Empty;
-        }
-
-        [Table("subscribers_mobile")]
-        public class SubscriberMobile : BaseModel
-        {
-            [PrimaryKey("id", false)]
-            [Column("id")]
-            public Guid Id { get; set; } // UUID -> use Guid
-
-            [Column("user_id")]
-            public Guid UserId { get; set; }
-
-            [Column("contact_number")]
-            public string ContactNumber { get; set; } = string.Empty;
-
-            [Column("created_at")]
-            public DateTime? CreatedAt { get; set; }
-        }
-
-        // 🔹 Grid item for DataGrid
-        public class SubscriberGridItem
-        {
-            public string Email { get; set; } = string.Empty;
-            public string ContactNumber { get; set; } = string.Empty;
         }
 
         private void Home_Click(object sender, MouseButtonEventArgs e)
@@ -204,7 +169,7 @@ namespace Capstone
                     csvContent.AppendLine("Email,Contact Number");
 
                     // Loop through DataGrid items
-                    foreach (var item in SubscribersGrid.Items)
+                    foreach (var item in EmployeeGrid.Items)
                     {
                         dynamic row = item;
                         string email = row.Email != null ? row.Email.ToString() : "";
@@ -223,6 +188,18 @@ namespace Capstone
                 }
             }
         }
+
+        [Table("badge_tracker")]
+        public class BarbershopManagementSystem : BaseModel
+        {
+            [PrimaryKey("id", false)]
+            public Guid Id { get; set; }
+
+            [Column("badge_name")]
+            public string BadgeName { get; set; } = string.Empty;
+
+            [Column("completed_count")]
+            public string completed { get; set; }
+        }
     }
 }
-

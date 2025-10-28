@@ -275,13 +275,15 @@
                         </StackPanel>
                     </Border>
                 </Grid>
-                
+
                 <!-- Filter and Action Section -->
                 <Border BorderBrush="Black" BorderThickness="1" Padding="20" CornerRadius="8" Margin="20,-15,20,20">
                     <StackPanel>
                         <!-- Filters and Buttons Row -->
+                        <!-- Replace the Grid section under "Filters and Buttons Row" with this: -->
                         <Grid Margin="0,0,0,20">
                             <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto"/>
                                 <ColumnDefinition Width="Auto"/>
                                 <ColumnDefinition Width="Auto"/>
                                 <ColumnDefinition Width="*"/>
@@ -292,7 +294,7 @@
                             <StackPanel Grid.Column="0" Margin="0,0,20,0">
                                 <Label Content="Category" FontSize="20" Margin="0,0,0,5"/>
                                 <ComboBox x:Name="Gender" Width="190" Height="47" FontSize="16" SelectedIndex="-1"
-                                          Style="{StaticResource TextBoxStyleComboBox}">
+                  Style="{StaticResource TextBoxStyleComboBox}">
                                     <ComboBoxItem IsEnabled="False" IsSelected="True" Foreground="Gray">All Items</ComboBoxItem>
                                     <ComboBoxItem>Aftershaves</ComboBoxItem>
                                     <ComboBoxItem>Clays</ComboBoxItem>
@@ -314,42 +316,69 @@
 
                             <!-- Sort Button -->
                             <Button Grid.Column="1" Content="Sort by" Cursor="Hand"
-                                    Width="160"
-                                    Height="40"
-                                    Margin="0,45,0,0"
-                                    VerticalAlignment="Top"
-                                    Foreground="white" Click="Sort_Click">
+            Width="160"
+            Height="40"
+            Margin="0,45,20,0"
+            VerticalAlignment="Top"
+            Foreground="white" Click="Sort_Click">
                                 <Button.Template>
                                     <ControlTemplate TargetType="Button">
                                         <Border Background="black" 
-                                                CornerRadius="20" 
-                                                BorderBrush="Black" 
-                                                BorderThickness="1">
+                        CornerRadius="20" 
+                        BorderBrush="Black" 
+                        BorderThickness="1">
                                             <ContentPresenter HorizontalAlignment="Center"
-                                                              VerticalAlignment="Center"
-                                                              RecognizesAccessKey="True"
-                                                              TextElement.Foreground="{TemplateBinding Foreground}"/>
+                                      VerticalAlignment="Center"
+                                      RecognizesAccessKey="True"
+                                      TextElement.Foreground="{TemplateBinding Foreground}"/>
                                         </Border>
                                     </ControlTemplate>
                                 </Button.Template>
                             </Button>
 
-                            <!-- Add New Item Button -->
-                            <Button Grid.Column="3" Content="Add New Item" Cursor="Hand"
-                                    Width="160"
-                                    Margin="0,45,0,4"
-                                    Foreground="white"
-                                    Click="AddItem_Click">
+                            <!-- Refresh Button -->
+                            <Button Grid.Column="2" Content="Refresh" Cursor="Hand"
+            Width="160"
+            Height="40"
+            Margin="0,45,0,0" 
+            VerticalAlignment="Top"
+            Foreground="white" Click="Refresh_Click">
+                                <Button.Template>
+                                    <ControlTemplate TargetType="Button">
+                                        <Border Background="black" 
+                        CornerRadius="20" 
+                        BorderBrush="Black" 
+                        BorderThickness="1">
+                                            <ContentPresenter HorizontalAlignment="Center"
+                                      VerticalAlignment="Center"
+                                      RecognizesAccessKey="True"
+                                      TextElement.Foreground="{TemplateBinding Foreground}"/>
+                                        </Border>
+                                    </ControlTemplate>
+                                </Button.Template>
+                            </Button>
+
+                            <!-- Empty space in middle -->
+                            <StackPanel Grid.Column="3"/>
+
+                            <!-- Add New Item Button - at the right end -->
+                            <Button Grid.Column="4" Content="Add New Item" Cursor="Hand"
+            Width="160"
+            Height="40"
+            Margin="0,45,0,0"
+            VerticalAlignment="Top"
+            Foreground="white"
+            Click="AddItem_Click">
                                 <Button.Template>
                                     <ControlTemplate TargetType="Button">
                                         <Border Background="blue" 
-                                                CornerRadius="20" 
-                                                BorderBrush="blue" 
-                                                BorderThickness="1">
+                        CornerRadius="20" 
+                        BorderBrush="blue" 
+                        BorderThickness="1">
                                             <ContentPresenter HorizontalAlignment="Center"
-                                                              VerticalAlignment="Center"
-                                                              RecognizesAccessKey="True"
-                                                              TextElement.Foreground="{TemplateBinding Foreground}"/>
+                                      VerticalAlignment="Center"
+                                      RecognizesAccessKey="True"
+                                      TextElement.Foreground="{TemplateBinding Foreground}"/>
                                         </Border>
                                     </ControlTemplate>
                                 </Button.Template>

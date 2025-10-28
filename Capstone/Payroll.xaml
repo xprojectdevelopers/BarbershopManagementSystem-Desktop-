@@ -90,6 +90,89 @@
                 </Setter.Value>
             </Setter>
         </Style>
+
+        <Style x:Key="TextBoxStyleComboBox" TargetType="ComboBox">
+            <Setter Property="Background" Value="White"/>
+            <Setter Property="BorderBrush" Value="Gray"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="Padding" Value="10,5"/>
+            <Setter Property="VerticalContentAlignment" Value="Center"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="ComboBox">
+                        <Grid>
+                            <Border Name="Border"
+                        Background="{TemplateBinding Background}"
+                        BorderBrush="{TemplateBinding BorderBrush}"
+                        BorderThickness="{TemplateBinding BorderThickness}"
+                        CornerRadius="4">
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="Auto"/>
+                                    </Grid.ColumnDefinitions>
+
+                                    <!-- Content Presenter -->
+                                    <ContentPresenter Grid.Column="0"
+                                          x:Name="PART_ContentPresenter"
+                                          Margin="{TemplateBinding Padding}"
+                                          Content="{TemplateBinding SelectionBoxItem}"
+                                          ContentTemplate="{TemplateBinding SelectionBoxItemTemplate}"
+                                          VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
+                                          HorizontalAlignment="Left"
+                                          IsHitTestVisible="False"/>
+
+                                    <ToggleButton Grid.Column="1"
+                                      x:Name="PART_DropDownToggle"
+                                      Background="Transparent"
+                                      BorderThickness="0"
+                                      Width="20"
+                                      Height="20"
+                                      Margin="0,0,8,0"
+                                      VerticalAlignment="Center"
+                                      IsChecked="{Binding IsDropDownOpen, RelativeSource={RelativeSource TemplatedParent}}"
+                                      ClickMode="Press">
+                                        <Path Fill="Gray"
+                                  Data="M7,10L12,15L17,10H7Z"
+                                  Stretch="Uniform"
+                                  Width="10"
+                                  Height="8"/>
+                                    </ToggleButton>
+
+                                    <!-- Popup -->
+                                    <Popup x:Name="PART_Popup"
+                               Grid.ColumnSpan="2"
+                               IsOpen="{TemplateBinding IsDropDownOpen}"
+                               Placement="Bottom"
+                               PlacementTarget="{Binding ElementName=Border}"
+                               StaysOpen="False">
+                                        <Border Background="White"
+                                    BorderBrush="Gray"
+                                    BorderThickness="1"
+                                    CornerRadius="4"
+                                    MinWidth="{Binding ActualWidth, ElementName=Border}">
+                                            <ScrollViewer>
+                                                <ItemsPresenter/>
+                                            </ScrollViewer>
+                                        </Border>
+                                    </Popup>
+                                </Grid>
+                            </Border>
+                        </Grid>
+                        <ControlTemplate.Triggers>
+                            <!-- Hover effect -->
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="Border" Property="BorderBrush" Value="#333"/>
+                            </Trigger>
+                            <!-- Focus effect -->
+                            <Trigger Property="IsFocused" Value="True">
+                                <Setter TargetName="Border" Property="BorderBrush" Value="#0078D4"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
     </Window.Resources>
 
     <Grid>
@@ -150,17 +233,18 @@
 
                         <!-- Search Section -->
                         <Grid Margin="40,70,40,20" Height="120">
-                            <Label Content="Employee ID *" FontSize="20" HorizontalAlignment="Left" Margin="20,0,0,0" VerticalAlignment="Top"/>
-                            <TextBox x:Name="txtEmployeeID" FontSize="20" VerticalContentAlignment="Center" 
-                                     Margin="20,37,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="205" Height="40" HorizontalAlignment="Left"/>
+                            <Label Content="Employee ID" FontSize="20" HorizontalAlignment="Left" Margin="20,0,0,0" VerticalAlignment="Top"/>
+                            <ComboBox x:Name="cmbItemID" SelectionChanged="cmbItemID_SelectionChanged" Height="47" FontSize="16" 
+              Style="{StaticResource TextBoxStyleComboBox}" HorizontalAlignment="Left" Margin="20,36,0,36" Width="205">
+                            </ComboBox>
                             <TextBlock x:Name="txtEmployeeIDError" Foreground="Red" FontSize="12" 
-                                       Margin="20,80,0,0" HorizontalAlignment="Left" VerticalAlignment="Top" Visibility="Collapsed"/>
+               Margin="20,80,0,0" HorizontalAlignment="Left" VerticalAlignment="Top" Visibility="Collapsed"/>
 
                             <Button Content="Search" Click="Search_Click"
-                                    Width="160" Cursor="Hand" Height="40"
-                                    Margin="245,37,0,0"
-                                    HorizontalAlignment="Left" VerticalAlignment="Top"
-                                    Foreground="white">
+            Width="160" Cursor="Hand" Height="40"
+            Margin="245,37,0,0"
+            HorizontalAlignment="Left" VerticalAlignment="Top"
+            Foreground="white">
                                 <Button.Template>
                                     <ControlTemplate TargetType="Button">
                                         <Border Background="black" CornerRadius="20" BorderBrush="Black" BorderThickness="1">
@@ -174,9 +258,9 @@
                             </Button>
 
                             <Button Content="Export" Cursor="Hand" Width="205" Height="40"
-                                    Margin="830,37,0,0" Click="ExportButton_Click"
-                                    HorizontalAlignment="Left" VerticalAlignment="Top"
-                                    Foreground="Blue">
+            Margin="830,37,0,0" Click="ExportButton_Click"
+            HorizontalAlignment="Left" VerticalAlignment="Top"
+            Foreground="Blue">
                                 <Button.Template>
                                     <ControlTemplate TargetType="Button">
                                         <Border Background="White" BorderBrush="gray" BorderThickness="1">
@@ -392,7 +476,7 @@
                                              Foreground="Black"
                                              VerticalAlignment="Center"
                                              Margin="10,23,0,0"
-                                             IsHitTestVisible="False"/> 
+                                             IsHitTestVisible="False"/>
                                     <TextBlock Foreground="Red" FontSize="12" Margin="0,90,0,0" VerticalAlignment="Top" Visibility="Collapsed"/>
                                 </Grid>
 

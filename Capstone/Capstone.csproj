@@ -17,6 +17,7 @@
     <None Remove="Dropshipping-1--Streamline-Milano.png" />
     <None Remove="emptystates-empty-cart.png" />
     <None Remove="export %281%29.png" />
+    <None Remove="Icon\camera-plus.png" />
     <None Remove="Icon\CheckCircle.png" />
     <None Remove="Icon\pencil-circle.png" />
     <None Remove="Icon\user-circle-minus %281%29.png" />
@@ -45,6 +46,7 @@
     <Resource Include="AppointmentOptions\Robot_On_Laptop_Computer.png" />
     <Resource Include="Icon\Appointment_Records.png" />
     <Resource Include="Icon\Book_Appointment.png" />
+    <Resource Include="Icon\camera-plus.png" />
     <Resource Include="Icon\CheckCircle.png">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </Resource>

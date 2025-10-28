@@ -11,8 +11,9 @@
         Background="White">
 
     <Window.Resources>
-        <!-- ✅ ADD THE CONVERTER AS A RESOURCE -->
-        <local:EmptyStringToVisibilityConverter x:Key="EmptyStringToVisibilityConverter" xmlns:local="clr-namespace:Capstone.AppointmentOptions"/>
+        <!-- Declare converters FIRST -->
+        <local:PesoConverter x:Key="PesoConverter"/>
+        <local:EmptyStringToVisibilityConverter x:Key="EmptyStringToVisibilityConverter"/>
 
         <Style x:Key="TextBoxStyleDatePicker" TargetType="DatePicker">
             <Setter Property="Background" Value="White"/>
@@ -249,14 +250,7 @@
                             <ColumnDefinition Width="Auto"/>
                         </Grid.ColumnDefinitions>
 
-                        <!-- Notification Icon -->
-                        <Button 
-        Margin="1060,0,0,0" 
-        Style="{StaticResource ResponsiveButton}"
-        ToolTip="Notifications"
-        Click="Notification_Click" Grid.ColumnSpan="3" HorizontalAlignment="Left">
-                            <Image Source="/Icon/bell.png" Style="{StaticResource TopBarIcon}"/>
-                        </Button>
+                        
 
                         <!-- Settings Icon -->
                         <Button  
@@ -299,12 +293,13 @@
                                     <ColumnDefinition Width="*"/>
                                 </Grid.ColumnDefinitions>
 
-                                <Label Content="Employee ID" FontSize="20" Grid.Row="0" Grid.Column="0" VerticalAlignment="Bottom" Margin="0,0,0,5"/>
-                                <TextBox x:Name="txtEmployeeID" VerticalContentAlignment="Center" FontSize="20" Grid.Row="1" Grid.Column="0" Height="47"/>
+                                <Label Content="Employee ID" FontSize="20" Grid.Row="1" Grid.Column="0" VerticalAlignment="Bottom" Margin="10,0,30,85" Grid.ColumnSpan="2"/>
+                                <ComboBox x:Name="cmbItemID"  Height="47" FontSize="20" Grid.Row="1"
+                                Style="{StaticResource TextBoxStyleComboBox}" SelectionChanged="cmbItemID_SelectionChanged" HorizontalAlignment="Center" Margin="0,38,0,36" Width="200"/>
                                 <TextBlock x:Name="txtEmployeeIDError" Foreground="Red" FontSize="14" Margin="465,210,0,0" Grid.Row="1" HorizontalAlignment="Left" VerticalAlignment="Top" Visibility="Collapsed"/>
                                 <!-- Sort Button -->
                                 <Button Grid.Column="2" Grid.Row="1" Content="Search" Cursor="Hand"
-                                Height="47" Click="Sort_Click"
+                                Height="47" Click="Search_Click"
                                 VerticalAlignment="Center"
                                 Foreground="white">
                                     <Button.Template>
@@ -390,7 +385,13 @@
                                 <DataGridTextColumn Header="Employee ID" Binding="{Binding EmiD}" Width="*"/>
                                 <DataGridTextColumn Header="Assigned Barber" Binding="{Binding BN}" Width="*"/>
                                 <DataGridTextColumn Header="Service" Binding="{Binding Service}" Width="*"/>
-                                <DataGridTextColumn Header="Price" Binding="{Binding Price}" Width="*"/>
+                                <DataGridTemplateColumn Header="Price" Width="*">
+                                    <DataGridTemplateColumn.CellTemplate>
+                                        <DataTemplate>
+                                            <TextBlock Text="{Binding Price, Converter={StaticResource PesoConverter}}"/>
+                                        </DataTemplate>
+                                    </DataGridTemplateColumn.CellTemplate>
+                                </DataGridTemplateColumn>
                                 <!-- Action Buttons -->
                                 <DataGridTemplateColumn Header="Action" Width="*">
                                     <DataGridTemplateColumn.CellTemplate>

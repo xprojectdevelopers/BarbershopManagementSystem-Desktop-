@@ -105,10 +105,45 @@ namespace Capstone
             employees = new ObservableCollection<Employee>();
 
             var result = await supabase.From<Employee>().Get();
-            foreach (var emp in result.Models)
+
+            // Filter only employees with "Barber" role
+            var barbers = result.Models.Where(emp => emp.Role?.Trim().Equals("Barber", StringComparison.OrdinalIgnoreCase) == true);
+
+            foreach (var emp in barbers)
             {
                 employees.Add(emp);
             }
+
+            // Populate ComboBox with Barber Employee IDs
+            cmbItemID.Items.Clear();
+
+            // Add placeholder item
+            var placeholderItem = new ComboBoxItem
+            {
+                Content = "Select Employee ID",
+                IsEnabled = false,
+                Foreground = Brushes.Gray
+            };
+            cmbItemID.Items.Add(placeholderItem);
+
+            // Add barber employee IDs
+            foreach (var emp in employees.OrderBy(e => e.EmID))
+            {
+                var item = new ComboBoxItem
+                {
+                    Content = emp.EmID,
+                    Tag = emp // Store the employee object for later use
+                };
+                cmbItemID.Items.Add(item);
+            }
+
+            // Select placeholder by default
+            cmbItemID.SelectedIndex = 0;
+        }
+
+        private void cmbItemID_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            txtEmployeeIDError.Visibility = Visibility.Collapsed;
         }
 
         private void ShowError(TextBlock errorTextBlock, string message)
@@ -127,7 +162,7 @@ namespace Capstone
 
         private void ClearForm()
         {
-            txtEmployeeID.Text = string.Empty;
+            cmbItemID.SelectedIndex = 0; // Reset to placeholder
             txtName.Clear();
             txtRole.Clear();
 
@@ -259,11 +294,17 @@ namespace Capstone
 
         private async void Search_Click(object sender, RoutedEventArgs e)
         {
-            string employeeId = txtEmployeeID.Text.Trim();
+            // Get selected employee ID from ComboBox
+            string employeeId = "";
 
-            if (string.IsNullOrEmpty(employeeId))
+            if (cmbItemID.SelectedItem is ComboBoxItem selectedItem && selectedItem.Tag is Employee)
             {
-                ShowError(txtEmployeeIDError, "Employee ID is required");
+                employeeId = selectedItem.Content.ToString();
+            }
+
+            if (string.IsNullOrEmpty(employeeId) || cmbItemID.SelectedIndex == 0)
+            {
+                ShowError(txtEmployeeIDError, "Please select an Employee ID");
                 return;
             }
 
@@ -459,9 +500,16 @@ namespace Capstone
                 saveButton.IsEnabled = false;
                 HideAllErrorMessages();
 
-                if (string.IsNullOrWhiteSpace(txtEmployeeID.Text.Trim()))
+                // Get Employee ID from ComboBox
+                string employeeId = "";
+                if (cmbItemID.SelectedItem is ComboBoxItem selectedItem && selectedItem.Tag is Employee)
                 {
-                    ShowError(txtEmployeeIDError, "Employee ID is required");
+                    employeeId = selectedItem.Content.ToString();
+                }
+
+                if (string.IsNullOrWhiteSpace(employeeId) || cmbItemID.SelectedIndex == 0)
+                {
+                    ShowError(txtEmployeeIDError, "Please select an Employee ID");
                     return;
                 }
 
@@ -477,7 +525,6 @@ namespace Capstone
                     return;
                 }
 
-                string employeeId = txtEmployeeID.Text.Trim();
                 DateTime releaseDate = DateTime.SpecifyKind(dpReleaseDate.SelectedDate.Value.Date, DateTimeKind.Utc);
 
                 var existingPayroll = await supabase.From<PayrollRecord>().Where(x => x.EmID == employeeId).Get();

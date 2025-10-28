@@ -949,3 +949,7 @@ C:\Users\Mezzc\OneDrive\Documents\Barbershop\Capstone\obj\Debug\net8.0-windows\A
 C:\Users\Mezzc\OneDrive\Documents\Barbershop\Capstone\obj\Debug\net8.0-windows\AppointmentOptions\MangeServiceDelete.baml
 C:\Users\Mezzc\OneDrive\Documents\Barbershop\Capstone\obj\Debug\net8.0-windows\AppointmentOptions\AppointmentTracker.g.cs
 C:\Users\Mezzc\OneDrive\Documents\Barbershop\Capstone\obj\Debug\net8.0-windows\AppointmentOptions\AppointmentTracker.baml
+C:\Users\Mezzc\OneDrive\Documents\Barbershop\Capstone\obj\Debug\net8.0-windows\MLVusers.g.cs
+C:\Users\Mezzc\OneDrive\Documents\Barbershop\Capstone\obj\Debug\net8.0-windows\MLVusers.baml
+C:\Users\Mezzc\OneDrive\Documents\Barbershop\Capstone\obj\Debug\net8.0-windows\MolaveLegend.g.cs
+C:\Users\Mezzc\OneDrive\Documents\Barbershop\Capstone\obj\Debug\net8.0-windows\MolaveLegend.baml

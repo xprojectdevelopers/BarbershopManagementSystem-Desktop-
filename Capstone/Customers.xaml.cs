@@ -23,11 +23,13 @@ namespace Capstone
         private int CurrentPage = 1;
         private int PageSize = 5; // 5 messages per page
         private int TotalPages = 1;
+        private Window? currentModalWindow;
 
         public Customers()
         {
             InitializeComponent();
             Loaded += async (s, e) => await InitializeData();
+            ModalOverlay.PreviewMouseLeftButtonDown += ModalOverlay_Click;
         }
 
         private async Task InitializeData()
@@ -36,6 +38,8 @@ namespace Capstone
             await LoadQuickMessages();
             await LoadCustomerProfilesCount();
             await LoadSubscribersCount();
+            await LoadMessageCount();
+            await LoadLegendCount();
         }
 
         private async Task InitializeSupabaseAsync()
@@ -162,6 +166,26 @@ namespace Capstone
             this.Hide();  // if you want to just hide it
         }
 
+        private void SeeAllMLVusers_Click(object sender, RoutedEventArgs e)
+        {
+            // Create instance of ListSubscribers window
+            MLVusers MLVusers = new MLVusers();
+
+            // Show the window
+            MLVusers.Show();
+            this.Hide();  // if you want to just hide it
+        }
+
+        private void SeeAllLegends_Click(object sender, RoutedEventArgs e)
+        {
+            // Create instance of ListSubscribers window
+            MolaveLegend MolaveLegend = new MolaveLegend();
+
+            // Show the window
+            MolaveLegend.Show();
+            this.Hide();  // if you want to just hide it
+        }
+
 
         // ✅ Existing delete/resolve message logic
         private async void ResolveMessage_Click(object sender, RoutedEventArgs e)
@@ -267,7 +291,76 @@ namespace Capstone
             await LoadQuickMessages();
         }
 
+        private async Task LoadMessageCount()
+        {
+            if (supabase == null)
+                return;
 
+            try
+            {
+                // 🔹 Fetch only the IDs of customer profiles
+                var result = await supabase
+                    .From<QuickMessage>()
+                    .Select("id") // Only select the id column
+                    .Get();
+
+                int totalCount = result.Models.Count; // Count locally
+                txtMessage.Text = totalCount.ToString();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Error loading customer count: {ex.Message}");
+            }
+        }
+
+        private async Task LoadLegendCount()
+        {
+            if (supabase == null)
+                return;
+
+            try
+            {
+                // 🔹 Fetch only the IDs of customer profiles
+                var result = await supabase
+                    .From<Legend>()
+                    .Select("id") // Only select the id column
+                    .Get();
+
+                int totalCount = result.Models.Count; // Count locally
+                txtLegend.Text = totalCount.ToString();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Error loading customer count: {ex.Message}");
+            }
+        }
+
+        private void Setting_Click(object sender, RoutedEventArgs e)
+        {
+            ModalOverlay.Visibility = Visibility.Visible;
+
+            currentModalWindow = new ModalsSetting();
+            currentModalWindow.Owner = this;
+            currentModalWindow.WindowStartupLocation = WindowStartupLocation.Manual;
+            currentModalWindow.Left = this.Left + this.ActualWidth - currentModalWindow.Width - 95;
+            currentModalWindow.Top = this.Top + 110;
+            currentModalWindow.Closed += ModalWindow_Closed;
+            currentModalWindow.Show();
+        }
+
+        private void ModalWindow_Closed(object sender, EventArgs e)
+        {
+            ModalOverlay.Visibility = Visibility.Collapsed;
+            currentModalWindow = null;
+        }
+
+        private void ModalOverlay_Click(object sender, MouseButtonEventArgs e)
+        {
+            if (currentModalWindow != null)
+                currentModalWindow.Close();
+
+            e.Handled = true;
+        }
 
 
         // ✅ Model for your Supabase table
@@ -318,6 +411,25 @@ namespace Capstone
 
             [Column("contact_number")]
             public string ContactNumber { get; set; } = string.Empty;
+        }
+
+        [Table("badge_tracker")]
+        public class Legend : BaseModel
+        {
+            [PrimaryKey("id", false)]
+            public Guid Id { get; set; }
+
+            [Column("customer_id")]
+            public Guid CustomerId { get; set; }
+
+            [Column("completed_count")]
+            public string CompletedCount { get; set; } = string.Empty;
+
+            [Column("badge_name")]
+            public string BadgeName { get; set; } = string.Empty;
+
+            [Column("updated_at")]
+            public string Updatedat { get; set; } = string.Empty;
         }
 
     }
