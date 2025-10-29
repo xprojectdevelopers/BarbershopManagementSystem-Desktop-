@@ -8,106 +8,149 @@
         WindowState="Maximized"
         Background="White" Height="736" Width="868">
 
-    <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
-        <StackPanel Margin="40">
-
-            <!-- 🔹 Header Section -->
-            <Grid Margin="0,0,0,20">
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="Auto"/>
-                    <ColumnDefinition Width="*"/>
-                    <ColumnDefinition Width="Auto"/>
-                    <ColumnDefinition Width="Auto"/>
-                </Grid.ColumnDefinitions>
-
-                <!-- Home -->
-                <StackPanel Orientation="Horizontal"
-            Grid.Column="0"
-            VerticalAlignment="Center"
-            MouseLeftButtonUp="Home_Click"
-            Cursor="Hand"
-            Margin="0,0,15,0">
-                    <Image Source="/Icon/arrow-left.png" Width="30" Height="30"/>
-                    <Label Content="Back"
-           FontWeight="Bold"
-           FontSize="20"
-           VerticalAlignment="Center"
-           Margin="5,0,0,0"/>
-                </StackPanel>
-
-                <!-- Spacer -->
-                <StackPanel Grid.Column="1"/>
-
-                <!-- Notification -->
-                <Image Source="/Icon/bell.png" Width="30" Height="30" Grid.Column="2" Margin="0,0,15,0" VerticalAlignment="Center"/>
-
-                <!-- Settings -->
-                <Image Source="/Icon/gear.png" Width="30" Height="30" Grid.Column="3" VerticalAlignment="Center"/>
-            </Grid>
-
-            <!-- Page Title -->
-            <Label Content="List of Subscribers" FontSize="15" FontWeight="Bold" Margin="0,10,0,0"/>
-
-        
-            <Border BorderBrush="Black" BorderThickness="1" Padding="20" CornerRadius="8" Margin="0,0,0,20">
-                <StackPanel>
-                    <TextBlock Text="Molave Street Barbers Subscribers"
-                               FontSize="20" FontWeight="Bold"
-                               HorizontalAlignment="Center" Margin="0,0,0,20"/>
-
-                    <DataGrid x:Name="SubscribersGrid" AutoGenerateColumns="False"
-                              CanUserAddRows="False" CanUserDeleteRows="False"
-                              HeadersVisibility="Column"
-                              RowHeight="35" FontSize="14"
-                              BorderBrush="#DDD" BorderThickness="1"
-                              GridLinesVisibility="All">
-                        <DataGrid.ColumnHeaderStyle>
-                            <Style TargetType="DataGridColumnHeader">
-                                <Setter Property="Background" Value="Black"/>
-                                <Setter Property="Foreground" Value="White"/>
-                                <Setter Property="FontWeight" Value="Bold"/>
-                                <Setter Property="HorizontalContentAlignment" Value="Center"/>
-                                <Setter Property="Padding" Value="5"/>
-                            </Style>
-                        </DataGrid.ColumnHeaderStyle>
-
-                        <DataGrid.Columns>
-                            <DataGridTextColumn Header="Email" Binding="{Binding Email}" Width="3*"/>
-                        </DataGrid.Columns>
-                    </DataGrid>
-                    <StackPanel x:Name="PaginationPanel"
-                        Orientation="Horizontal"
-                        HorizontalAlignment="Center"
-                        Margin="0,10,0,40"/>
-
-                    <!--  Export Button -->
-                    <Button x:Name="ExportButton"
-                            Width="140"
-                            Height="45"
-                            HorizontalAlignment="Center"
-                            Cursor="Hand"
-                            Background="Transparent"
-                            BorderThickness="0"
-                            Click="ExportButton_Click">
-                        <Border Background="White"
-                                BorderBrush="#D0D0D0"
-                                BorderThickness="2"
-                                CornerRadius="20"
-                                Padding="10,10"> 
-                            <StackPanel Orientation="Horizontal" VerticalAlignment="Center" HorizontalAlignment="Center">
-                                <Image Source="/Icon/export.png" Width="20" Height="20" Margin="10,0,6,0"/>
-                                <TextBlock Text="Export"
-                                   FontSize="16"
-                                   Foreground="#007AFF"
-                                   FontWeight="SemiBold"
-                                   VerticalAlignment="Center"
-                                   Margin="0,0,10,0"/> 
-                            </StackPanel>
+    <Window.Resources>
+        <!-- Responsive button style for notification and settings -->
+        <Style x:Key="ResponsiveButton" TargetType="Button">
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Padding" Value="12"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="HorizontalAlignment" Value="Center"/>
+            <Setter Property="VerticalAlignment" Value="Center"/>
+            <Setter Property="MinWidth" Value="40"/>
+            <Setter Property="MinHeight" Value="40"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border Background="{TemplateBinding Background}" 
+                         BorderBrush="{TemplateBinding BorderBrush}"
+                         BorderThickness="{TemplateBinding BorderThickness}"
+                         Padding="{TemplateBinding Padding}"
+                         CornerRadius="20">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
                         </Border>
-                    </Button>
-                </StackPanel>
-            </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter Property="Background" Value="Transparent"/>
+                            </Trigger>
+                            <Trigger Property="IsPressed" Value="True">
+                                <Setter Property="Background" Value="Transparent"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
 
-        </StackPanel>
-    </ScrollViewer>
+        <!-- Simple icon style for top bar -->
+        <Style x:Key="TopBarIcon" TargetType="Image">
+            <Setter Property="Width" Value="24"/>
+            <Setter Property="Height" Value="24"/>
+        </Style>
+    </Window.Resources>
+
+    <Grid>
+        <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
+            <StackPanel Margin="40">
+
+                <!-- 🔹 Header Section -->
+                <Grid Margin="0,0,20,0">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="Auto"/>
+                    </Grid.ColumnDefinitions>
+
+                    <!-- Home -->
+                    <StackPanel Orientation="Horizontal" Grid.Column="0" VerticalAlignment="Center"
+        MouseLeftButtonUp="Home_Click" Cursor="Hand" Margin="0,0,15,0">
+                        <Image Source="/Icon/arrow-left.png" Width="30" Height="30"/>
+                        <Label Content="Back" FontWeight="Bold" FontSize="20" VerticalAlignment="Center" Margin="5,0,0,0"/>
+                    </StackPanel>
+
+
+                    <StackPanel Grid.Column="1"/>
+                    <!-- Settings Icon -->
+                    <Button Grid.Column="4"
+         Style="{StaticResource ResponsiveButton}"
+         ToolTip="Settings"
+         Click="Setting_Click">
+                        <Image Source="/Icon/gear.png" Style="{StaticResource TopBarIcon}"/>
+                    </Button>
+                </Grid>
+
+                <!-- Page Title -->
+                <Label Content="List of Subscribers" FontSize="15" FontWeight="Bold" Margin="0,10,0,0"/>
+
+
+                <Border BorderBrush="Black" BorderThickness="1" Padding="20" CornerRadius="8" Margin="0,0,0,20">
+                    <StackPanel>
+                        <TextBlock Text="Molave Street Barbers Subscribers"
+                                   FontSize="20" FontWeight="Bold"
+                                   HorizontalAlignment="Center" Margin="0,0,0,20"/>
+
+                        <DataGrid x:Name="SubscribersGrid" AutoGenerateColumns="False"
+                                  CanUserAddRows="False" CanUserDeleteRows="False"
+                                  HeadersVisibility="Column"
+                                  RowHeight="35" FontSize="14"
+                                  BorderBrush="#DDD" BorderThickness="1"
+                                  GridLinesVisibility="All">
+                            <DataGrid.ColumnHeaderStyle>
+                                <Style TargetType="DataGridColumnHeader">
+                                    <Setter Property="Background" Value="Black"/>
+                                    <Setter Property="Foreground" Value="White"/>
+                                    <Setter Property="FontWeight" Value="Bold"/>
+                                    <Setter Property="HorizontalContentAlignment" Value="Center"/>
+                                    <Setter Property="Padding" Value="5"/>
+                                </Style>
+                            </DataGrid.ColumnHeaderStyle>
+
+                            <DataGrid.Columns>
+                                <DataGridTextColumn Header="Email" Binding="{Binding Email}" Width="3*"/>
+                            </DataGrid.Columns>
+                        </DataGrid>
+                        <StackPanel x:Name="PaginationPanel"
+                            Orientation="Horizontal"
+                            HorizontalAlignment="Center"
+                            Margin="0,10,0,40"/>
+
+                        <!--  Export Button -->
+                        <Button x:Name="ExportButton"
+                                Width="140"
+                                Height="45"
+                                HorizontalAlignment="Center"
+                                Cursor="Hand"
+                                Background="Transparent"
+                                BorderThickness="0"
+                                Click="ExportButton_Click">
+                            <Border Background="White"
+                                    BorderBrush="#D0D0D0"
+                                    BorderThickness="2"
+                                    CornerRadius="20"
+                                    Padding="10,10">
+                                <StackPanel Orientation="Horizontal" VerticalAlignment="Center" HorizontalAlignment="Center">
+                                    <Image Source="/Icon/export.png" Width="20" Height="20" Margin="10,0,6,0"/>
+                                    <TextBlock Text="Export"
+                                       FontSize="16"
+                                       Foreground="#007AFF"
+                                       FontWeight="SemiBold"
+                                       VerticalAlignment="Center"
+                                       Margin="0,0,10,0"/>
+                                </StackPanel>
+                            </Border>
+                        </Button>
+                    </StackPanel>
+                </Border>
+
+            </StackPanel>
+        </ScrollViewer>
+
+        <!-- Gray Overlay for Modal Effect - NOW OUTSIDE ScrollViewer -->
+        <Border x:Name="ModalOverlay"
+            Background="#80000000"
+            Visibility="Collapsed"
+            IsHitTestVisible="True"
+            MouseLeftButtonDown="ModalOverlay_Click"/>
+    </Grid>
 </Window>

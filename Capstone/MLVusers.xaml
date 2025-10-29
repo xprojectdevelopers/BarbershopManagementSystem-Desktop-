@@ -65,9 +65,9 @@
 
                 <!-- Home -->
                 <StackPanel Orientation="Horizontal" Grid.Column="0" VerticalAlignment="Center"
-                     MouseLeftButtonUp="Home_Click" Cursor="Hand" Margin="0,0,15,0">
-                    <Image Source="/Icon/house.png" Width="30" Height="30"/>
-                    <Label Content="Home" FontWeight="Bold" FontSize="20" VerticalAlignment="Center" Margin="5,0,0,0"/>
+                MouseLeftButtonUp="Home_Click" Cursor="Hand" Margin="0,0,15,0">
+                    <Image Source="/Icon/arrow-left.png" Width="30" Height="30"/>
+                    <Label Content="Back" FontWeight="Bold" FontSize="20" VerticalAlignment="Center" Margin="5,0,0,0"/>
                 </StackPanel>
 
 

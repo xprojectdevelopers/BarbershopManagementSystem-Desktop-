@@ -3,10 +3,14 @@
 FC:\Users\Mezzc\OneDrive\Documents\Barbershop\Capstone\AddEmployee.xaml;;
 FC:\Users\Mezzc\OneDrive\Documents\Barbershop\Capstone\AddItem.xaml;;
 FC:\Users\Mezzc\OneDrive\Documents\Barbershop\Capstone\AppointmentOptions\Appointments.xaml;;
+FC:\Users\Mezzc\OneDrive\Documents\Barbershop\Capstone\AppointmentOptions\AppointmentTracker.xaml;;
 FC:\Users\Mezzc\OneDrive\Documents\Barbershop\Capstone\AppointmentOptions\Appointment_Records.xaml;;
 FC:\Users\Mezzc\OneDrive\Documents\Barbershop\Capstone\AppointmentOptions\AssignNew_Service.xaml;;
 FC:\Users\Mezzc\OneDrive\Documents\Barbershop\Capstone\AppointmentOptions\Book_Appointment.xaml;;
 FC:\Users\Mezzc\OneDrive\Documents\Barbershop\Capstone\AppointmentOptions\Manage_Services.xaml;;
+FC:\Users\Mezzc\OneDrive\Documents\Barbershop\Capstone\AppointmentOptions\MangeServiceDelete.xaml;;
+FC:\Users\Mezzc\OneDrive\Documents\Barbershop\Capstone\AppointmentOptions\NewServiceSuccessfully.xaml;;
+FC:\Users\Mezzc\OneDrive\Documents\Barbershop\Capstone\AppointmentOptions\ServiceDescriptionSuccessful.xaml;;
 FC:\Users\Mezzc\OneDrive\Documents\Barbershop\Capstone\AppointmentOptions\Service_Description.xaml;;
 FC:\Users\Mezzc\OneDrive\Documents\Barbershop\Capstone\delete.xaml;;
 FC:\Users\Mezzc\OneDrive\Documents\Barbershop\Capstone\DeleteSuccessfull.xaml;;
@@ -21,8 +25,10 @@ FC:\Users\Mezzc\OneDrive\Documents\Barbershop\Capstone\ItemSuccessfulUpdate.xaml
 FC:\Users\Mezzc\OneDrive\Documents\Barbershop\Capstone\LoginForm.xaml;;
 FC:\Users\Mezzc\OneDrive\Documents\Barbershop\Capstone\ManageItem.xaml;;
 FC:\Users\Mezzc\OneDrive\Documents\Barbershop\Capstone\Menu.xaml;;
+FC:\Users\Mezzc\OneDrive\Documents\Barbershop\Capstone\MLVusers.xaml;;
 FC:\Users\Mezzc\OneDrive\Documents\Barbershop\Capstone\ModalsNotification.xaml;;
 FC:\Users\Mezzc\OneDrive\Documents\Barbershop\Capstone\ModalsSetting.xaml;;
+FC:\Users\Mezzc\OneDrive\Documents\Barbershop\Capstone\MolaveLegend.xaml;;
 FC:\Users\Mezzc\OneDrive\Documents\Barbershop\Capstone\notfound.xaml;;
 FC:\Users\Mezzc\OneDrive\Documents\Barbershop\Capstone\notfoundItem.xaml;;
 FC:\Users\Mezzc\OneDrive\Documents\Barbershop\Capstone\Payroll.xaml;;
@@ -34,10 +40,4 @@ FC:\Users\Mezzc\OneDrive\Documents\Barbershop\Capstone\SaleItem.xaml;;
 FC:\Users\Mezzc\OneDrive\Documents\Barbershop\Capstone\succesfull.xaml;;
 FC:\Users\Mezzc\OneDrive\Documents\Barbershop\Capstone\UpdateSuccessful.xaml;;
 FC:\Users\Mezzc\OneDrive\Documents\Barbershop\Capstone\Views\PayrollHistory.xaml;;
-FC:\Users\Mezzc\OneDrive\Documents\Barbershop\Capstone\AppointmentOptions\NewServiceSuccessfully.xaml;;
-FC:\Users\Mezzc\OneDrive\Documents\Barbershop\Capstone\AppointmentOptions\ServiceDescriptionSuccessful.xaml;;
-FC:\Users\Mezzc\OneDrive\Documents\Barbershop\Capstone\AppointmentOptions\MangeServiceDelete.xaml;;
-FC:\Users\Mezzc\OneDrive\Documents\Barbershop\Capstone\AppointmentOptions\AppointmentTracker.xaml;;
-FC:\Users\Mezzc\OneDrive\Documents\Barbershop\Capstone\MLVusers.xaml;;
-FC:\Users\Mezzc\OneDrive\Documents\Barbershop\Capstone\MolaveLegend.xaml;;
 

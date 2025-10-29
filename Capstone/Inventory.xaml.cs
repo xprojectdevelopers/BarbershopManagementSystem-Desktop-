@@ -239,6 +239,19 @@ namespace Capstone
             await LoadEmployees();
         }
 
+        private void Setting_Click(object sender, RoutedEventArgs e)
+        {
+            ModalOverlay.Visibility = Visibility.Visible;
+
+            currentModalWindow = new ModalsSetting();
+            currentModalWindow.Owner = this;
+            currentModalWindow.WindowStartupLocation = WindowStartupLocation.Manual;
+            currentModalWindow.Left = this.Left + this.ActualWidth - currentModalWindow.Width - 80;
+            currentModalWindow.Top = this.Top + 100;
+            currentModalWindow.Closed += ModalWindow_Closed;
+            currentModalWindow.Show();
+        }
+
         [Table("Item_Order")]
         public class BarbershopManagementSystem : BaseModel
         {

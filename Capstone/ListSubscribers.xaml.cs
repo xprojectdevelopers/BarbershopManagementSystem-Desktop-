@@ -26,11 +26,13 @@ namespace Capstone
         private int CurrentPage = 1;
         private int PageSize = 5;
         private int TotalPages = 1;
+        private Window? currentModalWindow;
 
         public ListSubscribers()
         {
             InitializeComponent();
             Loaded += async (s, e) => await InitializeData();
+            ModalOverlay.PreviewMouseLeftButtonDown += ModalOverlay_Click;
         }
 
         private async Task InitializeData()
@@ -143,6 +145,33 @@ namespace Capstone
 
                 PaginationPanel.Children.Add(btn);
             }
+        }
+
+        private void Setting_Click(object sender, RoutedEventArgs e)
+        {
+            ModalOverlay.Visibility = Visibility.Visible;
+
+            currentModalWindow = new ModalsSetting();
+            currentModalWindow.Owner = this;
+            currentModalWindow.WindowStartupLocation = WindowStartupLocation.Manual;
+            currentModalWindow.Left = this.Left + this.ActualWidth - currentModalWindow.Width - 70;
+            currentModalWindow.Top = this.Top + 110;
+            currentModalWindow.Closed += ModalWindow_Closed;
+            currentModalWindow.Show();
+        }
+
+        private void ModalWindow_Closed(object sender, EventArgs e)
+        {
+            ModalOverlay.Visibility = Visibility.Collapsed;
+            currentModalWindow = null;
+        }
+
+        private void ModalOverlay_Click(object sender, MouseButtonEventArgs e)
+        {
+            if (currentModalWindow != null)
+                currentModalWindow.Close();
+
+            e.Handled = true;
         }
 
         // 🔹 Models

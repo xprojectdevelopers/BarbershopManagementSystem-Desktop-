@@ -175,6 +175,45 @@
                 </Setter.Value>
             </Setter>
         </Style>
+
+        <!-- Responsive button style for notification and settings -->
+        <Style x:Key="ResponsiveButton" TargetType="Button">
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Padding" Value="12"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="HorizontalAlignment" Value="Center"/>
+            <Setter Property="VerticalAlignment" Value="Center"/>
+            <Setter Property="MinWidth" Value="40"/>
+            <Setter Property="MinHeight" Value="40"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border Background="{TemplateBinding Background}" 
+BorderBrush="{TemplateBinding BorderBrush}"
+BorderThickness="{TemplateBinding BorderThickness}"
+Padding="{TemplateBinding Padding}"
+CornerRadius="20">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter Property="Background" Value="Transparent"/>
+                            </Trigger>
+                            <Trigger Property="IsPressed" Value="True">
+                                <Setter Property="Background" Value="Transparent"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <!-- Simple icon style for top bar (no converter needed) -->
+        <Style x:Key="TopBarIcon" TargetType="Image">
+            <Setter Property="Width" Value="24"/>
+            <Setter Property="Height" Value="24"/>
+        </Style>
     </Window.Resources>
 
     <ScrollViewer VerticalScrollBarVisibility="Auto">
@@ -184,25 +223,42 @@
                 <RowDefinition Height="auto"/>
             </Grid.RowDefinitions>
 
-            <!-- HEADER -->
-            <Grid Grid.Row="0" Margin="45,40,95,20" Height="60">
+            <Grid Margin="100,30,0,0">
                 <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto"/>
                     <ColumnDefinition Width="*"/>
                     <ColumnDefinition Width="Auto"/>
                     <ColumnDefinition Width="Auto"/>
                 </Grid.ColumnDefinitions>
 
-                <!-- Back -->
+                <!-- Home - on the left side -->
+                <!-- Back - on the left side -->
                 <StackPanel Orientation="Horizontal" Grid.Column="0" VerticalAlignment="Center"
-                MouseLeftButtonUp="Home_Click" Cursor="Hand" Margin="47,0,0,0">
+MouseLeftButtonUp="Home_Click" Cursor="Hand" Margin="0,0,15,0">
                     <Image Source="/Icon/arrow-left.png" Width="30" Height="30"/>
                     <Label Content="Back" FontWeight="Bold" FontSize="20" VerticalAlignment="Center" Margin="5,0,0,0"/>
                 </StackPanel>
 
-                <!-- Notification -->
-                <Image Source="/Icon/bell.png" Width="30" Height="30" Grid.Column="1" Margin="0,0,5,0" VerticalAlignment="Center"/>
-                <!-- Settings -->
-                <Image Source="/Icon/gear.png" Width="30" Height="30" Grid.Column="2" VerticalAlignment="Center"/>
+                <!-- Empty space in middle -->
+                <StackPanel Grid.Column="1"/>
+
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="Auto"/>
+                    </Grid.ColumnDefinitions>
+
+
+
+                    <!-- Settings Icon -->
+                    <Button  
+Margin="1030,0,0,0" 
+Style="{StaticResource ResponsiveButton}"
+ToolTip="Settings" Grid.ColumnSpan="3" HorizontalAlignment="Left" Click="Setting_Click">
+                        <Image Source="/Icon/gear.png" Style="{StaticResource TopBarIcon}"/>
+                    </Button>
+                </Grid>
             </Grid>
 
 

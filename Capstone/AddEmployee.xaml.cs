@@ -32,6 +32,7 @@ namespace Capstone
         {
             InitializeComponent();
             Loaded += async (s, e) => await InitializeData();
+            ModalOverlay.PreviewMouseLeftButtonDown += ModalOverlay_Click;
 
             // Prevent leading zero removal
             txtContactNumber.PreviewKeyDown += PhoneNumber_PreviewKeyDown;
@@ -722,11 +723,6 @@ namespace Capstone
             }
         }
 
-        private void ModalWindow_Closed(object sender, EventArgs e)
-        {
-            ModalOverlay.Visibility = Visibility.Collapsed;
-            currentModalWindow = null;
-        }
 
         private string GetSelectedComboBoxValue(ComboBox comboBox)
         {
@@ -790,6 +786,33 @@ namespace Capstone
             // ===== Work schedule =====
             foreach (var child in workSchedulePanel.Children)
                 if (child is CheckBox cb) cb.IsChecked = false;
+        }
+
+        private void Setting_Click(object sender, RoutedEventArgs e)
+        {
+            ModalOverlay.Visibility = Visibility.Visible;
+
+            currentModalWindow = new ModalsSetting();
+            currentModalWindow.Owner = this;
+            currentModalWindow.WindowStartupLocation = WindowStartupLocation.Manual;
+            currentModalWindow.Left = this.Left + this.ActualWidth - currentModalWindow.Width - 115;
+            currentModalWindow.Top = this.Top + 100;
+            currentModalWindow.Closed += ModalWindow_Closed;
+            currentModalWindow.Show();
+        }
+
+        private void ModalWindow_Closed(object sender, EventArgs e)
+        {
+            ModalOverlay.Visibility = Visibility.Collapsed;
+            currentModalWindow = null;
+        }
+
+        private void ModalOverlay_Click(object sender, MouseButtonEventArgs e)
+        {
+            if (currentModalWindow != null)
+                currentModalWindow.Close();
+
+            e.Handled = true;
         }
 
         [Table("Add_Employee")] // pangalan ng table sa Supabase

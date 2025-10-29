@@ -29,6 +29,7 @@ namespace Capstone
             InitializeComponent();
             Loaded += async (s, e) => await InitializeData();
             SetupPlaceholders();
+            ModalOverlay.PreviewMouseLeftButtonDown += ModalOverlay_Click;
         }
 
         private void SetupPlaceholders()
@@ -575,6 +576,27 @@ namespace Capstone
                 isSaving = false;
                 ((Button)sender).IsEnabled = true;
             }
+        }
+
+        private void Setting_Click(object sender, RoutedEventArgs e)
+        {
+            ModalOverlay.Visibility = Visibility.Visible;
+
+            currentModalWindow = new ModalsSetting();
+            currentModalWindow.Owner = this;
+            currentModalWindow.WindowStartupLocation = WindowStartupLocation.Manual;
+            currentModalWindow.Left = this.Left + this.ActualWidth - currentModalWindow.Width - 70;
+            currentModalWindow.Top = this.Top + 110;
+            currentModalWindow.Closed += ModalWindow_Closed;
+            currentModalWindow.Show();
+        }
+
+        private void ModalOverlay_Click(object sender, MouseButtonEventArgs e)
+        {
+            if (currentModalWindow != null)
+                currentModalWindow.Close();
+
+            e.Handled = true;
         }
 
         [Table("Add_Employee")]

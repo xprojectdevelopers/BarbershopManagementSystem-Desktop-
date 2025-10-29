@@ -93,7 +93,46 @@
             </Setter.Value>
         </Setter>
     </Style>
-</Window.Resources>
+
+        <!-- Responsive button style for notification and settings -->
+        <Style x:Key="ResponsiveButton" TargetType="Button">
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Padding" Value="12"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="HorizontalAlignment" Value="Center"/>
+            <Setter Property="VerticalAlignment" Value="Center"/>
+            <Setter Property="MinWidth" Value="40"/>
+            <Setter Property="MinHeight" Value="40"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border Background="{TemplateBinding Background}" 
+                 BorderBrush="{TemplateBinding BorderBrush}"
+                 BorderThickness="{TemplateBinding BorderThickness}"
+                 Padding="{TemplateBinding Padding}"
+                 CornerRadius="20">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter Property="Background" Value="Transparent"/>
+                            </Trigger>
+                            <Trigger Property="IsPressed" Value="True">
+                                <Setter Property="Background" Value="Transparent"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <!-- Simple icon style for top bar -->
+        <Style x:Key="TopBarIcon" TargetType="Image">
+            <Setter Property="Width" Value="24"/>
+            <Setter Property="Height" Value="24"/>
+        </Style>
+    </Window.Resources>
     
             <Grid>
         <!-- Page Title -->
@@ -104,8 +143,8 @@
                VerticalAlignment="Top"
                HorizontalAlignment="Left"/>
 
-        <!-- Header Section -->
-        <Grid Height="50" VerticalAlignment="Top" Margin="0,30,0,0">
+        <!-- 🔹 Header Section -->
+        <Grid Margin="60,-550,50,0">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="Auto"/>
                 <ColumnDefinition Width="*"/>
@@ -114,37 +153,21 @@
             </Grid.ColumnDefinitions>
 
             <!-- Home -->
-            <StackPanel Orientation="Horizontal"
-                        Grid.Column="0"
-                        VerticalAlignment="Center"
-                        MouseLeftButtonUp="Home_Click"
-                        Cursor="Hand"
-                        Margin="60,0,15,0">
+            <StackPanel Orientation="Horizontal" Grid.Column="0" VerticalAlignment="Center"
+MouseLeftButtonUp="Home_Click" Cursor="Hand" Margin="0,0,15,0">
                 <Image Source="/Icon/arrow-left.png" Width="30" Height="30"/>
-                <Label Content="Back"
-                       FontWeight="Bold"
-                       FontSize="20"
-                       VerticalAlignment="Center"
-                       Margin="5,0,0,0"/>
+                <Label Content="Back" FontWeight="Bold" FontSize="20" VerticalAlignment="Center" Margin="5,0,0,0"/>
             </StackPanel>
 
+
             <StackPanel Grid.Column="1"/>
-
-            <!-- Notification -->
-            <Image Source="/Icon/bell.png"
-                   Width="30"
-                   Height="30"
-                   Grid.Column="2"
-                   Margin="0,0,15,0"
-                   VerticalAlignment="Center"/>
-
-            <!-- Settings -->
-            <Image Source="/Icon/gear.png"
-                   Width="30"
-                   Height="30"
-                   Grid.Column="3"
-                   VerticalAlignment="Center"
-                   Margin="0,0,60,0"/>
+            <!-- Settings Icon -->
+            <Button Grid.Column="4"
+ Style="{StaticResource ResponsiveButton}"
+ ToolTip="Settings"
+ Click="Setting_Click">
+                <Image Source="/Icon/gear.png" Style="{StaticResource TopBarIcon}"/>
+            </Button>
         </Grid>
 
         <!-- Main Container -->
@@ -163,7 +186,7 @@
                 </Grid.RowDefinitions>
 
                 <!-- Title -->
-                <TextBlock Text="Molave Streets Barbers Subcribers"
+                <TextBlock Text="Molave Streets Barbers Subcribes"
                            FontSize="20"
                            FontWeight="Bold"
                            HorizontalAlignment="Center"
@@ -238,7 +261,7 @@
                     </DataGrid.ColumnHeaderStyle>
                     <DataGrid.Columns>
                         <DataGridTextColumn Header="Name" Binding="{Binding BadgeName}" Width="*"/>
-                        <DataGridTextColumn Header="Email" Binding="{Binding completed}" Width="*"/>
+                        <DataGridTextColumn Header="Molave Street Badge" Binding="{Binding completed}" Width="*"/>
                     </DataGrid.Columns>
                 </DataGrid>
 
@@ -285,5 +308,12 @@
 
             </Grid>
         </Border>
+
+        <!-- Gray Overlay for Modal Effect - NOW OUTSIDE ScrollViewer -->
+        <Border x:Name="ModalOverlay"
+            Background="#80000000"
+            Visibility="Collapsed"
+            IsHitTestVisible="True"
+            MouseLeftButtonDown="ModalOverlay_Click"/>
     </Grid>
 </Window>

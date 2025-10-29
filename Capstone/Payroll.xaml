@@ -173,6 +173,45 @@
                 </Setter.Value>
             </Setter>
         </Style>
+
+        <!-- Responsive button style for notification and settings -->
+        <Style x:Key="ResponsiveButton" TargetType="Button">
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Padding" Value="12"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="HorizontalAlignment" Value="Center"/>
+            <Setter Property="VerticalAlignment" Value="Center"/>
+            <Setter Property="MinWidth" Value="40"/>
+            <Setter Property="MinHeight" Value="40"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border Background="{TemplateBinding Background}" 
+                     BorderBrush="{TemplateBinding BorderBrush}"
+                     BorderThickness="{TemplateBinding BorderThickness}"
+                     Padding="{TemplateBinding Padding}"
+                     CornerRadius="20">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter Property="Background" Value="Transparent"/>
+                            </Trigger>
+                            <Trigger Property="IsPressed" Value="True">
+                                <Setter Property="Background" Value="Transparent"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <!-- Simple icon style for top bar -->
+        <Style x:Key="TopBarIcon" TargetType="Image">
+            <Setter Property="Width" Value="24"/>
+            <Setter Property="Height" Value="24"/>
+        </Style>
     </Window.Resources>
 
     <Grid>
@@ -183,28 +222,35 @@
             <StackPanel Margin="40" Width="1205">
 
                 <!-- Header Section -->
-                <Grid Margin="20,0,20,20">
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="Auto"/>
-                        <ColumnDefinition Width="*"/>
-                        <ColumnDefinition Width="Auto"/>
-                        <ColumnDefinition Width="Auto"/>
-                    </Grid.ColumnDefinitions>
+                <StackPanel Grid.Row="0" Margin="0,0,0,0" Width="1205">
+                    <Grid Margin="20,0,20,0">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="Auto"/>
+                        </Grid.ColumnDefinitions>
 
-                    <StackPanel Orientation="Horizontal" Grid.Column="0" VerticalAlignment="Center"
-                MouseLeftButtonUp="Home_Click" Cursor="Hand" Margin="0,0,15,0">
-                        <Image Source="/Icon/house.png" Width="30" Height="30"/>
-                        <Label Content="Home" FontWeight="Bold" FontSize="20" VerticalAlignment="Center" Margin="5,0,0,0"/>
-                    </StackPanel>
+                        <!-- Home -->
+                        <StackPanel Orientation="Horizontal" Grid.Column="0" VerticalAlignment="Center"
+                     MouseLeftButtonUp="Home_Click" Cursor="Hand" Margin="0,0,15,0">
+                            <Image Source="/Icon/house.png" Width="30" Height="30"/>
+                            <Label Content="Home" FontWeight="Bold" FontSize="20" VerticalAlignment="Center" Margin="5,0,0,0"/>
+                        </StackPanel>
 
-                    <StackPanel Grid.Column="1"/>
 
-                    <Image Source="/Icon/bell.png" Width="30" Height="30" Grid.Column="2" Margin="0,0,15,0" VerticalAlignment="Center"/>
-                    <Image Source="/Icon/gear.png" Width="30" Height="30" Grid.Column="3" VerticalAlignment="Center"/>
-                </Grid>
+                        <StackPanel Grid.Column="1"/>
+                        <!-- Settings Icon -->
+                        <Button Grid.Column="3"
+                 Style="{StaticResource ResponsiveButton}"
+                 ToolTip="Settings"
+                 Click="Setting_Click">
+                            <Image Source="/Icon/gear.png" Style="{StaticResource TopBarIcon}"/>
+                        </Button>
+                    </Grid>
 
-                <!-- Page Title -->
-                <Label Content="Payroll" FontSize="20" FontWeight="Bold" Margin="20,0,20,15"/>
+                    <Label Content="Payroll" FontSize="20" FontWeight="Bold" Margin="20,20,20,15"/>
+                </StackPanel>
                 <UniformGrid Columns="3" Rows="1" Height="250" Margin="20,-20,20,0">
 
                     <Border BorderBrush="#000" BorderThickness="1" CornerRadius="8" Padding="15" Margin="0,0,0,0">
@@ -641,6 +687,7 @@
                 Grid.RowSpan="3"
                 Background="#80000000"
                 Visibility="Collapsed"
-                IsHitTestVisible="True"/>
+                IsHitTestVisible="True"
+                MouseLeftButtonDown="ModalOverlay_Click"/>
     </Grid>
 </Window>

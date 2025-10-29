@@ -180,7 +180,7 @@ namespace Capstone.AppointmentOptions
             currentModalWindow = new ModalsSetting();
             currentModalWindow.Owner = this;
             currentModalWindow.WindowStartupLocation = WindowStartupLocation.Manual;
-            currentModalWindow.Left = this.Left + this.ActualWidth - currentModalWindow.Width - 95;
+            currentModalWindow.Left = this.Left + this.ActualWidth - currentModalWindow.Width - 70;
             currentModalWindow.Top = this.Top + 110;
             currentModalWindow.Closed += ModalWindow_Closed;
             currentModalWindow.Show();

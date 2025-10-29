@@ -66,6 +66,8 @@ namespace Capstone.AppointmentOptions
                 await InitializeSupabaseAsync();
 
                 items = new ObservableCollection<ItemData>();
+
+                // Get all employees from Add_Employee table
                 var result = await supabase.From<ItemData>().Get();
 
                 cmbItemID.Items.Clear();
@@ -78,14 +80,19 @@ namespace Capstone.AppointmentOptions
 
                 cmbItemID.SelectedIndex = 0;
 
+                // Filter to show only employees with "Barber" role
                 foreach (var item in result.Models)
                 {
-                    items.Add(item);
-                    cmbItemID.Items.Add(new ComboBoxItem
+                    if (item.Employee_Role != null &&
+                        item.Employee_Role.Equals("Barber", StringComparison.OrdinalIgnoreCase))
                     {
-                        Content = item.Item_ID,
-                        Tag = item
-                    });
+                        items.Add(item);
+                        cmbItemID.Items.Add(new ComboBoxItem
+                        {
+                            Content = item.Item_ID,
+                            Tag = item
+                        });
+                    }
                 }
 
                 // Load existing services
@@ -291,6 +298,10 @@ namespace Capstone.AppointmentOptions
 
             [Column("Employee_Nickname")]
             public string Item_Name { get; set; }
+
+            [Column("Employee_Role")]  // ADD THIS
+            public string Employee_Role { get; set; }
+
         }
 
         [Table("AssignNew_Service")]

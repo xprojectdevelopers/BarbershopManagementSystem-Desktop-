@@ -13,14 +13,52 @@
 
     <Window.Resources>
         <local:PesoConverter x:Key="PesoConverter"/>
+        
+        <!-- Responsive button style for notification and settings -->
+<Style x:Key="ResponsiveButton" TargetType="Button">
+    <Setter Property="Background" Value="Transparent"/>
+    <Setter Property="BorderThickness" Value="0"/>
+    <Setter Property="Padding" Value="12"/>
+    <Setter Property="Cursor" Value="Hand"/>
+    <Setter Property="HorizontalAlignment" Value="Center"/>
+    <Setter Property="VerticalAlignment" Value="Center"/>
+    <Setter Property="MinWidth" Value="40"/>
+    <Setter Property="MinHeight" Value="40"/>
+    <Setter Property="Template">
+        <Setter.Value>
+            <ControlTemplate TargetType="Button">
+                <Border Background="{TemplateBinding Background}" 
+BorderBrush="{TemplateBinding BorderBrush}"
+BorderThickness="{TemplateBinding BorderThickness}"
+Padding="{TemplateBinding Padding}"
+CornerRadius="20">
+                    <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                </Border>
+                <ControlTemplate.Triggers>
+                    <Trigger Property="IsMouseOver" Value="True">
+                        <Setter Property="Background" Value="Transparent"/>
+                    </Trigger>
+                    <Trigger Property="IsPressed" Value="True">
+                        <Setter Property="Background" Value="Transparent"/>
+                    </Trigger>
+                </ControlTemplate.Triggers>
+            </ControlTemplate>
+        </Setter.Value>
+    </Setter>
+</Style>
+
+<!-- Simple icon style for top bar (no converter needed) -->
+<Style x:Key="TopBarIcon" TargetType="Image">
+    <Setter Property="Width" Value="24"/>
+    <Setter Property="Height" Value="24"/>
+</Style>
     </Window.Resources>
 
     <Grid>
         <!-- Page Title -->
         <Label Content="Payroll History" FontSize="20" FontWeight="Bold" Margin="65,100,0,0" VerticalAlignment="Top" HorizontalAlignment="Left"/>
 
-        <!-- Header Section -->
-        <Grid Height="50" VerticalAlignment="Top" Margin="0,30,0,0">
+        <Grid Margin="60,-570,0,0">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="Auto"/>
                 <ColumnDefinition Width="*"/>
@@ -28,20 +66,34 @@
                 <ColumnDefinition Width="Auto"/>
             </Grid.ColumnDefinitions>
 
-            <!-- Home -->
+            <!-- Home - on the left side -->
+            <!-- Back - on the left side -->
             <StackPanel Orientation="Horizontal" Grid.Column="0" VerticalAlignment="Center"
-                        MouseLeftButtonUp="Home_Click" Cursor="Hand" Margin="60,0,15,0">
+MouseLeftButtonUp="Home_Click" Cursor="Hand" Margin="0,0,15,0">
                 <Image Source="/Icon/arrow-left.png" Width="30" Height="30"/>
                 <Label Content="Back" FontWeight="Bold" FontSize="20" VerticalAlignment="Center" Margin="5,0,0,0"/>
             </StackPanel>
 
+            <!-- Empty space in middle -->
             <StackPanel Grid.Column="1"/>
 
-            <!-- Notification -->
-            <Image Source="/Icon/bell.png" Width="30" Height="30" Grid.Column="2" Margin="0,0,15,0" VerticalAlignment="Center"/>
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
 
-            <!-- Settings -->
-            <Image Source="/Icon/gear.png" Width="30" Height="30" Grid.Column="3" VerticalAlignment="Center" Margin="0,0,60,0"/>
+
+
+                <!-- Settings Icon -->
+                <Button  
+Margin="1095,0,0,0" 
+Style="{StaticResource ResponsiveButton}"
+ToolTip="Settings" Grid.ColumnSpan="3" HorizontalAlignment="Left" Click="Setting_Click">
+                    <Image Source="/Icon/gear.png" Style="{StaticResource TopBarIcon}"/>
+                </Button>
+            </Grid>
         </Grid>
 
         <!-- Main Container -->
@@ -175,5 +227,13 @@
                 </Grid>
             </Grid>
         </Border>
+
+        <!-- Gray Overlay for Modal Effect -->
+        <Border x:Name="ModalOverlay"
+        Grid.RowSpan="3"
+        Background="#80000000"
+        Visibility="Collapsed"
+        IsHitTestVisible="True"
+        MouseLeftButtonDown="ModalOverlay_Click"/>
     </Grid>
 </Window>
