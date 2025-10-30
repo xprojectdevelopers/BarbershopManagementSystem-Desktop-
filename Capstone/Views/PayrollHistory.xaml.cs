@@ -40,7 +40,9 @@ namespace Capstone
     public partial class PayrollHistory : Window
     {
         private Supabase.Client? supabase;
+        private ObservableCollection<BarbershopManagementSystem> allEmployees = new();
         private ObservableCollection<BarbershopManagementSystem> employees = new();
+        private List<string> distinctEmployeeIDs = new();
 
         private int CurrentPage = 1;
         private int PageSize = 5;
@@ -89,13 +91,122 @@ namespace Capstone
                 .Order(x => x.Id, Ordering.Descending)
                 .Get();
 
-            employees = new ObservableCollection<BarbershopManagementSystem>(result.Models);
+            allEmployees = new ObservableCollection<BarbershopManagementSystem>(result.Models);
+            employees = new ObservableCollection<BarbershopManagementSystem>(allEmployees);
+
+            // Populate ComboBox with distinct Employee IDs
+            distinctEmployeeIDs = allEmployees
+                .Where(emp => !string.IsNullOrWhiteSpace(emp.EmID))
+                .Select(emp => emp.EmID)
+                .Distinct()
+                .OrderBy(id => id)
+                .ToList();
+
+            PopulateEmployeeIDComboBox();
 
             TotalPages = (int)Math.Ceiling(employees.Count / (double)PageSize);
             if (TotalPages == 0) TotalPages = 1;
 
             LoadPage(CurrentPage);
             GeneratePaginationButtons();
+        }
+
+        private void PopulateEmployeeIDComboBox()
+        {
+            cmbItemID.Items.Clear();
+
+            // Add placeholder
+            ComboBoxItem placeholder = new ComboBoxItem
+            {
+                Content = "Select Employee ID",
+                IsEnabled = false,
+                Foreground = System.Windows.Media.Brushes.Gray
+            };
+            cmbItemID.Items.Add(placeholder);
+
+
+
+            // Add distinct employee IDs
+            foreach (var empID in distinctEmployeeIDs)
+            {
+                ComboBoxItem item = new ComboBoxItem
+                {
+                    Content = empID,
+                    Tag = empID
+                };
+                cmbItemID.Items.Add(item);
+            }
+
+            cmbItemID.SelectedIndex = 0;
+        }
+
+        private void SearchButton_Click(object sender, RoutedEventArgs e)
+        {
+            // Clear error message
+            if (txtEmployeeIDError != null)
+            {
+                txtEmployeeIDError.Visibility = Visibility.Collapsed;
+            }
+
+            // Check if an employee ID is selected
+            if (cmbItemID.SelectedIndex <= 0)
+            {
+                if (txtEmployeeIDError != null)
+                {
+                    txtEmployeeIDError.Text = "Please select an Employee ID";
+                    txtEmployeeIDError.Visibility = Visibility.Visible;
+                }
+                return;
+            }
+
+            var selectedItem = cmbItemID.SelectedItem as ComboBoxItem;
+            if (selectedItem == null) return;
+
+            string selectedTag = selectedItem.Tag?.ToString() ?? "";
+
+            if (selectedTag == "ALL")
+            {
+                // Show all employees
+                employees = new ObservableCollection<BarbershopManagementSystem>(allEmployees);
+            }
+            else
+            {
+                // Filter by selected Employee ID
+                var filteredEmployees = allEmployees
+                    .Where(emp => emp.EmID == selectedTag)
+                    .ToList();
+
+                if (!filteredEmployees.Any())
+                {
+                    if (txtEmployeeIDError != null)
+                    {
+                        txtEmployeeIDError.Text = "No payroll records found for this Employee ID";
+                        txtEmployeeIDError.Visibility = Visibility.Visible;
+                    }
+                    employees = new ObservableCollection<BarbershopManagementSystem>();
+                }
+                else
+                {
+                    employees = new ObservableCollection<BarbershopManagementSystem>(filteredEmployees);
+                }
+            }
+
+            // Reset pagination
+            CurrentPage = 1;
+            TotalPages = (int)Math.Ceiling(employees.Count / (double)PageSize);
+            if (TotalPages == 0) TotalPages = 1;
+
+            LoadPage(CurrentPage);
+            GeneratePaginationButtons();
+        }
+
+        private void cmbItemID_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            // Clear error message when selection changes
+            if (txtEmployeeIDError != null)
+            {
+                txtEmployeeIDError.Visibility = Visibility.Collapsed;
+            }
         }
 
         private void LoadPage(int pageNumber)

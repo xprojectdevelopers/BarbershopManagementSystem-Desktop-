@@ -123,7 +123,7 @@
                                                       HorizontalAlignment="Left"
                                                       IsHitTestVisible="False"/>
 
-                                    
+
                                     <ToggleButton Grid.Column="1"
                                                   x:Name="PART_DropDownToggle"
                                                   Background="Transparent"
@@ -280,7 +280,7 @@ ToolTip="Settings" Grid.ColumnSpan="3" HorizontalAlignment="Left" Click="Setting
             <TextBox x:Name="txtFullName" HorizontalAlignment="Left" FontSize="30" Margin="255,407,0,0" Grid.Row="1" TextWrapping="Wrap" VerticalAlignment="Top" Width="465"/>
             <TextBlock x:Name="txtFullNameError" Foreground="Red" FontSize="14" Margin="255,450,0,0" Grid.Row="1" HorizontalAlignment="Left" VerticalAlignment="Top" Visibility="Collapsed"/>
             <TextBlock x:Name="txtFullNameTaken" Foreground="Red" FontSize="14" Margin="255,450,0,0" Grid.Row="1" HorizontalAlignment="Left" VerticalAlignment="Top" Visibility="Collapsed"/>
-            
+
             <!-- Profile Image + Upload Button -->
             <StackPanel Grid.Row="1" Orientation="Vertical" HorizontalAlignment="Left" Margin="760,301,0,-7">
                 <Image x:Name="PhotoPreview" Height="195" Width="195" Source="/Icon/profile.png" 
@@ -340,7 +340,11 @@ Visibility="Collapsed"/>
             <Label Content="Employment Informations" FontSize="40" HorizontalAlignment="Left" VerticalAlignment="Top" RenderTransformOrigin="2.096,5.165" Margin="255,1023,0,0" Grid.Row="1" FontWeight="Bold"/>
 
             <Label Content="Employee ID *" FontSize="20" HorizontalAlignment="Left" Margin="465,131,0,0" Grid.Row="1" VerticalAlignment="Top"/>
-            <TextBox x:Name="txtEmployeeID" HorizontalAlignment="Left" FontSize="30" Margin="465,169,0,0" Grid.Row="1" TextWrapping="Wrap" VerticalAlignment="Top" Width="250"/>
+            <ComboBox x:Name="cmbEmployeeID" HorizontalAlignment="Left" Margin="465,168,0,0" Grid.Row="1" VerticalAlignment="Top" 
+Width="250" FontSize="16" SelectedIndex="-1"
+Style="{StaticResource TextBoxStyleComboBox}" Height="38">
+                <ComboBoxItem IsEnabled="False" IsSelected="True" Foreground="Gray">Select Employee ID</ComboBoxItem>
+            </ComboBox>
             <TextBlock x:Name="txtEmployeeIDError" Foreground="Red" FontSize="14" Margin="465,210,0,0" Grid.Row="1" HorizontalAlignment="Left" VerticalAlignment="Top" Visibility="Collapsed"/>
             <Button Content="Search" Cursor="Hand"
         Width="160"
@@ -415,7 +419,7 @@ Click="btnGeneratePassword_Click" Cursor="Hand">
             <TextBox x:Name="txtNickname" HorizontalAlignment="Left" FontSize="30" Margin="255,1267,0,0" Grid.Row="1" TextWrapping="Wrap" VerticalAlignment="Top" Width="420"/>
             <TextBlock x:Name="txtNicknameError" Foreground="Red" FontSize="14" Margin="255,1310,0,0" Grid.Row="1" HorizontalAlignment="Left" VerticalAlignment="Top" Visibility="Collapsed"/>
             <TextBlock x:Name="txtNicknameTaken" Foreground="Red" FontSize="14" Margin="255,1308,0,0" Grid.Row="1" HorizontalAlignment="Left" VerticalAlignment="Top" Visibility="Collapsed"/>
-            
+
             <Label Content="Barber Expertise *" FontSize="20" HorizontalAlignment="Left" Margin="720,1229,0,0" 
 Grid.Row="1" VerticalAlignment="Top"/>
 
@@ -477,7 +481,7 @@ Grid.Row="1" VerticalAlignment="Top"/>
   VerticalAlignment="Center" VerticalContentAlignment="Center" Margin="5"/>
                 <CheckBox Content="Saturday" FontSize="20" Height="40" 
   VerticalAlignment="Center" VerticalContentAlignment="Center" Margin="5"/>
-                
+
                 <TextBlock/>
             </UniformGrid>
             <TextBlock x:Name="txtWorkScheduleError" Foreground="Red" FontSize="14" Margin="255,1650,0,0" Grid.Row="1" HorizontalAlignment="Left" VerticalAlignment="Top" Visibility="Collapsed"/>

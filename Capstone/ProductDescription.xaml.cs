@@ -35,6 +35,7 @@ namespace Capstone
         private ObservableCollection<BarbershopManagementSystem> filteredItems = new ObservableCollection<BarbershopManagementSystem>();
         private Window currentModalWindow;
         private bool isSaving = false;
+
         public ProductDescription()
         {
             InitializeComponent();
@@ -58,7 +59,7 @@ namespace Capstone
         private async Task InitializeData()
         {
             await InitializeSupabaseAsync();
-            
+
             employees = new ObservableCollection<BarbershopManagementSystem>();
 
             // Fetch data from Supabase
@@ -82,6 +83,39 @@ namespace Capstone
             items = new ObservableCollection<BarbershopManagementSystem>(result.Models);
             filteredItems = new ObservableCollection<BarbershopManagementSystem>(items);
 
+            // Populate ComboBox with Product IDs
+            PopulateProductIDComboBox();
+        }
+
+        private void PopulateProductIDComboBox()
+        {
+            cmbProductItem.Items.Clear();
+
+            // Add placeholder item
+            ComboBoxItem placeholder = new ComboBoxItem
+            {
+                Content = "Select Product ID",
+                IsEnabled = false,
+                Foreground = Brushes.Gray
+            };
+            cmbProductItem.Items.Add(placeholder);
+
+            // Add all Product IDs from items
+            foreach (var item in items)
+            {
+                if (!string.IsNullOrEmpty(item.ItemID))
+                {
+                    ComboBoxItem comboItem = new ComboBoxItem
+                    {
+                        Content = item.ItemID,
+                        Tag = item // Store the entire item object for easy access
+                    };
+                    cmbProductItem.Items.Add(comboItem);
+                }
+            }
+
+            // Set placeholder as selected
+            cmbProductItem.SelectedIndex = 0;
         }
 
         private void ModalWindow_Closed(object sender, EventArgs e)
@@ -102,11 +136,10 @@ namespace Capstone
         // Search and Update Methods
         private async void Search_Click(object sender, RoutedEventArgs e)
         {
-            string itemId = txtItemID.Text.Trim();
-
-            if (string.IsNullOrEmpty(itemId))
+            // Check if a valid item is selected in ComboBox
+            if (cmbProductItem.SelectedItem == null || cmbProductItem.SelectedIndex <= 0)
             {
-                ShowError(txtItemIDError, "Item ID is required");
+                ShowError(txtItemIDError, "Please select a Product ID");
                 return;
             }
 
@@ -114,27 +147,41 @@ namespace Capstone
 
             try
             {
-                var result = await supabase
-                    .From<BarbershopManagementSystem>()
-                    .Where(x => x.ItemID == itemId)
-                    .Get();
-
-                if (result.Models.Count > 0)
+                // Get the selected item from ComboBox
+                ComboBoxItem selectedComboItem = cmbProductItem.SelectedItem as ComboBoxItem;
+                if (selectedComboItem != null && selectedComboItem.Tag is BarbershopManagementSystem item)
                 {
-                    var item = result.Models.First();
+                    // Auto-fill the form with selected item data
                     PopulateForm(item);
                     HideAllErrorMessages();
                 }
                 else
                 {
-                    HideAllErrorMessages();
-                    ModalOverlay.Visibility = Visibility.Visible;
+                    // Fallback: search by ItemID text
+                    string itemId = selectedComboItem?.Content?.ToString() ?? "";
 
-                    currentModalWindow = new notfoundItem();
-                    currentModalWindow.Owner = this;
-                    currentModalWindow.WindowStartupLocation = WindowStartupLocation.CenterOwner;
-                    currentModalWindow.Closed += ModalWindow_Closed;
-                    currentModalWindow.Show();
+                    var result = await supabase
+                        .From<BarbershopManagementSystem>()
+                        .Where(x => x.ItemID == itemId)
+                        .Get();
+
+                    if (result.Models.Count > 0)
+                    {
+                        var foundItem = result.Models.First();
+                        PopulateForm(foundItem);
+                        HideAllErrorMessages();
+                    }
+                    else
+                    {
+                        HideAllErrorMessages();
+                        ModalOverlay.Visibility = Visibility.Visible;
+
+                        currentModalWindow = new notfoundItem();
+                        currentModalWindow.Owner = this;
+                        currentModalWindow.WindowStartupLocation = WindowStartupLocation.CenterOwner;
+                        currentModalWindow.Closed += ModalWindow_Closed;
+                        currentModalWindow.Show();
+                    }
                 }
             }
             catch (Exception ex)
@@ -145,7 +192,8 @@ namespace Capstone
 
         private void PopulateForm(BarbershopManagementSystem item)
         {
-            txtItemID.Text = item.ItemID ?? "";
+            // Set the ItemID in the form (if you have a separate display field)
+            // txtItemID.Text = item.ItemID ?? "";
 
             // Convert string date to DateTime
             if (!string.IsNullOrEmpty(item.Date) && DateTime.TryParse(item.Date, out DateTime parsedDate))
@@ -169,9 +217,16 @@ namespace Capstone
 
         private async void Update_Click(object sender, RoutedEventArgs e)
         {
-            string itemId = txtItemID.Text.Trim();
+            // Get Item ID from selected ComboBox item
+            if (cmbProductItem.SelectedItem == null || cmbProductItem.SelectedIndex <= 0)
+            {
+                ShowError(txtItemIDError, "Please select a Product ID");
+                return;
+            }
 
-            // Validate Item ID
+            ComboBoxItem selectedComboItem = cmbProductItem.SelectedItem as ComboBoxItem;
+            string itemId = selectedComboItem?.Content?.ToString() ?? "";
+
             if (string.IsNullOrEmpty(itemId))
             {
                 ShowError(txtItemIDError, "Item ID is required");
@@ -280,7 +335,7 @@ namespace Capstone
             }
 
             // Validate Category
-            if (Category.SelectedItem == null)
+            if (Category.SelectedItem == null || Category.SelectedIndex <= 0)
             {
                 ShowError(txtCategoryError, "Category is required");
                 isValid = false;
@@ -375,9 +430,14 @@ namespace Capstone
         // Helper method to get ComboBox selected value
         private string GetComboBoxSelectedValue(ComboBox comboBox)
         {
-            if (comboBox.SelectedItem is ComboBoxItem selectedItem)
+            if (comboBox.SelectedItem is ComboBoxItem selectedItem && !selectedItem.IsEnabled)
             {
-                return selectedItem.Content.ToString() ?? "";
+                return "";
+            }
+
+            if (comboBox.SelectedItem is ComboBoxItem validItem)
+            {
+                return validItem.Content.ToString() ?? "";
             }
             return "";
         }
@@ -385,13 +445,13 @@ namespace Capstone
         // Helper method to clear form
         private void ClearForm()
         {
-            txtItemID.Text = "";
+            cmbProductItem.SelectedIndex = 0; // Reset to placeholder
             txtItemName.Text = "";
             txtPrice.Text = "";
             txtSupplierName.Text = "";
             txtSCNumber.Text = "";
             ItemDate.SelectedDate = null;
-            Category.SelectedItem = null;
+            Category.SelectedIndex = 0; // Reset to placeholder
             HideAllErrorMessages();
         }
 
@@ -437,7 +497,15 @@ namespace Capstone
 
         private async void Delete_Click(object sender, RoutedEventArgs e)
         {
-            string employeeId = txtItemID.Text.Trim();
+            // Get Item ID from selected ComboBox item
+            if (cmbProductItem.SelectedItem == null || cmbProductItem.SelectedIndex <= 0)
+            {
+                ShowError(txtItemIDError, "Please select a Product ID");
+                return;
+            }
+
+            ComboBoxItem selectedComboItem = cmbProductItem.SelectedItem as ComboBoxItem;
+            string employeeId = selectedComboItem?.Content?.ToString() ?? "";
 
             // Check if Employee ID is empty
             if (string.IsNullOrEmpty(employeeId))
@@ -452,6 +520,7 @@ namespace Capstone
                     .From<BarbershopManagementSystem>()
                     .Where(x => x.ItemID == employeeId)
                     .Get();
+
                 if (employeeToDelete.Models.Count == 0)
                 {
                     HideAllErrorMessages();
@@ -517,6 +586,9 @@ namespace Capstone
                     // Show as regular window
                     currentModalWindow.Show();
                     ClearForm();
+
+                    // Reload items to refresh ComboBox
+                    await LoadItems();
                 }
             }
             catch (Exception ex)

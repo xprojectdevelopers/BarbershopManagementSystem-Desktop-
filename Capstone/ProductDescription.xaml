@@ -106,10 +106,10 @@
                     <ControlTemplate TargetType="ComboBox">
                         <Grid>
                             <Border Name="Border"
-                                Background="{TemplateBinding Background}"
-                                BorderBrush="{TemplateBinding BorderBrush}"
-                                BorderThickness="{TemplateBinding BorderThickness}"
-                                CornerRadius="4">
+                 Background="{TemplateBinding Background}"
+                 BorderBrush="{TemplateBinding BorderBrush}"
+                 BorderThickness="{TemplateBinding BorderThickness}"
+                 CornerRadius="4">
                                 <Grid>
                                     <Grid.ColumnDefinitions>
                                         <ColumnDefinition Width="*"/>
@@ -118,43 +118,43 @@
 
                                     <!-- Content Presenter -->
                                     <ContentPresenter Grid.Column="0"
-                                                  x:Name="PART_ContentPresenter"
-                                                  Margin="{TemplateBinding Padding}"
-                                                  Content="{TemplateBinding SelectionBoxItem}"
-                                                  ContentTemplate="{TemplateBinding SelectionBoxItemTemplate}"
-                                                  VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
-                                                  HorizontalAlignment="Left"
-                                                  IsHitTestVisible="False"/>
+                                   x:Name="PART_ContentPresenter"
+                                   Margin="{TemplateBinding Padding}"
+                                   Content="{TemplateBinding SelectionBoxItem}"
+                                   ContentTemplate="{TemplateBinding SelectionBoxItemTemplate}"
+                                   VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
+                                   HorizontalAlignment="Left"
+                                   IsHitTestVisible="False"/>
 
                                     <ToggleButton Grid.Column="1"
-                                              x:Name="PART_DropDownToggle"
-                                              Background="Transparent"
-                                              BorderThickness="0"
-                                              Width="20"
-                                              Height="20"
-                                              Margin="0,0,8,0"
-                                              VerticalAlignment="Center"
-                                              IsChecked="{Binding IsDropDownOpen, RelativeSource={RelativeSource TemplatedParent}}"
-                                              ClickMode="Press">
+                               x:Name="PART_DropDownToggle"
+                               Background="Transparent"
+                               BorderThickness="0"
+                               Width="20"
+                               Height="20"
+                               Margin="0,0,8,0"
+                               VerticalAlignment="Center"
+                               IsChecked="{Binding IsDropDownOpen, RelativeSource={RelativeSource TemplatedParent}}"
+                               ClickMode="Press">
                                         <Path Fill="Gray"
-                                          Data="M7,10L12,15L17,10H7Z"
-                                          Stretch="Uniform"
-                                          Width="10"
-                                          Height="8"/>
+                           Data="M7,10L12,15L17,10H7Z"
+                           Stretch="Uniform"
+                           Width="10"
+                           Height="8"/>
                                     </ToggleButton>
 
                                     <!-- Popup -->
                                     <Popup x:Name="PART_Popup"
-                                       Grid.ColumnSpan="2"
-                                       IsOpen="{TemplateBinding IsDropDownOpen}"
-                                       Placement="Bottom"
-                                       PlacementTarget="{Binding ElementName=Border}"
-                                       StaysOpen="False">
+                        Grid.ColumnSpan="2"
+                        IsOpen="{TemplateBinding IsDropDownOpen}"
+                        Placement="Bottom"
+                        PlacementTarget="{Binding ElementName=Border}"
+                        StaysOpen="False">
                                         <Border Background="White"
-                                            BorderBrush="Gray"
-                                            BorderThickness="1"
-                                            CornerRadius="4"
-                                            MinWidth="{Binding ActualWidth, ElementName=Border}">
+                             BorderBrush="Gray"
+                             BorderThickness="1"
+                             CornerRadius="4"
+                             MinWidth="{Binding ActualWidth, ElementName=Border}">
                                             <ScrollViewer>
                                                 <ItemsPresenter/>
                                             </ScrollViewer>
@@ -177,6 +177,7 @@
                 </Setter.Value>
             </Setter>
         </Style>
+
     </Window.Resources>
 
     <Grid>
@@ -200,7 +201,17 @@
 
                     <Label Content="Product ID" FontSize="20" Grid.Row="0" Grid.Column="0" VerticalAlignment="Bottom" Margin="0,0,0,5"/>
                     <StackPanel Orientation="Horizontal" Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" Margin="00,0,0,0">
-                        <TextBox x:Name="txtItemID" FontSize="30" Width="205" Height="47" VerticalAlignment="Top"/>
+                        <ComboBox x:Name="cmbProductItem" Width="150"
+          HorizontalAlignment="Left"
+          VerticalAlignment="Center"
+          Margin="0,0,10,0"
+          FontSize="14"
+          Height="47"
+          IsEditable="False"
+          MinWidth="160"
+          MaxDropDownHeight="150" Style="{StaticResource TextBoxStyleComboBox}">
+                            <ComboBoxItem IsEnabled="False" IsSelected="True" Foreground="Gray">Select Product ID</ComboBoxItem>
+                        </ComboBox>
                         <Button Content="Search" Cursor="Hand"
 Width="160" Height="47" 
 Margin="20,0,0,0"

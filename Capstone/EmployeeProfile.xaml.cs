@@ -18,8 +18,8 @@ namespace Capstone
     {
         private Client supabase;
         private ObservableCollection<BarbershopManagementSystem> employees;
-        private string currentPhotoPath; // Add this field to track current photo path
-        private bool isPhotoChanged = false; // Add this field to track if photo was changed
+        private string currentPhotoPath;
+        private bool isPhotoChanged = false;
         private Window currentModalWindow;
 
         public EmployeeProfile()
@@ -53,6 +53,14 @@ namespace Capstone
             foreach (var emp in result.Models)
             {
                 employees.Add(emp);
+
+                // Add Employee IDs to ComboBox
+                ComboBoxItem item = new ComboBoxItem
+                {
+                    Content = emp.Eid,
+                    Tag = emp
+                };
+                cmbEmployeeID.Items.Add(item);
             }
         }
 
@@ -79,8 +87,6 @@ namespace Capstone
                     bitmap.EndInit();
 
                     PhotoPreview.Source = bitmap;
-
-                    // Store the new photo path and mark as changed
                     currentPhotoPath = openFileDialog.FileName;
                     isPhotoChanged = true;
                 }
@@ -89,23 +95,23 @@ namespace Capstone
                     MessageBox.Show("Failed to load image: " + ex.Message);
                 }
             }
-        } 
+        }
 
         private async void Search_Click(object sender, RoutedEventArgs e)
         {
-            string employeeId = txtEmployeeID.Text.Trim();
-
-            if (string.IsNullOrEmpty(employeeId))
+            if (cmbEmployeeID.SelectedIndex <= 0)
             {
-                ShowError(txtEmployeeIDError, "Employee ID is required");
+                ShowError(txtEmployeeIDError, "Please select an Employee ID");
                 return;
             }
 
-            // Clear Employee ID validation error when search is performed with valid ID
             txtEmployeeIDError.Visibility = Visibility.Collapsed;
 
             try
             {
+                ComboBoxItem selectedItem = cmbEmployeeID.SelectedItem as ComboBoxItem;
+                string employeeId = selectedItem.Content.ToString();
+
                 var result = await supabase
                     .From<BarbershopManagementSystem>()
                     .Where(x => x.Eid == employeeId)
@@ -119,19 +125,13 @@ namespace Capstone
                 }
                 else
                 {
-                    // Hide all validation errors before showing not found dialog
                     HideAllErrorMessages();
                     ModalOverlay.Visibility = Visibility.Visible;
 
-                    // Open PurchaseOrders as a regular window
                     currentModalWindow = new notfound();
                     currentModalWindow.Owner = this;
                     currentModalWindow.WindowStartupLocation = WindowStartupLocation.CenterOwner;
-
-                    // Subscribe to Closed event
                     currentModalWindow.Closed += ModalWindow_Closed;
-
-                    // Show as regular window
                     currentModalWindow.Show();
                     ClearForm();
                 }
@@ -152,12 +152,10 @@ namespace Capstone
         {
             bool isValid = true;
 
-            // Clear previous errors for uniqueness checks only
             txtFullNameTaken.Visibility = Visibility.Collapsed;
             txtPasswordSame.Visibility = Visibility.Collapsed;
             txtNicknameTaken.Visibility = Visibility.Collapsed;
 
-            // Validate Full Name uniqueness (exclude current employee)
             if (!string.IsNullOrWhiteSpace(newEmployee.Fname) &&
                 employees.Any(emp => emp.Eid != currentEmployeeId &&
                                    emp.Fname.Equals(newEmployee.Fname, StringComparison.OrdinalIgnoreCase)))
@@ -166,7 +164,6 @@ namespace Capstone
                 isValid = false;
             }
 
-            // Validate Password uniqueness (only if password is provided and role is Cashier, exclude current employee)
             if (newEmployee.Role == "Cashier" && !string.IsNullOrWhiteSpace(newEmployee.Epassword) &&
                 employees.Any(emp => emp.Eid != currentEmployeeId && emp.Epassword == newEmployee.Epassword))
             {
@@ -174,7 +171,6 @@ namespace Capstone
                 isValid = false;
             }
 
-            // Validate Nickname uniqueness (exclude current employee)
             if (!string.IsNullOrWhiteSpace(newEmployee.Nickname) &&
                 employees.Any(emp => emp.Eid != currentEmployeeId &&
                                    emp.Nickname.Equals(newEmployee.Nickname, StringComparison.OrdinalIgnoreCase)))
@@ -188,32 +184,24 @@ namespace Capstone
 
         private void PopulateForm(BarbershopManagementSystem employee)
         {
-            // Personal Details
             txtFullName.Text = employee.Fname ?? "";
             bdate.SelectedDate = employee.Bdate;
-
             SetComboBoxSelection(Gender, employee.Gender);
-
             txtAddress.Text = employee.Address ?? "";
             txtContactNumber.Text = employee.Cnumber ?? "";
             txtEmail.Text = employee.Email ?? "";
             txtEmergencyName.Text = employee.ECname ?? "";
             txtEmergencyNumber.Text = employee.ECnumber ?? "";
-
-            // Employment Information
             SetComboBoxSelection(cmbRole, employee.Role);
             txtEmployeePassword.Text = employee.Epassword ?? "";
             txtNickname.Text = employee.Nickname ?? "";
-
             SetComboBoxSelection(cmbBarberExpertise, employee.BarberExpertise);
-
             dateHiredPicker.SelectedDate = employee.DateHired;
             SetComboBoxSelection(cmbEmploymentStatus, employee.Estatus);
             SetCheckBoxes(workSchedulePanel, employee.Wsched);
 
-            // Load Photo and set current photo path
             currentPhotoPath = employee.PhotoPath;
-            isPhotoChanged = false; // Reset photo changed flag
+            isPhotoChanged = false;
             LoadEmployeePhoto(employee.PhotoPath);
         }
 
@@ -247,17 +235,17 @@ namespace Capstone
                     }
                     else
                     {
-                        PhotoPreview.Source = new BitmapImage(new Uri("/profile.png", UriKind.Relative));
+                        PhotoPreview.Source = new BitmapImage(new Uri("/Icon/profile.png", UriKind.Relative));
                     }
                 }
                 else
                 {
-                    PhotoPreview.Source = new BitmapImage(new Uri("/profile.png", UriKind.Relative));
+                    PhotoPreview.Source = new BitmapImage(new Uri("/Icon/profile.png", UriKind.Relative));
                 }
             }
             catch (Exception ex)
             {
-                PhotoPreview.Source = new BitmapImage(new Uri("/profile.png", UriKind.Relative));
+                PhotoPreview.Source = new BitmapImage(new Uri("/Icon/profile.png", UriKind.Relative));
                 MessageBox.Show($"Error loading photo: {ex.Message}", "Photo Load Error", MessageBoxButton.OK, MessageBoxImage.Warning);
             }
         }
@@ -280,7 +268,7 @@ namespace Capstone
             }
             catch
             {
-                PhotoPreview.Source = new BitmapImage(new Uri("/profile.png", UriKind.Relative));
+                PhotoPreview.Source = new BitmapImage(new Uri("/Icon/profile.png", UriKind.Relative));
             }
         }
 
@@ -343,6 +331,7 @@ namespace Capstone
 
         private void ClearForm()
         {
+            cmbEmployeeID.SelectedIndex = 0;
             txtEmployeeIDError.Text = string.Empty;
             txtFullName.Clear();
             bdate.SelectedDate = null;
@@ -352,16 +341,13 @@ namespace Capstone
             txtEmail.Clear();
             txtEmergencyName.Clear();
             txtEmergencyNumber.Clear();
-
             cmbRole.SelectedIndex = -1;
             txtEmployeePassword.Clear();
             txtNickname.Clear();
             cmbBarberExpertise.SelectedIndex = -1;
             dateHiredPicker.SelectedDate = null;
             cmbEmploymentStatus.SelectedIndex = -1;
-
             ClearCheckBoxes(workSchedulePanel);
-
             PhotoPreview.Source = new BitmapImage(new Uri("/Icon/profile.png", UriKind.Relative));
             currentPhotoPath = null;
             isPhotoChanged = false;
@@ -386,17 +372,13 @@ namespace Capstone
 
                 if (role == "Cashier")
                 {
-                    // Enable password controls
                     btnGeneratePassword.IsEnabled = true;
                     txtEmployeePassword.IsEnabled = true;
-
-                    // Reset password control colors to normal
                     btnGeneratePassword.Foreground = Brushes.Blue;
                     txtEmployeePassword.Background = Brushes.White;
                     txtEmployeePassword.Foreground = Brushes.Black;
                     cmbBarberExpertise.SelectedIndex = -1;
 
-                    // Find and enable the password label
                     var passwordLabel = FindVisualChild<Label>(this, "lblEmployeePassword");
                     if (passwordLabel != null)
                     {
@@ -404,13 +386,9 @@ namespace Capstone
                         passwordLabel.IsEnabled = true;
                     }
 
-                    // Disable barber-related controls
                     cmbBarberExpertise.IsEnabled = false;
-
-                    // Gray out barber controls
                     cmbBarberExpertise.Foreground = Brushes.Gray;
 
-                    // Find and gray out barber expertise label
                     var expertiseLabel = FindVisualChild<Label>(this, "lblBarberExpertise");
                     if (expertiseLabel != null)
                     {
@@ -418,29 +396,22 @@ namespace Capstone
                         expertiseLabel.IsEnabled = false;
                     }
 
-                    // Find and gray out services label
                     var servicesLabel = FindVisualChild<Label>(this, "lblServicesOffered");
                     if (servicesLabel != null)
                     {
                         servicesLabel.Foreground = Brushes.Gray;
                         servicesLabel.IsEnabled = false;
-
                     }
-
                 }
                 else if (role == "Barber")
                 {
-                    // Disable password controls
                     btnGeneratePassword.IsEnabled = false;
                     txtEmployeePassword.IsEnabled = false;
-
-                    // Gray out password controls
                     btnGeneratePassword.Foreground = Brushes.Gray;
                     txtEmployeePassword.Background = Brushes.LightGray;
                     txtEmployeePassword.Foreground = Brushes.Gray;
-                    txtEmployeePassword.Text = string.Empty; // Clear password when switching to Barber
+                    txtEmployeePassword.Text = string.Empty;
 
-                    // Find and gray out the password label
                     var passwordLabel = FindVisualChild<Label>(this, "lblEmployeePassword");
                     if (passwordLabel != null)
                     {
@@ -448,13 +419,9 @@ namespace Capstone
                         passwordLabel.IsEnabled = false;
                     }
 
-                    // Enable barber-related controls
                     cmbBarberExpertise.IsEnabled = true;
-
-                    // Reset barber control colors to normal
                     cmbBarberExpertise.Foreground = Brushes.Black;
 
-                    // Find and enable barber expertise label
                     var expertiseLabel = FindVisualChild<Label>(this, "lblBarberExpertise");
                     if (expertiseLabel != null)
                     {
@@ -462,33 +429,26 @@ namespace Capstone
                         expertiseLabel.IsEnabled = true;
                     }
 
-                    // Find and enable services label
                     var servicesLabel = FindVisualChild<Label>(this, "lblServicesOffered");
                     if (servicesLabel != null)
                     {
                         servicesLabel.Foreground = Brushes.Black;
                         servicesLabel.IsEnabled = true;
                     }
-
                 }
             }
             else
             {
-                // Disable password controls
                 btnGeneratePassword.IsEnabled = false;
                 txtEmployeePassword.IsEnabled = false;
                 btnGeneratePassword.Foreground = Brushes.Gray;
                 txtEmployeePassword.Background = Brushes.LightGray;
                 txtEmployeePassword.Foreground = Brushes.Gray;
-
-                // Disable barber controls
                 cmbBarberExpertise.IsEnabled = false;
                 cmbBarberExpertise.Foreground = Brushes.Gray;
                 txtEmployeePassword.Text = string.Empty;
             }
         }
-
-
 
         private static T FindVisualChild<T>(DependencyObject parent, string childName) where T : DependencyObject
         {
@@ -511,17 +471,16 @@ namespace Capstone
             return null;
         }
 
-
         private async void Delete_Click(object sender, RoutedEventArgs e)
         {
-            string employeeId = txtEmployeeID.Text.Trim();
-
-            // Check if Employee ID is empty
-            if (string.IsNullOrEmpty(employeeId))
+            if (cmbEmployeeID.SelectedIndex <= 0)
             {
-                ShowError(txtEmployeeIDError, "Employee ID is required");
+                ShowError(txtEmployeeIDError, "Please select an Employee ID");
                 return;
             }
+
+            ComboBoxItem selectedItem = cmbEmployeeID.SelectedItem as ComboBoxItem;
+            string employeeId = selectedItem.Content.ToString();
 
             try
             {
@@ -529,40 +488,30 @@ namespace Capstone
                     .From<BarbershopManagementSystem>()
                     .Where(x => x.Eid == employeeId)
                     .Get();
+
                 if (employeeToDelete.Models.Count == 0)
                 {
                     HideAllErrorMessages();
                     ModalOverlay.Visibility = Visibility.Visible;
 
-                    // Open PurchaseOrders as a regular window
                     currentModalWindow = new notfound();
                     currentModalWindow.Owner = this;
                     currentModalWindow.WindowStartupLocation = WindowStartupLocation.CenterOwner;
-
-                    // Subscribe to Closed event
                     currentModalWindow.Closed += ModalWindow_Closed;
-
-                    // Show as regular window
                     currentModalWindow.Show();
                     ClearForm();
                     return;
                 }
 
-                // Show delete confirmation
                 ModalOverlay.Visibility = Visibility.Visible;
 
-                // Open delete confirmation as a regular window
                 currentModalWindow = new delete();
                 currentModalWindow.Owner = this;
                 currentModalWindow.WindowStartupLocation = WindowStartupLocation.CenterOwner;
 
-                // Store reference for dialog result
                 delete deleteDialog = (delete)currentModalWindow;
-
-                // Subscribe to Closed event
                 currentModalWindow.Closed += ModalWindow_Closed;
 
-                // Show as dialog
                 bool? result = deleteDialog.ShowDialog();
 
                 if (result == true)
@@ -580,18 +529,16 @@ namespace Capstone
                         employees.Remove(localEmployee);
                     }
 
+                    // Remove from ComboBox
+                    cmbEmployeeID.Items.Remove(selectedItem);
+
                     HideAllErrorMessages();
                     ModalOverlay.Visibility = Visibility.Visible;
 
-                    // Open PurchaseOrders as a regular window
                     currentModalWindow = new DeleteSuccessfull();
                     currentModalWindow.Owner = this;
                     currentModalWindow.WindowStartupLocation = WindowStartupLocation.CenterOwner;
-
-                    // Subscribe to Closed event
                     currentModalWindow.Closed += ModalWindow_Closed;
-
-                    // Show as regular window
                     currentModalWindow.Show();
                     ClearForm();
                 }
@@ -602,16 +549,16 @@ namespace Capstone
             }
         }
 
-
         private async void Update_Click(object sender, RoutedEventArgs e)
         {
-            string employeeId = txtEmployeeID.Text.Trim();
-
-            if (string.IsNullOrEmpty(employeeId))
+            if (cmbEmployeeID.SelectedIndex <= 0)
             {
-                ShowError(txtEmployeeIDError, "Employee ID is required");
+                ShowError(txtEmployeeIDError, "Please select an Employee ID");
                 return;
             }
+
+            ComboBoxItem selectedItem = cmbEmployeeID.SelectedItem as ComboBoxItem;
+            string employeeId = selectedItem.Content.ToString();
 
             try
             {
@@ -620,30 +567,22 @@ namespace Capstone
                     .Where(x => x.Eid == employeeId)
                     .Get();
 
-                // Check if employee exists - this should be after querying
                 if (existingEmployee.Models.Count == 0)
                 {
                     HideAllErrorMessages();
                     ModalOverlay.Visibility = Visibility.Visible;
 
-                    // Open PurchaseOrders as a regular window
                     currentModalWindow = new notfound();
                     currentModalWindow.Owner = this;
                     currentModalWindow.WindowStartupLocation = WindowStartupLocation.CenterOwner;
-
-                    // Subscribe to Closed event
                     currentModalWindow.Closed += ModalWindow_Closed;
-
-                    // Show as regular window
                     currentModalWindow.Show();
-
                     ClearForm();
                     return;
                 }
 
                 var employee = existingEmployee.Models.First();
 
-                // Validate all required fields first
                 if (!ValidateForm())
                 {
                     return;
@@ -657,7 +596,6 @@ namespace Capstone
                     Nickname = txtNickname.Text.Trim()
                 };
 
-                // Then validate for duplicates
                 if (!ValidateEmployeeInlineForUpdate(tempEmployee, employeeId))
                 {
                     return;
@@ -735,15 +673,10 @@ namespace Capstone
 
                 ModalOverlay.Visibility = Visibility.Visible;
 
-                // Open PurchaseOrders as a regular window
                 currentModalWindow = new UpdateSuccessful();
                 currentModalWindow.Owner = this;
                 currentModalWindow.WindowStartupLocation = WindowStartupLocation.CenterOwner;
-
-                // Subscribe to Closed event
                 currentModalWindow.Closed += ModalWindow_Closed;
-
-                // Show as regular window
                 currentModalWindow.Show();
             }
             catch (Exception ex)
@@ -751,7 +684,6 @@ namespace Capstone
                 MessageBox.Show($"Error updating employee: {ex.Message}", "Update Error", MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
-
 
         private string GetComboBoxSelectedValue(ComboBox comboBox)
         {
@@ -779,26 +711,11 @@ namespace Capstone
             return string.Join(", ", selectedItems);
         }
 
-        private bool ValidateEmployeeId()
-        {
-            // Hide the error message first
-            txtEmployeeIDError.Visibility = Visibility.Collapsed;
-
-            if (string.IsNullOrWhiteSpace(txtEmployeeID.Text))
-            {
-                ShowError(txtEmployeeIDError, "Employee ID is required");
-                return false;
-            }
-            return true;
-        }
-
-        // FIXED: ValidateForm method - corrected parameter declaration and validation logic
         private bool ValidateForm()
         {
             bool isValid = true;
             HideAllErrorMessages();
 
-            // Create temporary employee object for validation
             var newEmployee = new BarbershopManagementSystem
             {
                 Fname = txtFullName.Text.Trim(),
@@ -810,7 +727,6 @@ namespace Capstone
                 Nickname = txtNickname.Text.Trim()
             };
 
-            // Basic personal information validation
             if (string.IsNullOrWhiteSpace(txtFullName.Text))
             {
                 ShowError(txtFullNameError, "Full name is required");
@@ -835,7 +751,6 @@ namespace Capstone
                 isValid = false;
             }
 
-            // Contact number validation
             if (string.IsNullOrWhiteSpace(txtContactNumber.Text))
             {
                 ShowError(txtContactNumberError, "Contact number is required");
@@ -852,7 +767,6 @@ namespace Capstone
                 isValid = false;
             }
 
-            // Email validation
             if (string.IsNullOrWhiteSpace(txtEmail.Text))
             {
                 ShowError(txtEmailError, "Email is required");
@@ -864,7 +778,6 @@ namespace Capstone
                 isValid = false;
             }
 
-            // Emergency contact validation
             if (string.IsNullOrWhiteSpace(txtEmergencyName.Text))
             {
                 ShowError(txtEmergencyNameError, "Emergency contact name is required");
@@ -887,7 +800,6 @@ namespace Capstone
                 isValid = false;
             }
 
-            // Employment information validation
             if (cmbRole.SelectedIndex < 0)
             {
                 ShowError(txtRoleError, "Employee role is required");
@@ -895,7 +807,6 @@ namespace Capstone
             }
             else
             {
-                // Role-specific validation
                 string selectedRole = GetComboBoxSelectedValue(cmbRole);
 
                 if (selectedRole == "Cashier")
@@ -908,7 +819,6 @@ namespace Capstone
                 }
                 else if (selectedRole == "Barber")
                 {
-                    // Validate barber expertise
                     if (cmbBarberExpertise.SelectedIndex <= 0)
                     {
                         ShowError(txtBarberExpertiseError, "Barber expertise is required for Barber role");
@@ -935,7 +845,6 @@ namespace Capstone
                 isValid = false;
             }
 
-            // Validate work schedule - at least one day must be selected
             bool hasSelectedDay = false;
             foreach (var child in workSchedulePanel.Children)
             {
@@ -963,7 +872,6 @@ namespace Capstone
 
         private void HideAllErrorMessages()
         {
-            // Basic field validation errors
             txtEmployeeIDError.Visibility = Visibility.Collapsed;
             txtFullNameError.Visibility = Visibility.Collapsed;
             txtBdateError.Visibility = Visibility.Collapsed;
@@ -980,8 +888,6 @@ namespace Capstone
             txtDateHiredError.Visibility = Visibility.Collapsed;
             txtEmploymentStatusError.Visibility = Visibility.Collapsed;
             txtWorkScheduleError.Visibility = Visibility.Collapsed;
-
-            // Duplicate validation errors
             txtFullNameTaken.Visibility = Visibility.Collapsed;
             txtPasswordSame.Visibility = Visibility.Collapsed;
             txtNicknameTaken.Visibility = Visibility.Collapsed;

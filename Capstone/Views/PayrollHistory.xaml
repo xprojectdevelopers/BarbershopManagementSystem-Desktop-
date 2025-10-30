@@ -13,45 +13,129 @@
 
     <Window.Resources>
         <local:PesoConverter x:Key="PesoConverter"/>
-        
+
         <!-- Responsive button style for notification and settings -->
-<Style x:Key="ResponsiveButton" TargetType="Button">
-    <Setter Property="Background" Value="Transparent"/>
-    <Setter Property="BorderThickness" Value="0"/>
-    <Setter Property="Padding" Value="12"/>
-    <Setter Property="Cursor" Value="Hand"/>
-    <Setter Property="HorizontalAlignment" Value="Center"/>
-    <Setter Property="VerticalAlignment" Value="Center"/>
-    <Setter Property="MinWidth" Value="40"/>
-    <Setter Property="MinHeight" Value="40"/>
-    <Setter Property="Template">
-        <Setter.Value>
-            <ControlTemplate TargetType="Button">
-                <Border Background="{TemplateBinding Background}" 
+        <Style x:Key="ResponsiveButton" TargetType="Button">
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Padding" Value="12"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="HorizontalAlignment" Value="Center"/>
+            <Setter Property="VerticalAlignment" Value="Center"/>
+            <Setter Property="MinWidth" Value="40"/>
+            <Setter Property="MinHeight" Value="40"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border Background="{TemplateBinding Background}" 
 BorderBrush="{TemplateBinding BorderBrush}"
 BorderThickness="{TemplateBinding BorderThickness}"
 Padding="{TemplateBinding Padding}"
 CornerRadius="20">
-                    <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                </Border>
-                <ControlTemplate.Triggers>
-                    <Trigger Property="IsMouseOver" Value="True">
-                        <Setter Property="Background" Value="Transparent"/>
-                    </Trigger>
-                    <Trigger Property="IsPressed" Value="True">
-                        <Setter Property="Background" Value="Transparent"/>
-                    </Trigger>
-                </ControlTemplate.Triggers>
-            </ControlTemplate>
-        </Setter.Value>
-    </Setter>
-</Style>
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter Property="Background" Value="Transparent"/>
+                            </Trigger>
+                            <Trigger Property="IsPressed" Value="True">
+                                <Setter Property="Background" Value="Transparent"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
 
-<!-- Simple icon style for top bar (no converter needed) -->
-<Style x:Key="TopBarIcon" TargetType="Image">
-    <Setter Property="Width" Value="24"/>
-    <Setter Property="Height" Value="24"/>
-</Style>
+        <!-- Simple icon style for top bar (no converter needed) -->
+        <Style x:Key="TopBarIcon" TargetType="Image">
+            <Setter Property="Width" Value="24"/>
+            <Setter Property="Height" Value="24"/>
+        </Style>
+
+        <Style x:Key="TextBoxStyleComboBox" TargetType="ComboBox">
+            <Setter Property="Background" Value="White"/>
+            <Setter Property="BorderBrush" Value="Gray"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="Padding" Value="10,5"/>
+            <Setter Property="VerticalContentAlignment" Value="Center"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="ComboBox">
+                        <Grid>
+                            <Border Name="Border"
+                         Background="{TemplateBinding Background}"
+                         BorderBrush="{TemplateBinding BorderBrush}"
+                         BorderThickness="{TemplateBinding BorderThickness}"
+                         CornerRadius="4">
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="Auto"/>
+                                    </Grid.ColumnDefinitions>
+
+                                    <!-- Content Presenter -->
+                                    <ContentPresenter Grid.Column="0"
+                                           x:Name="PART_ContentPresenter"
+                                           Margin="{TemplateBinding Padding}"
+                                           Content="{TemplateBinding SelectionBoxItem}"
+                                           ContentTemplate="{TemplateBinding SelectionBoxItemTemplate}"
+                                           VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
+                                           HorizontalAlignment="Left"
+                                           IsHitTestVisible="False"/>
+
+                                    <ToggleButton Grid.Column="1"
+                                       x:Name="PART_DropDownToggle"
+                                       Background="Transparent"
+                                       BorderThickness="0"
+                                       Width="20"
+                                       Height="20"
+                                       Margin="0,0,8,0"
+                                       VerticalAlignment="Center"
+                                       IsChecked="{Binding IsDropDownOpen, RelativeSource={RelativeSource TemplatedParent}}"
+                                       ClickMode="Press">
+                                        <Path Fill="Gray"
+                                   Data="M7,10L12,15L17,10H7Z"
+                                   Stretch="Uniform"
+                                   Width="10"
+                                   Height="8"/>
+                                    </ToggleButton>
+
+                                    <!-- Popup -->
+                                    <Popup x:Name="PART_Popup"
+                                Grid.ColumnSpan="2"
+                                IsOpen="{TemplateBinding IsDropDownOpen}"
+                                Placement="Bottom"
+                                PlacementTarget="{Binding ElementName=Border}"
+                                StaysOpen="False">
+                                        <Border Background="White"
+                                     BorderBrush="Gray"
+                                     BorderThickness="1"
+                                     CornerRadius="4"
+                                     MinWidth="{Binding ActualWidth, ElementName=Border}">
+                                            <ScrollViewer>
+                                                <ItemsPresenter/>
+                                            </ScrollViewer>
+                                        </Border>
+                                    </Popup>
+                                </Grid>
+                            </Border>
+                        </Grid>
+                        <ControlTemplate.Triggers>
+                            <!-- Hover effect -->
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="Border" Property="BorderBrush" Value="#333"/>
+                            </Trigger>
+                            <!-- Focus effect -->
+                            <Trigger Property="IsFocused" Value="True">
+                                <Setter TargetName="Border" Property="BorderBrush" Value="#0078D4"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
     </Window.Resources>
 
     <Grid>
@@ -103,8 +187,11 @@ ToolTip="Settings" Grid.ColumnSpan="3" HorizontalAlignment="Left" Click="Setting
             <Grid>
                 <!-- Search -->
                 <Label Content="Employee ID *" FontSize="20" HorizontalAlignment="Left" Margin="20,20,0,0" VerticalAlignment="Top"/>
-                <TextBox x:Name="txtEmployeeID" VerticalContentAlignment="Center" HorizontalAlignment="Left" FontSize="20" Margin="20,57,0,0" VerticalAlignment="Top" Width="205" Height="43"/>
-                <TextBlock x:Name="txtEmployeeIDError" Foreground="Red" FontSize="14" Margin="400,60,0,0" HorizontalAlignment="Left" VerticalAlignment="Top" Visibility="Collapsed"/>
+                <ComboBox x:Name="cmbItemID" SelectionChanged="cmbItemID_SelectionChanged" Height="47" FontSize="20" 
+        SelectedIndex="-1" Style="{StaticResource TextBoxStyleComboBox}" HorizontalAlignment="Left" Margin="20,60,0,0" VerticalAlignment="Top" Width="205">
+                    <ComboBoxItem IsEnabled="False" IsSelected="True" Foreground="Gray">Select Product ID</ComboBoxItem>
+                </ComboBox>
+                <TextBlock x:Name="txtEmployeeIDError" Foreground="Red" FontSize="14" Margin="240,70,0,0" HorizontalAlignment="Left" VerticalAlignment="Top" Visibility="Collapsed"/>
 
                 <!-- Search Button -->
                 <Button Width="160"
@@ -112,7 +199,8 @@ ToolTip="Settings" Grid.ColumnSpan="3" HorizontalAlignment="Left" Click="Setting
                         Margin="255,60,0,0"
                         HorizontalAlignment="Left"
                         VerticalAlignment="Top"
-                        Foreground="white">
+                        Foreground="white"
+                        Click="SearchButton_Click">
                     <Button.Template>
                         <ControlTemplate TargetType="Button">
                             <Border Background="black" CornerRadius="20" BorderBrush="Black" BorderThickness="1">
