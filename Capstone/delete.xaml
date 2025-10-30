@@ -4,8 +4,8 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Capstone"
-        mc:Ignorable="d"
-        Title="succesfull" Height="490" Width="500" WindowStartupLocation="CenterScreen">
+        mc:Ignorable="d" 
+        Title="succesfull" Height="490" Width="500" WindowStyle="None" WindowStartupLocation="CenterScreen">
 
     <Grid>
 
@@ -17,7 +17,7 @@
         <Image HorizontalAlignment="Left" Height="170" Margin="160,79,0,0" VerticalAlignment="Top" Width="200" Source="/Pop out image/marketing-target.png"/>
         <TextBlock HorizontalAlignment="Left" FontSize="20" Margin="155,292,0,0" TextWrapping="Wrap" Text="delete this record?" VerticalAlignment="Top" FontWeight="Bold"/>
 
-        <Button Content="Yes"
+        <Button Content="Yes" Cursor="Hand"
 Width="135"
 Height="50"
 Margin="90,339,0,0"
@@ -38,7 +38,7 @@ Foreground="White" FontSize="20" FontWeight="Bold" Click="Yes_Click" >
                 </ControlTemplate>
             </Button.Template>
         </Button>
-        <Button Content="No"
+        <Button Content="No" Cursor="Hand"
             Width="135"
             Height="50"
             Margin="265,339,0,0"

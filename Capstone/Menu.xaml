@@ -153,7 +153,7 @@
 
                         <Button Margin="1045,0,0,0" 
                                 Style="{StaticResource ResponsiveButton}"
-                                ToolTip="Settings" 
+                                ToolTip="Settings"  Cursor="Hand"
                                 Grid.ColumnSpan="3" 
                                 HorizontalAlignment="Left" 
                                 Click="Setting_Click">
@@ -184,7 +184,7 @@
                                           Style="{StaticResource ResponsiveProfileRole}"/>
                                 <TextBlock Text="My Profile" 
                                           Style="{StaticResource ResponsiveProfileLink}"
-                                          MouseLeftButtonUp="MyProfile_Click"/>
+                                          MouseLeftButtonUp="MyProfile_Click" Cursor="Hand"/>
                             </StackPanel>
                         </StackPanel>
                     </Viewbox>

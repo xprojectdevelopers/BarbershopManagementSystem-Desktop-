@@ -82,7 +82,7 @@
                 <!-- Settings Icon -->
                 <Button Grid.Column="3"
                         Style="{StaticResource ResponsiveButton}"
-                        ToolTip="Settings"
+                        ToolTip="Settings" Cursor="Hand"
                         Click="Setting_Click">
                     <Image Source="/Icon/gear.png" Style="{StaticResource TopBarIcon}"/>
                 </Button>

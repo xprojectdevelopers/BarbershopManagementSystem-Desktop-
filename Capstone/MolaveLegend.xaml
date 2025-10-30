@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Capstone"
         mc:Ignorable="d"
-        Title="MolaveLegend" Height="700" Width="1280"
+        Title="Molave Legend" Height="700" Width="1280"
         WindowState="Maximized"
         ResizeMode="CanResize"
         Background="White">
@@ -164,7 +164,7 @@ MouseLeftButtonUp="Home_Click" Cursor="Hand" Margin="0,0,15,0">
             <!-- Settings Icon -->
             <Button Grid.Column="4"
  Style="{StaticResource ResponsiveButton}"
- ToolTip="Settings"
+ ToolTip="Settings" Cursor="Hand"
  Click="Setting_Click">
                 <Image Source="/Icon/gear.png" Style="{StaticResource TopBarIcon}"/>
             </Button>

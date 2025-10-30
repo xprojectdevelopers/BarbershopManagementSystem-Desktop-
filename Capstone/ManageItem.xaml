@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Capstone"
         mc:Ignorable="d" 
-        Title="PayrollHistory" Height="700" Width="1280"
+        Title="Manage Items" Height="700" Width="1280"
         WindowState="Maximized"
         ResizeMode="CanResize" 
         Background="White">
@@ -243,7 +243,7 @@
                         <!-- Settings Icon -->
                         <Button Grid.Column="3"
          Style="{StaticResource ResponsiveButton}"
-         ToolTip="Settings"
+         ToolTip="Settings" Cursor="Hand"
          Click="Setting_Click">
                             <Image Source="/Icon/gear.png" Style="{StaticResource TopBarIcon}"/>
                         </Button>
@@ -272,7 +272,7 @@
                                 <TextBlock Text="Update existing product details in Molave Streets Barbers."
            FontSize="14" Foreground="Gray" Margin="0,5,0,15" TextWrapping="Wrap"/>
                                 <Button Content="Update"
-        Padding="10,5"
+        Padding="10,5" 
         Background="Blue" Foreground="White"
         FontWeight="Bold" Width="140" Height="40"
         HorizontalAlignment="Left"

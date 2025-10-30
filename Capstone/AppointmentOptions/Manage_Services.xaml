@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Capstone.AppointmentOptions"
         mc:Ignorable="d" 
-        Title="PayrollHistory" Height="800" Width="1280"
+        Title="Manage Service" Height="800" Width="1280"
         WindowState="Maximized"
         ResizeMode="CanResize" 
         Background="White">
@@ -254,7 +254,7 @@
 
                         <!-- Settings Icon -->
                         <Button  
-        Margin="1095,0,0,0" 
+        Margin="1095,0,0,0"  Cursor="Hand"
         Style="{StaticResource ResponsiveButton}"
         ToolTip="Settings" Grid.ColumnSpan="3" HorizontalAlignment="Left" Click="Setting_Click">
                             <Image Source="/Icon/gear.png" Style="{StaticResource TopBarIcon}"/>

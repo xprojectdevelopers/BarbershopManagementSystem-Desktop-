@@ -31,7 +31,7 @@
                 </StackPanel>
 
                 <Button Content="Continue"
-                        Width="170"
+                        Width="170" Cursor="Hand"
                         Height="50"
                         Margin="0,358,0,0"
                         HorizontalAlignment="Center"

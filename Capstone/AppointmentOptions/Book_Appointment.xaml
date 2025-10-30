@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Capstone"
         mc:Ignorable="d" 
-        Title="PayrollHistory" Height="900" Width="1280"
+        Title="Appointment Information" Height="900" Width="1280"
         WindowState="Maximized"
         ResizeMode="CanResize" 
         Background="White">
@@ -251,7 +251,7 @@
 
                         <!-- Settings Icon -->
                         <Button  
-                        Margin="1095,0,0,0" 
+                        Margin="1095,0,0,0"  Cursor="Hand"
                         Style="{StaticResource ResponsiveButton}"
                         ToolTip="Settings" Grid.ColumnSpan="3" HorizontalAlignment="Left" Click="Setting_Click">
                             <Image Source="/Icon/gear.png" Style="{StaticResource TopBarIcon}"/>
@@ -280,7 +280,7 @@
                             </Grid.ColumnDefinitions>
 
                             <Label Content="Appointment Number" FontSize="20" Grid.Row="0" Grid.Column="0" VerticalAlignment="Bottom" Margin="0,0,0,5"/>
-                            <StackPanel Orientation="Horizontal" Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" Margin="00,0,0,0">
+                            <StackPanel Orientation="Horizontal" Cursor="Hand" Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" Margin="00,0,0,0">
                                 <TextBox x:Name="txtItemID" FontSize="30" Width="205" Height="47" VerticalAlignment="Top"/>
                                 <Button Content="Generate Number"
         Width="160" Height="40" Margin="20,0,0,0" Cursor="Hand"

@@ -7,7 +7,7 @@
         mc:Ignorable="d"
         Title="succesfull" Height="490" Width="500" 
         ResizeMode="CanResizeWithGrip"
-        WindowStartupLocation="CenterOwner"
+        WindowStartupLocation="CenterOwner" WindowStyle="None"
         ShowInTaskbar="False">
 
     <Grid>
@@ -22,7 +22,7 @@
 
         <Button Content="Continue"
 Width="170"
-Height="50"
+Height="50" Cursor="Hand"
 Margin="165,344,0,0"
 HorizontalAlignment="Left"
 VerticalAlignment="Top"

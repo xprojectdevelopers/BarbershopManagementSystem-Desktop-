@@ -6,7 +6,7 @@
         xmlns:local="clr-namespace:Capstone"
         mc:Ignorable="d"
         Title="succesfull" Height="490" Width="500" ResizeMode="CanResizeWithGrip"
-        WindowStartupLocation="CenterOwner"
+        WindowStartupLocation="CenterOwner" WindowStyle="None"
         ShowInTaskbar="False">
 
     <Grid>
@@ -19,7 +19,7 @@
         <Image HorizontalAlignment="Left" Height="170" Margin="160,79,0,0" VerticalAlignment="Top" Width="200" Source="/Pop out image/Phone-Hotspot-1--Streamline-Milano.png"/>
         <TextBlock HorizontalAlignment="Left" FontSize="20" Margin="180,292,0,0" TextWrapping="Wrap" Text="Employee ID." VerticalAlignment="Top" FontWeight="Bold"/>
 
-        <Button Content="Continue"
+        <Button Content="Continue" Cursor="Hand"
 Width="170"
 Height="50"
 Margin="165,344,0,0"

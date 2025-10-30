@@ -6,7 +6,7 @@
         xmlns:local="clr-namespace:Capstone"
         mc:Ignorable="d"
         Title="succesfull" Height="490" Width="500" 
-        ResizeMode="CanResizeWithGrip"
+        ResizeMode="CanResizeWithGrip" WindowStyle="None"
         WindowStartupLocation="CenterOwner"
         ShowInTaskbar="False">
 
@@ -22,7 +22,7 @@
 
         <Button Content="Continue"
 Width="170"
-Height="50"
+Height="50" Cursor="Hand"
 Margin="165,344,0,0"
 HorizontalAlignment="Left"
 VerticalAlignment="Top"

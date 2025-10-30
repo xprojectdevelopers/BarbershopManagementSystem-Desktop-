@@ -4,6 +4,7 @@ using System;
 using System.Configuration;
 using System.Threading.Tasks;
 using System.Windows;
+using System.Windows.Input;
 using System.Windows.Media.Imaging;
 
 namespace Capstone
@@ -12,11 +13,13 @@ namespace Capstone
     {
         private Supabase.Client supabase;
         private string currentEmployeeId;
+        private Window? currentModalWindow;
 
         public ProfileCashier()
         {
             InitializeComponent();
             Loaded += async (s, e) => await InitializeData();
+            ModalOverlay.PreviewMouseLeftButtonDown += ModalOverlay_Click;
         }
 
         private async Task InitializeData()
@@ -141,6 +144,33 @@ namespace Capstone
             Menu menu = new Menu();
             menu.Show();
             this.Close();
+        }
+
+        private void Setting_Click(object sender, RoutedEventArgs e)
+        {
+            ModalOverlay.Visibility = Visibility.Visible;
+
+            currentModalWindow = new ModalsSetting();
+            currentModalWindow.Owner = this;
+            currentModalWindow.WindowStartupLocation = WindowStartupLocation.Manual;
+            currentModalWindow.Left = this.Left + this.ActualWidth - currentModalWindow.Width - 610;
+            currentModalWindow.Top = this.Top + 295;
+            currentModalWindow.Closed += ModalWindow_Closed;
+            currentModalWindow.Show();
+        }
+
+        private void ModalWindow_Closed(object sender, EventArgs e)
+        {
+            ModalOverlay.Visibility = Visibility.Collapsed;
+            currentModalWindow = null;
+        }
+
+        private void ModalOverlay_Click(object sender, MouseButtonEventArgs e)
+        {
+            if (currentModalWindow != null)
+                currentModalWindow.Close();
+
+            e.Handled = true;
         }
 
         [Table("Add_Employee")]

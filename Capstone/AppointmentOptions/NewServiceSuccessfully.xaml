@@ -7,7 +7,7 @@
         mc:Ignorable="d"
         Title="NewServiceSuccessfully" Height="490" Width="500" 
         ResizeMode="CanResizeWithGrip"
-        WindowStartupLocation="CenterOwner"
+        WindowStartupLocation="CenterOwner" WindowStyle="None"
         ShowInTaskbar="False">
 
     <Grid>
@@ -21,7 +21,7 @@
         <TextBlock HorizontalAlignment="Left" FontSize="20" Margin="160,292,0,0" TextWrapping="Wrap" Text="added successfully." VerticalAlignment="Top" FontWeight="Bold"/>
 
         <Button Content="Continue"
-Width="170"
+Width="170" Cursor="Hand"
 Height="50"
 Margin="165,344,0,0"
 HorizontalAlignment="Left"

@@ -4,7 +4,7 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         mc:Ignorable="d"
-        Title="Customers"
+        Title="List of Subcribers"
         WindowState="Maximized"
         Background="White" Height="736" Width="868">
 
@@ -74,7 +74,7 @@
                     <!-- Settings Icon -->
                     <Button Grid.Column="4"
          Style="{StaticResource ResponsiveButton}"
-         ToolTip="Settings"
+         ToolTip="Settings" Cursor="Hand"
          Click="Setting_Click">
                         <Image Source="/Icon/gear.png" Style="{StaticResource TopBarIcon}"/>
                     </Button>

@@ -88,15 +88,12 @@
             <Grid Margin="12,224,-12,-224">
 
                 <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,0,20,0">
-                    <Button Click="BackButton_Click" Style="{StaticResource ResponsiveButton}">
+                    <Button Click="BackButton_Click" Cursor="Hand" Style="{StaticResource ResponsiveButton}">
                         <Image Source="/Icon/house.png" Style="{StaticResource TopBarIcon}"/>
                     </Button>
-                    
-                    <Button Style="{StaticResource ResponsiveButton}" ToolTip="Notifications">
-                        <Image Source="/Icon/bell.png" Style="{StaticResource TopBarIcon}"/>
-                    </Button>
 
-                    <Button Style="{StaticResource ResponsiveButton}" ToolTip="Settings">
+
+                    <Button Style="{StaticResource ResponsiveButton}" Cursor="Hand" ToolTip="Settings" Click="Setting_Click">
                         <Image Source="/Icon/gear.png" Style="{StaticResource TopBarIcon}"/>
                     </Button>
                 </StackPanel>
@@ -144,5 +141,12 @@
                          Cursor="Arrow"/>
             </Grid>
         </StackPanel>
+
+        <!-- Gray Overlay for Modal Effect - MOVED OUTSIDE ScrollViewer -->
+        <Border x:Name="ModalOverlay"
+            Background="#80000000"
+            Visibility="Collapsed"
+            IsHitTestVisible="True"
+            MouseLeftButtonDown="ModalOverlay_Click"/>
     </Grid>
 </Window>

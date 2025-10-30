@@ -7,7 +7,7 @@
         mc:Ignorable="d"
         Title="AddItem" Height="605" 
         Width="890" 
-        MinWidth="400"
+        MinWidth="400" WindowStyle="None"
         MinHeight="400"
         ResizeMode="CanResizeWithGrip"
         WindowStartupLocation="CenterOwner"

@@ -6,7 +6,7 @@
         xmlns:local="clr-namespace:Capstone.AppointmentOptions"
         mc:Ignorable="d"
         Title="ServiceDescriptionSuccessful" Height="490" Width="500" 
-        ResizeMode="CanResizeWithGrip"
+        ResizeMode="CanResizeWithGrip" WindowStyle="None"
         WindowStartupLocation="CenterOwner"
         ShowInTaskbar="False">
 
@@ -20,7 +20,7 @@
         <Image HorizontalAlignment="Left" Height="170" Margin="160,79,0,0" VerticalAlignment="Top" Width="200" Source="/Pop out image/slang-to-the-moon.png"/>
         <TextBlock HorizontalAlignment="Left" FontSize="20" Margin="160,292,0,0" TextWrapping="Wrap" Text="have been applied." VerticalAlignment="Top" FontWeight="Bold"/>
 
-        <Button Content="Continue"
+        <Button Content="Continue" Cursor="Hand"
 Width="170"
 Height="50"
 Margin="165,344,0,0"

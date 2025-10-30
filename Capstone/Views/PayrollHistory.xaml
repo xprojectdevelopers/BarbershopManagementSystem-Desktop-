@@ -6,7 +6,7 @@
         xmlns:local="clr-namespace:Capstone"
         xmlns:sys="clr-namespace:System;assembly=mscorlib"
         mc:Ignorable="d"
-        Title="PayrollHistory" Height="700" Width="1280"
+        Title="Payroll History" Height="700" Width="1280"
         WindowState="Maximized"
         ResizeMode="CanResize"
         Background="White">
@@ -88,7 +88,7 @@ MouseLeftButtonUp="Home_Click" Cursor="Hand" Margin="0,0,15,0">
 
                 <!-- Settings Icon -->
                 <Button  
-Margin="1095,0,0,0" 
+Margin="1095,0,0,0" Cursor="Hand"
 Style="{StaticResource ResponsiveButton}"
 ToolTip="Settings" Grid.ColumnSpan="3" HorizontalAlignment="Left" Click="Setting_Click">
                     <Image Source="/Icon/gear.png" Style="{StaticResource TopBarIcon}"/>
