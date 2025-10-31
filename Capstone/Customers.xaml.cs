@@ -289,6 +289,10 @@ namespace Capstone
         private async void Refresh_Click(object sender, RoutedEventArgs e)
         {
             await LoadQuickMessages();
+            await LoadCustomerProfilesCount();
+            await LoadSubscribersCount();
+            await LoadMessageCount();
+            await LoadLegendCount();
         }
 
         private async Task LoadMessageCount()

@@ -248,7 +248,7 @@
                             <ColumnDefinition Width="Auto"/>
                         </Grid.ColumnDefinitions>
 
-                        
+
 
                         <!-- Settings Icon -->
                         <Button  
@@ -338,7 +338,7 @@ Margin="10,0,0,0"/>
                             </Grid.ColumnDefinitions>
 
                             <!-- Row 1: Item Name, Category, Price -->
-                            <Grid Margin="150,0,40,0">
+                            <Grid Margin="0,0,40,0">
                                 <Grid.RowDefinitions>
                                     <RowDefinition Height="Auto"/>
                                     <RowDefinition Height="Auto"/>
@@ -349,6 +349,8 @@ Margin="10,0,0,0"/>
                                     <ColumnDefinition Width="Auto"/>
                                     <ColumnDefinition Width="280"/>
                                     <ColumnDefinition Width="40"/>
+                                    <ColumnDefinition Width="205"/>
+                                    <ColumnDefinition Width="20"/>
                                     <ColumnDefinition Width="205"/>
                                     <ColumnDefinition Width="*"/>
                                 </Grid.ColumnDefinitions>
@@ -414,6 +416,31 @@ Margin="10,0,0,0"/>
                                         </ControlTemplate>
                                     </Button.Template>
                                 </Button>
+
+                                <!-- Refresh Button -->
+                                <Button Grid.Column="6" 
+                                        Grid.Row="1" 
+                                        Content="Refresh" 
+                                        Cursor="Hand"
+                                        Height="47"
+                                        VerticalAlignment="Center"
+                                        Foreground="white"
+                                        Click="RefreshButton_Click">
+                                    <Button.Template>
+                                        <ControlTemplate TargetType="Button">
+                                            <Border Background="black" 
+                                                CornerRadius="20" 
+                                                BorderBrush="Black" 
+                                                BorderThickness="1">
+                                                <ContentPresenter HorizontalAlignment="Center"
+                                                              VerticalAlignment="Center"
+                                                              RecognizesAccessKey="True"
+                                                              TextElement.Foreground="{TemplateBinding Foreground}"/>
+                                            </Border>
+                                        </ControlTemplate>
+                                    </Button.Template>
+                                </Button>
+
                             </Grid>
                         </Grid>
 

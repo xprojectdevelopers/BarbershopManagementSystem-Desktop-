@@ -266,6 +266,12 @@ namespace Capstone.AppointmentOptions
             ApplyFilters();
         }
 
+        private async void RefreshButton_Click(object sender, RoutedEventArgs e)
+        {
+            await LoadAppointments();
+            await UpdateStatistics();
+        }
+
         private void Home_Click(object sender, MouseButtonEventArgs e)
         {
             Appointments Appointments = new Appointments();

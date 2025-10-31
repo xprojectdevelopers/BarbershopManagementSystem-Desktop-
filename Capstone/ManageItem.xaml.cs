@@ -284,6 +284,8 @@ namespace Capstone
         private async void Refresh_Click(object sender, RoutedEventArgs e)
         {
             await LoadItems();
+            await LoadItemCount();
+            await LoadProductCount();
         }
 
         private void Setting_Click(object sender, RoutedEventArgs e)
