@@ -18,7 +18,7 @@ namespace Capstone.AppointmentOptions
         private Supabase.Client? supabase;
         private ObservableCollection<AppointmentModel> appointments = new();
         private int CurrentPage = 1;
-        private int PageSize = 5;
+        private int PageSize = 10;
         private int TotalPages = 1;
         private Window? currentModalWindow;
 
@@ -32,7 +32,7 @@ namespace Capstone.AppointmentOptions
         private async Task InitializeData()
         {
             await InitializeSupabaseAsync();
-            await LoadAppointments();
+            await LoadOnGoingAppointments();
         }
 
         private async Task InitializeSupabaseAsync()
@@ -55,32 +55,58 @@ namespace Capstone.AppointmentOptions
             await supabase.InitializeAsync();
         }
 
-        private async Task LoadAppointments()
+        private async Task LoadOnGoingAppointments()
         {
             if (supabase == null) return;
 
             try
             {
+                // Get ONLY "On Going" appointments
                 var result = await supabase
                     .From<AppointmentModel>()
-                    .Where(x => x.Status == "On Going")
-                    .Order(x => x.CreatedAt, Ordering.Descending)
+                    .Filter("status", Operator.Equals, "On Going")
+                    .Order("created_at", Ordering.Descending)
                     .Get();
 
-                appointments = new ObservableCollection<AppointmentModel>(result.Models);
+                Console.WriteLine($"Found {result?.Models?.Count ?? 0} 'On Going' appointments");
 
-                TotalPages = (int)Math.Ceiling(appointments.Count / (double)PageSize);
-                LoadPage(1);
-                GeneratePaginationButtons();
+                appointments.Clear();
+
+                if (result?.Models != null && result.Models.Count > 0)
+                {
+                    foreach (var model in result.Models)
+                    {
+                        Console.WriteLine($"📋 Adding: {model.ReceiptCode} | {model.CustomerName} | Status: {model.Status}");
+                        appointments.Add(model);
+                    }
+
+                    TotalPages = (int)Math.Ceiling(appointments.Count / (double)PageSize);
+                    if (TotalPages == 0) TotalPages = 1;
+
+                    LoadPage(CurrentPage);
+                    GeneratePaginationButtons();
+                }
+                else
+                {
+                    AppointmentsGrid.ItemsSource = null;
+                    // No message box - just show empty table
+                }
             }
             catch (Exception ex)
             {
                 MessageBox.Show($"❌ Error loading appointments: {ex.Message}");
+                Console.WriteLine($"Full error: {ex}");
             }
         }
 
         private void LoadPage(int pageNumber)
         {
+            if (appointments == null || appointments.Count == 0)
+            {
+                AppointmentsGrid.ItemsSource = null;
+                return;
+            }
+
             CurrentPage = pageNumber;
 
             var pageData = appointments
@@ -88,7 +114,11 @@ namespace Capstone.AppointmentOptions
                 .Take(PageSize)
                 .ToList();
 
+            AppointmentsGrid.ItemsSource = null;
             AppointmentsGrid.ItemsSource = pageData;
+            AppointmentsGrid.Items.Refresh();
+
+            Console.WriteLine($"Displaying page {pageNumber} with {pageData.Count} items");
         }
 
         private void GeneratePaginationButtons()
@@ -102,9 +132,12 @@ namespace Capstone.AppointmentOptions
                     Content = i.ToString(),
                     Margin = new Thickness(5),
                     Padding = new Thickness(10, 5, 10, 5),
-                    Foreground = System.Windows.Media.Brushes.Gray,
-                    FontWeight = (i == CurrentPage) ? FontWeights.Bold : FontWeights.Normal,
-                    Cursor = Cursors.Hand
+                    Background = i == CurrentPage ? System.Windows.Media.Brushes.Black : System.Windows.Media.Brushes.Transparent,
+                    Foreground = i == CurrentPage ? System.Windows.Media.Brushes.White : System.Windows.Media.Brushes.Black,
+                    FontWeight = FontWeights.Bold,
+                    Cursor = Cursors.Hand,
+                    BorderThickness = new Thickness(1),
+                    BorderBrush = System.Windows.Media.Brushes.Black
                 };
 
                 int pageNum = i;
@@ -118,69 +151,49 @@ namespace Capstone.AppointmentOptions
             }
         }
 
-        // ✅ Navigation handlers
+        // Navigation Methods
         private void Home_Click(object sender, MouseButtonEventArgs e)
         {
-            Menu menu = new Menu();
-            menu.Show();
-            this.Close();
+            new Menu().Show();
+            Close();
         }
 
         private void Book_Click(object sender, RoutedEventArgs e)
         {
-            Book_Appointment bookWindow = new Book_Appointment();
-            bookWindow.Show();
-            this.Close();
+            new Book_Appointment().Show();
+            Close();
         }
 
         private void Record_Click(object sender, RoutedEventArgs e)
         {
-            Appointment_Records recordWindow = new Appointment_Records();
-            recordWindow.Show();
-            this.Close();
+            new Appointment_Records().Show();
+            Close();
         }
 
         private void Service_Click(object sender, RoutedEventArgs e)
         {
-            Manage_Services serviceWindow = new Manage_Services();
-            serviceWindow.Show();
-            this.Close();
+            new Manage_Services().Show();
+            Close();
         }
 
-        // Refresh button click
         private async void Refresh_Click(object sender, RoutedEventArgs e)
         {
-            await LoadAppointments();
-            MessageBox.Show("🔄 Appointments refreshed!");
+            await LoadOnGoingAppointments();
         }
 
-        // Test notification button click
-        private void TestNotificationButton_Click(object sender, RoutedEventArgs e)
-        {
-            MessageBox.Show("🔔 Test notification sent!");
-        }
-
-        private void Notification_Click(object sender, RoutedEventArgs e)
-        {
-            ModalOverlay.Visibility = Visibility.Visible;
-
-            currentModalWindow = new ModalsNotification();
-            currentModalWindow.Owner = this;
-            currentModalWindow.WindowStartupLocation = WindowStartupLocation.Manual;
-            currentModalWindow.Left = this.Left + this.ActualWidth - currentModalWindow.Width - 95;
-            currentModalWindow.Top = this.Top + 110;
-            currentModalWindow.Closed += ModalWindow_Closed;
-            currentModalWindow.Show();
-        }
-
+        // Modal Methods
         private void Setting_Click(object sender, RoutedEventArgs e)
         {
-            ModalOverlay.Visibility = Visibility.Visible;
+            ShowModal(new ModalsSetting(), offsetX: 70);
+        }
 
-            currentModalWindow = new ModalsSetting();
+        private void ShowModal(Window modal, int offsetX)
+        {
+            ModalOverlay.Visibility = Visibility.Visible;
+            currentModalWindow = modal;
             currentModalWindow.Owner = this;
             currentModalWindow.WindowStartupLocation = WindowStartupLocation.Manual;
-            currentModalWindow.Left = this.Left + this.ActualWidth - currentModalWindow.Width - 70;
+            currentModalWindow.Left = this.Left + this.ActualWidth - currentModalWindow.Width - offsetX;
             currentModalWindow.Top = this.Top + 110;
             currentModalWindow.Closed += ModalWindow_Closed;
             currentModalWindow.Show();
@@ -194,27 +207,21 @@ namespace Capstone.AppointmentOptions
 
         private void ModalOverlay_Click(object sender, MouseButtonEventArgs e)
         {
-            if (currentModalWindow != null)
-                currentModalWindow.Close();
-
+            currentModalWindow?.Close();
             e.Handled = true;
         }
 
-        // ✅ Approve / Reject appointment handlers
+        // Appointment Approval/Rejection
         private async void ApproveAppointment_Click(object sender, RoutedEventArgs e)
         {
             if ((sender as Button)?.DataContext is AppointmentModel selected)
-            {
                 await UpdateAppointmentStatus(selected, "Approved");
-            }
         }
 
         private async void RejectAppointment_Click(object sender, RoutedEventArgs e)
         {
             if ((sender as Button)?.DataContext is AppointmentModel selected)
-            {
                 await UpdateAppointmentStatus(selected, "Declined");
-            }
         }
 
         private async Task UpdateAppointmentStatus(AppointmentModel selected, string newStatus)
@@ -223,64 +230,39 @@ namespace Capstone.AppointmentOptions
 
             try
             {
-                // Create a new instance with updated status
-                var updatedAppointment = new AppointmentModel
-                {
-                    Id = selected.Id,
-                    CustomerId = selected.CustomerId,
-                    CustomerName = selected.CustomerName,
-                    ContactNumber = selected.ContactNumber,
-                    CustomerBadge = selected.CustomerBadge,
-                    Service = selected.Service,
-                    Barber = selected.Barber,
-                    Date = selected.Date,
-                    Time = selected.Time,
-                    Subtotal = selected.Subtotal,
-                    AppointmentFee = selected.AppointmentFee,
-                    Total = selected.Total,
-                    PaymentMethod = selected.PaymentMethod,
-                    ReceiptCode = selected.ReceiptCode,
-                    Status = newStatus,  // ✅ Updated status
-                    PushToken = selected.PushToken,
-                    CreatedAt = selected.CreatedAt
-                };
-
+                // Update status in database to "Approved" or "Declined"
                 var updated = await supabase
                     .From<AppointmentModel>()
                     .Where(x => x.Id == selected.Id)
-                    .Update(updatedAppointment);
+                    .Set(x => x.Status, newStatus)
+                    .Update();
 
                 if (updated.Models != null && updated.Models.Count > 0)
                 {
-                    // Remove from the current list and refresh
+                    // Remove from current view (but it stays in database with new status)
                     appointments.Remove(selected);
 
-                    // Recalculate pagination
                     TotalPages = (int)Math.Ceiling(appointments.Count / (double)PageSize);
-
-                    // Adjust current page if needed
                     if (CurrentPage > TotalPages && TotalPages > 0)
-                    {
                         CurrentPage = TotalPages;
-                    }
 
                     LoadPage(CurrentPage);
                     GeneratePaginationButtons();
 
-                    MessageBox.Show($"✅ Appointment {newStatus}!\nID: {selected.Id}");
+                    MessageBox.Show($"✅ Appointment {newStatus}!");
                 }
                 else
                 {
-                    MessageBox.Show("⚠️ Failed to update appointment. No rows affected.");
+                    MessageBox.Show("⚠️ No rows were updated.");
                 }
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"❌ Error updating appointment: {ex.Message}\n\nDetails: {ex.InnerException?.Message}");
+                MessageBox.Show($"❌ Error updating appointment: {ex.Message}");
             }
         }
 
-        // 🔹 Supabase Appointment Model
+        // Model definition
         [Table("appointment_sched")]
         public class AppointmentModel : BaseModel
         {

@@ -185,7 +185,17 @@ namespace Capstone
         private void PopulateForm(BarbershopManagementSystem employee)
         {
             txtFullName.Text = employee.Fname ?? "";
-            bdate.SelectedDate = employee.Bdate;
+
+            // Convert string to DateTime for DatePicker - Birthdate
+            if (!string.IsNullOrEmpty(employee.Bdate) && DateTime.TryParse(employee.Bdate, out DateTime birthdate))
+            {
+                bdate.SelectedDate = birthdate;
+            }
+            else
+            {
+                bdate.SelectedDate = null;
+            }
+
             SetComboBoxSelection(Gender, employee.Gender);
             txtAddress.Text = employee.Address ?? "";
             txtContactNumber.Text = employee.Cnumber ?? "";
@@ -196,7 +206,17 @@ namespace Capstone
             txtEmployeePassword.Text = employee.Epassword ?? "";
             txtNickname.Text = employee.Nickname ?? "";
             SetComboBoxSelection(cmbBarberExpertise, employee.BarberExpertise);
-            dateHiredPicker.SelectedDate = employee.DateHired;
+
+            // Convert string to DateTime for DatePicker - Date Hired
+            if (!string.IsNullOrEmpty(employee.DateHired) && DateTime.TryParse(employee.DateHired, out DateTime dateHired))
+            {
+                dateHiredPicker.SelectedDate = dateHired;
+            }
+            else
+            {
+                dateHiredPicker.SelectedDate = null;
+            }
+
             SetComboBoxSelection(cmbEmploymentStatus, employee.Estatus);
             SetCheckBoxes(workSchedulePanel, employee.Wsched);
 
@@ -602,7 +622,10 @@ namespace Capstone
                 }
 
                 employee.Fname = txtFullName.Text.Trim();
-                employee.Bdate = bdate.SelectedDate;
+
+                // Convert DateTime? to String for Bdate
+                employee.Bdate = bdate.SelectedDate?.ToString("yyyy-MM-dd") ?? string.Empty;
+
                 employee.Gender = GetComboBoxSelectedValue(Gender);
                 employee.Address = txtAddress.Text.Trim();
                 employee.Cnumber = txtContactNumber.Text.Trim();
@@ -632,7 +655,9 @@ namespace Capstone
                     employee.BarberExpertise = string.Empty;
                 }
 
-                employee.DateHired = dateHiredPicker.SelectedDate;
+                // Convert DateTime? to String for DateHired
+                employee.DateHired = dateHiredPicker.SelectedDate?.ToString("yyyy-MM-dd") ?? string.Empty;
+
                 employee.Estatus = GetComboBoxSelectedValue(cmbEmploymentStatus);
                 employee.Wsched = GetSelectedCheckBoxes(workSchedulePanel);
 
@@ -926,7 +951,7 @@ namespace Capstone
             public string Fname { get; set; }
 
             [Column("Birthdate")]
-            public DateTime? Bdate { get; set; }
+            public string Bdate { get; set; }
 
             [Column("Gender")]
             public string Gender { get; set; }
@@ -962,7 +987,7 @@ namespace Capstone
             public string BarberExpertise { get; set; }
 
             [Column("Date_Hired")]
-            public DateTime? DateHired { get; set; }
+            public string DateHired { get; set; }
 
             [Column("Employee_Status")]
             public string Estatus { get; set; }

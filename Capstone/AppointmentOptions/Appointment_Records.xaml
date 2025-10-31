@@ -421,7 +421,7 @@ Margin="10,0,0,0"/>
                         <DataGrid x:Name="AppointmentDataGrid" AutoGenerateColumns="False"
                           CanUserAddRows="False" CanUserDeleteRows="False"
                           HeadersVisibility="Column"
-                          RowHeight="35" FontSize="14"
+                          RowHeight="30.10" FontSize="14"
                           BorderBrush="#DDD" BorderThickness="1"
                           GridLinesVisibility="All">
                             <DataGrid.ColumnHeaderStyle>

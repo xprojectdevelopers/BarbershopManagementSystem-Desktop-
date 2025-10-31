@@ -228,30 +228,35 @@
                     </Grid.ColumnDefinitions>
 
                     <Label Content="Appointment Number" FontSize="20" Grid.Row="0" Grid.Column="0" VerticalAlignment="Bottom" Margin="0,0,0,5"/>
+
                     <StackPanel Orientation="Horizontal" Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" Margin="0,0,0,0">
-                        <TextBox x:Name="txtItemID" FontSize="30" Width="205" Height="47" VerticalAlignment="Top"/>
-                        <Button Content="Search" Cursor="Hand"
-                                Width="160" Height="47" 
-                                Margin="20,0,0,0"
-                                VerticalAlignment="Top" 
-                                Grid.Row="1"
-                                Foreground="white">
+                        <StackPanel>
+                            <TextBox x:Name="txtAppNumber" VerticalContentAlignment="Center" FontSize="16" Width="205" Height="47" VerticalAlignment="Top"/>
+                            <TextBlock x:Name="txtAppNumberError" Foreground="Red" FontSize="12" 
+                       Margin="0,5,0,0" VerticalAlignment="Top" Visibility="Collapsed"/>
+                        </StackPanel>
+
+                        <Button Content="Search" Cursor="Hand" Click="Search_Click"
+                Width="160" Height="47" 
+                Margin="20,0,0,0"
+                VerticalAlignment="Top" 
+                Foreground="white">
                             <Button.Template>
                                 <ControlTemplate TargetType="Button">
                                     <Border Background="black" 
-                                            CornerRadius="20" 
-                                            BorderBrush="White" 
-                                            BorderThickness="1">
+                            CornerRadius="20" 
+                            BorderBrush="White" 
+                            BorderThickness="1">
                                         <StackPanel Orientation="Horizontal" 
-                                                    HorizontalAlignment="Center"
-                                                    VerticalAlignment="Center">
+                                    HorizontalAlignment="Center"
+                                    VerticalAlignment="Center">
                                             <Image Source="/Icon/magnifying-glass.png" 
-                                                   Width="20" 
-                                                   Height="20" 
-                                                   Margin="0,0,8,0"/>
+                                   Width="20" 
+                                   Height="20" 
+                                   Margin="0,0,8,0"/>
                                             <TextBlock Text="Search" 
-                                                       Foreground="{TemplateBinding Foreground}"
-                                                       VerticalAlignment="Center"/>
+                                       Foreground="{TemplateBinding Foreground}"
+                                       VerticalAlignment="Center"/>
                                         </StackPanel>
                                     </Border>
                                 </ControlTemplate>
@@ -277,12 +282,12 @@
                     </Grid.ColumnDefinitions>
 
                     <Label Content="Customer Name" FontSize="20" Grid.Row="0" Grid.Column="0" VerticalAlignment="Bottom" Margin="0,0,0,5"/>
-                    <TextBox x:Name="txtItemName" FontSize="30" Grid.Row="1" Grid.Column="0" Height="47"/>
+                    <TextBox x:Name="txtCustomerName" IsReadOnly="True" VerticalContentAlignment="Center" FontSize="16" Grid.Row="1" Grid.Column="0" Height="47"/>
 
                     <Label Content="Barber Assigned" FontSize="20" Grid.Row="0" Grid.Column="2" VerticalAlignment="Bottom" Margin="0,0,0,5"/>
                     <Grid Grid.Row="1" Grid.Column="2">
-                        <TextBox x:Name="txtPrice" 
-                                 FontSize="30" 
+                        <TextBox x:Name="txtAssigne" IsReadOnly="True"
+                                 FontSize="16" 
                                  Height="47"
                                  VerticalContentAlignment="Center"
                                  BorderBrush="Gray"
@@ -290,7 +295,7 @@
                     </Grid>
 
                     <Label Content="Service" FontSize="20" Grid.Row="0" Grid.Column="4" VerticalAlignment="Bottom" Margin="0,0,0,5"/>
-                    <TextBox FontSize="30" Grid.Row="1" Grid.Column="4" Height="47"/>
+                    <TextBox x:Name="txtService" IsReadOnly="True" VerticalContentAlignment="Center" FontSize="16" Grid.Row="1" Grid.Column="4" Height="47"/>
                 </Grid>
 
                 <!-- Row 2: Date, Time, Payment Method -->
@@ -310,13 +315,13 @@
                     </Grid.ColumnDefinitions>
 
                     <Label Content="Date" FontSize="20" Grid.Row="0" Grid.Column="0" VerticalAlignment="Bottom" Margin="0,0,0,5"/>
-                    <TextBox FontSize="30" Grid.Row="1" Grid.Column="0" Height="47"/>
+                    <TextBox x:Name="txtDate" IsReadOnly="True" VerticalContentAlignment="Center" FontSize="16" Grid.Row="1" Grid.Column="0" Height="47"/>
 
                     <Label Content="Time" FontSize="20" Grid.Row="0" Grid.Column="2" VerticalAlignment="Bottom" Margin="0,0,0,5"/>
-                    <TextBox FontSize="30" Grid.Row="1" Grid.Column="2" Height="47"/>
+                    <TextBox x:Name="txtTime" IsReadOnly="True" VerticalContentAlignment="Center" FontSize="16" Grid.Row="1" Grid.Column="2" Height="47"/>
 
                     <Label Content="Payment Method" FontSize="20" Grid.Row="0" Grid.Column="4" VerticalAlignment="Bottom" Margin="0,0,0,5"/>
-                    <TextBox FontSize="30" Grid.Row="1" Grid.Column="4" Height="47"/>
+                    <TextBox x:Name="txtPayMethod" IsReadOnly="True" VerticalContentAlignment="Center" FontSize="16" Grid.Row="1" Grid.Column="4" Height="47"/>
                 </Grid>
 
                 <!-- Row 3: Total, Appointment Status, Payment Status -->
@@ -337,7 +342,7 @@
 
                     <Label Content="Total" FontSize="20" Grid.Row="0" Grid.Column="0" VerticalAlignment="Bottom" Margin="0,0,0,5"/>
                     <Grid Grid.Row="1" Grid.Column="0">
-                        <TextBox FontSize="30" 
+                        <TextBox FontSize="16" x:Name="Total" IsReadOnly="True"
                                  Height="47"
                                  Padding="30,0,10,0"
                                  VerticalContentAlignment="Center"
@@ -352,29 +357,29 @@
                     </Grid>
 
                     <Label Content="Appointment Status" FontSize="20" Grid.Row="0" Grid.Column="2" VerticalAlignment="Bottom" Margin="0,0,0,5"/>
-                    <ComboBox Grid.Row="1" Grid.Column="2" Height="47" FontSize="16" 
+                    <ComboBox x:Name="cmbAppStatus" Grid.Row="1" Grid.Column="2" Height="47" FontSize="16" 
                               SelectedIndex="-1" Style="{StaticResource TextBoxStyleComboBox}">
                         <ComboBoxItem IsEnabled="False" IsSelected="True" Foreground="Gray">Select Appointment Status</ComboBoxItem>
-                        <ComboBoxItem>Confirmed</ComboBoxItem>
-                        <ComboBoxItem>Pending</ComboBoxItem>
-                        <ComboBoxItem>Cancelled</ComboBoxItem>
+                        <ComboBoxItem>Approved</ComboBoxItem>
+                        <ComboBoxItem>On Going</ComboBoxItem>
+                        <ComboBoxItem>Completed</ComboBoxItem>
+                        <ComboBoxItem>No Show</ComboBoxItem>
                     </ComboBox>
 
                     <Label Content="Payment Status" FontSize="20" Grid.Row="0" Grid.Column="4" VerticalAlignment="Bottom" Margin="0,0,0,5"/>
-                    <ComboBox Grid.Row="1" Grid.Column="4" Height="47" FontSize="16" 
+                    <ComboBox x:Name="cmbPayStatus" Grid.Row="1" Grid.Column="4" Height="47" FontSize="16" 
                               SelectedIndex="-1" Style="{StaticResource TextBoxStyleComboBox}">
                         <ComboBoxItem IsEnabled="False" IsSelected="True" Foreground="Gray">Select Payment Status</ComboBoxItem>
                         <ComboBoxItem>Paid</ComboBoxItem>
                         <ComboBoxItem>Unpaid</ComboBoxItem>
-                        <ComboBoxItem>Partial</ComboBoxItem>
                     </ComboBox>
                 </Grid>
 
                 <!-- Buttons Section -->
                 <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,30,0,0">
-                    <Button Content="Clear" Cursor="Hand"
+                    <Button Content="Clear" Cursor="Hand" 
                             Width="205"
-                            Height="40"
+                            Height="40" Click="Clear_Click"
                             Margin="0,0,20,0"
                             HorizontalAlignment="Left"
                             VerticalAlignment="Top"
@@ -397,7 +402,7 @@
                         </Button.Template>
                     </Button>
 
-                    <Button Content="Update" Cursor="Hand"
+                    <Button Content="Update" Cursor="Hand" Click="Update_Click"
                             Width="205"
                             Height="40"
                             Margin="0,0,0,0"
@@ -424,5 +429,12 @@
                 </StackPanel>
             </StackPanel>
         </Border>
+
+        <!-- Gray Overlay for Modal Effect -->
+        <Border x:Name="ModalOverlay"
+                Grid.RowSpan="3"
+                Background="#80000000"
+                Visibility="Collapsed"
+                IsHitTestVisible="True"/>
     </Grid>
 </Window>
