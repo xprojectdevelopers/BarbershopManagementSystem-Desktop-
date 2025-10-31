@@ -92,7 +92,7 @@ namespace Capstone.AppointmentOptions
                     currentModalWindow.WindowStartupLocation = WindowStartupLocation.CenterOwner;
                     currentModalWindow.Closed += ModalWindow_Closed;
                     currentModalWindow.Show();
-                    ClearForm();
+                    Clear();
                     return;
                 }
 
@@ -177,6 +177,24 @@ namespace Capstone.AppointmentOptions
         private void ClearForm()
         {
             txtAppNumber.Clear();
+            txtCustomerName.Clear();
+            txtService.Clear();
+            txtAssigne.Clear();
+            txtDate.Clear();
+            txtTime.Clear();
+            txtPayMethod.Clear();
+            Total.Clear();
+            cmbAppStatus.SelectedIndex = 0;
+            cmbPayStatus.SelectedIndex = 0;
+            currentAppointment = null;
+
+            // Clear error message when clearing form
+            txtAppNumberError.Visibility = Visibility.Collapsed;
+            txtAppNumberError.Text = string.Empty;
+        }
+
+        private void Clear()
+        {
             txtCustomerName.Clear();
             txtService.Clear();
             txtAssigne.Clear();
