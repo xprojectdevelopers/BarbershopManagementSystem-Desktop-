@@ -282,7 +282,7 @@
                             <Label Content="Appointment Number" FontSize="20" Grid.Row="0" Grid.Column="0" VerticalAlignment="Bottom" Margin="0,0,0,5"/>
                             <StackPanel Orientation="Horizontal" Cursor="Hand" Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" Margin="00,0,0,0">
                                 <TextBox x:Name="txtItemID" FontSize="30" Width="205" Height="47" VerticalAlignment="Top"/>
-                                <Button Content="Generate Number"
+                                <Button Content="Generate Number" Click="btnGeneratedNum_Click"
         Width="160" Height="40" Margin="20,0,0,0" Cursor="Hand"
         Foreground="blue" VerticalAlignment="Top">
                                     <Button.Template>
@@ -454,7 +454,7 @@ SelectedIndex="-1" Style="{StaticResource TextBoxStyleComboBox}">
                             <Button Content="View Receipt" Cursor="Hand"
 Width="205"
 Height="40"
-Margin="0,37,0,0"
+Margin="0,37,0,0" Click="View_Click"
 HorizontalAlignment="Left"
 VerticalAlignment="Top" Grid.Row="1"
 Foreground="white">

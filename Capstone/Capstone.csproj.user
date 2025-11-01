@@ -7,10 +7,16 @@
     <Compile Update="AppointmentOptions\AppointmentDeleteSuccessful.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Update="AppointmentOptions\AppointmentRequestApproved.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Update="AppointmentOptions\AppointmentTracker.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Update="AppointmentOptions\AssignNew_Service.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Update="AppointmentOptions\BookAppointmentSuccessful.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Update="AppointmentOptions\Book_Appointment.xaml.cs">
@@ -20,6 +26,12 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Update="AppointmentOptions\ConfirmDecline.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Update="AppointmentOptions\DeclineAppointment.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Update="AppointmentOptions\DeclineAppointmentSuccess.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Update="AppointmentOptions\DeleteAppointment.xaml.cs">
@@ -38,6 +50,9 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Update="AppointmentOptions\Service_Description.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Update="AppointmentOptions\ViewReceipt.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Update="MLVusers.xaml.cs">

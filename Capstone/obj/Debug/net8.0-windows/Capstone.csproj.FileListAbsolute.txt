@@ -963,3 +963,13 @@ C:\Users\Mezzc\OneDrive\Documents\Barbershop\Capstone\obj\Debug\net8.0-windows\A
 C:\Users\Mezzc\OneDrive\Documents\Barbershop\Capstone\obj\Debug\net8.0-windows\AppointmentOptions\DeleteAppointment.g.cs
 C:\Users\Mezzc\OneDrive\Documents\Barbershop\Capstone\obj\Debug\net8.0-windows\AppointmentOptions\AppointmentDeleteSuccessful.baml
 C:\Users\Mezzc\OneDrive\Documents\Barbershop\Capstone\obj\Debug\net8.0-windows\AppointmentOptions\DeleteAppointment.baml
+C:\Users\Mezzc\OneDrive\Documents\Barbershop\Capstone\obj\Debug\net8.0-windows\AppointmentOptions\AppointmentRequestApproved.g.cs
+C:\Users\Mezzc\OneDrive\Documents\Barbershop\Capstone\obj\Debug\net8.0-windows\AppointmentOptions\DeclineAppointment.g.cs
+C:\Users\Mezzc\OneDrive\Documents\Barbershop\Capstone\obj\Debug\net8.0-windows\AppointmentOptions\AppointmentRequestApproved.baml
+C:\Users\Mezzc\OneDrive\Documents\Barbershop\Capstone\obj\Debug\net8.0-windows\AppointmentOptions\DeclineAppointment.baml
+C:\Users\Mezzc\OneDrive\Documents\Barbershop\Capstone\obj\Debug\net8.0-windows\AppointmentOptions\DeclineAppointmentSuccess.g.cs
+C:\Users\Mezzc\OneDrive\Documents\Barbershop\Capstone\obj\Debug\net8.0-windows\AppointmentOptions\DeclineAppointmentSuccess.baml
+C:\Users\Mezzc\OneDrive\Documents\Barbershop\Capstone\obj\Debug\net8.0-windows\AppointmentOptions\BookAppointmentSuccessful.g.cs
+C:\Users\Mezzc\OneDrive\Documents\Barbershop\Capstone\obj\Debug\net8.0-windows\AppointmentOptions\ViewReceipt.g.cs
+C:\Users\Mezzc\OneDrive\Documents\Barbershop\Capstone\obj\Debug\net8.0-windows\AppointmentOptions\BookAppointmentSuccessful.baml
+C:\Users\Mezzc\OneDrive\Documents\Barbershop\Capstone\obj\Debug\net8.0-windows\AppointmentOptions\ViewReceipt.baml
