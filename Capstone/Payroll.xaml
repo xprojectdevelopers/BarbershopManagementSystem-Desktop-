@@ -335,7 +335,7 @@
                                 </Grid.ColumnDefinitions>
 
                                 <Grid Grid.Column="0">
-                                    <Label Content="Name" FontSize="20" Margin="0,0,0,0" VerticalAlignment="Top"/>
+                                    <Label Content="Nickname" FontSize="20" Margin="0,0,0,0" VerticalAlignment="Top"/>
                                     <TextBox x:Name="txtName" VerticalContentAlignment="Center" IsReadOnly="True" FontSize="20" Height="40" Width="205" 
                                              HorizontalAlignment="Left" Margin="0,37,0,0" VerticalAlignment="Top"/>
                                     <TextBlock x:Name="txtNameError" Foreground="Red" FontSize="12" 

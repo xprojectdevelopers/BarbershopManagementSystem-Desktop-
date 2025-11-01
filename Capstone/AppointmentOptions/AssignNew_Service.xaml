@@ -251,7 +251,6 @@
                         <ComboBoxItem>Haircut/Perm</ComboBoxItem>
                         <ComboBoxItem>Rebond/Short Hair</ComboBoxItem>
                         <ComboBoxItem>Rebond/Long Hair</ComboBoxItem>
-                        <ComboBoxItem>Braid</ComboBoxItem>
                         <ComboBoxItem IsEnabled="False" IsSelected="True" Foreground="Gray">Select Service</ComboBoxItem>
                     </ComboBox>
                     <TextBlock x:Name="cmbServiceError" Foreground="Red" FontSize="12" 

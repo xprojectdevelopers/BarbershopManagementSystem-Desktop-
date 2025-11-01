@@ -20,6 +20,7 @@ namespace Capstone
     {
         private Client supabase;
         private ObservableCollection<Employee> employees;
+        private ObservableCollection<ServiceRecord> employeeServices; // Services for selected employee
         private Window currentModalWindow;
         private bool isSavingFundEnabled = true;
         private bool isSaving = false;
@@ -57,11 +58,9 @@ namespace Capstone
 
         private void SetupPlaceholder(TextBox textBox)
         {
-            // Set initial placeholder
             textBox.Text = "0";
             textBox.Foreground = Brushes.Gray;
 
-            // GotFocus: Remove placeholder
             textBox.GotFocus += (s, e) =>
             {
                 if (textBox.Text == "0" && textBox.Foreground == Brushes.Gray)
@@ -71,7 +70,6 @@ namespace Capstone
                 }
             };
 
-            // LostFocus: Restore placeholder if empty
             textBox.LostFocus += (s, e) =>
             {
                 if (string.IsNullOrWhiteSpace(textBox.Text))
@@ -104,21 +102,22 @@ namespace Capstone
         {
             await InitializeSupabaseAsync();
             employees = new ObservableCollection<Employee>();
+            employeeServices = new ObservableCollection<ServiceRecord>();
 
-            var result = await supabase.From<Employee>().Get();
+            // Get all services from AssignNew_Service
+            var serviceResult = await supabase.From<ServiceRecord>().Get();
 
-            // Filter only employees with "Barber" role
-            var barbers = result.Models.Where(emp => emp.Role?.Trim().Equals("Barber", StringComparison.OrdinalIgnoreCase) == true);
+            // Get unique Employee IDs from services
+            var uniqueEmployeeIds = serviceResult.Models
+                .Where(s => !string.IsNullOrWhiteSpace(s.EmiD))
+                .Select(s => s.EmiD)
+                .Distinct()
+                .OrderBy(id => id)
+                .ToList();
 
-            foreach (var emp in barbers)
-            {
-                employees.Add(emp);
-            }
-
-            // Populate ComboBox with Barber Employee IDs
             cmbItemID.Items.Clear();
 
-            // Add placeholder item
+            // Add placeholder
             var placeholderItem = new ComboBoxItem
             {
                 Content = "Select Employee ID",
@@ -127,18 +126,17 @@ namespace Capstone
             };
             cmbItemID.Items.Add(placeholderItem);
 
-            // Add barber employee IDs
-            foreach (var emp in employees.OrderBy(e => e.EmID))
+            // Add employee IDs from services
+            foreach (var empId in uniqueEmployeeIds)
             {
                 var item = new ComboBoxItem
                 {
-                    Content = emp.EmID,
-                    Tag = emp // Store the employee object for later use
+                    Content = empId,
+                    Tag = empId
                 };
                 cmbItemID.Items.Add(item);
             }
 
-            // Select placeholder by default
             cmbItemID.SelectedIndex = 0;
         }
 
@@ -163,11 +161,10 @@ namespace Capstone
 
         private void ClearForm()
         {
-            cmbItemID.SelectedIndex = 0; // Reset to placeholder
+            cmbItemID.SelectedIndex = 0;
             txtName.Clear();
             txtRole.Clear();
 
-            // Reset to placeholder "0"
             ResetToPlaceholder(txtHaircut);
             ResetToPlaceholder(txtHaircutReservation);
             ResetToPlaceholder(txtHaircutWash);
@@ -211,7 +208,7 @@ namespace Capstone
             SaveFileDialog saveFileDialog = new SaveFileDialog
             {
                 Filter = "CSV files (*.csv)|*.csv",
-                FileName = $"Payroll_History_{DateTime.Now:yyyy-MM-dd}.csv"
+                FileName = $"Payroll{DateTime.Now:yyyy-MM-dd}.csv"
             };
 
             if (saveFileDialog.ShowDialog() != true)
@@ -219,54 +216,86 @@ namespace Capstone
 
             try
             {
-                var payrollResult = await supabase.From<PayrollRecord>().Get();
-
-                var validPayrolls = payrollResult.Models
-                    .Where(p => !string.IsNullOrWhiteSpace(p.EmID))
-                    .OrderByDescending(p => p.Id)
-                    .ToList();
-
-                if (!validPayrolls.Any())
-                {
-                    MessageBox.Show("No payroll data to export.", "Empty Data", MessageBoxButton.OK, MessageBoxImage.Information);
-                    return;
-                }
-
                 var csv = new StringBuilder();
 
-                csv.AppendLine("PAYROLL HISTORY REPORT");
+                // Header
+                csv.AppendLine("MOLAVE STREET BARBERS PAYROLL REPORT");
                 csv.AppendLine($"\"Generated on: {DateTime.Now:MMMM dd, yyyy hh:mm tt}\"");
-                csv.AppendLine($"\"Total Records: {validPayrolls.Count}\"");
                 csv.AppendLine();
 
-                csv.AppendLine("\"Employee ID\",\"Employee Name\",\"Role\",\"Gross Pay\",\"Saving Fund\",\"Cash Advance\",\"Attendance Deduction\",\"Net Pay\",\"Release Date\"");
+                // Basic Payroll Information
+                csv.AppendLine("\"=== BASIC PAYROLL INFORMATION ===\"");
+                csv.AppendLine("\"Employee ID\",\"Nickname\",\"Role\",\"Start Date\",\"End Date\"");
 
-                foreach (var payroll in validPayrolls)
+                string employeeId = "";
+                if (cmbItemID.SelectedItem is ComboBoxItem selectedItem && selectedItem.Tag != null)
                 {
-                    string[] row = new string[]
-                    {
-                        CsvEscape(payroll.EmID ?? ""),
-                        CsvEscape(payroll.Name ?? ""),
-                        CsvEscape(payroll.BRole ?? ""),
-                        FormatAmount(payroll.GrossPay),
-                        FormatAmount(payroll.SavingFund),
-                        FormatAmount(payroll.CashAdvance),
-                        FormatAmount(payroll.Absent),
-                        FormatAmount(payroll.NetPay),
-                        payroll.Release != default(DateTime) ? payroll.Release.ToLocalTime().ToString("yyyy-MM-dd") : ""
-                    };
-
-                    csv.AppendLine(string.Join(",", row));
+                    employeeId = selectedItem.Content.ToString();
                 }
+
+                string startDate = dpStartDate.SelectedDate.HasValue ? dpStartDate.SelectedDate.Value.ToString("yyyy-MM-dd") : "";
+                string endDate = dpEndDate.SelectedDate.HasValue ? dpEndDate.SelectedDate.Value.ToString("yyyy-MM-dd") : "";
+
+                csv.AppendLine($"\"{employeeId}\",\"{CsvEscape(txtName.Text)}\",\"{CsvEscape(txtRole.Text)}\",\"{startDate}\",\"{endDate}\"");
+                csv.AppendLine();
+
+                // Service Count
+                csv.AppendLine("\"=== SERVICE COUNT ===\"");
+                csv.AppendLine("\"Service Name\",\"Count/Amount\"");
+                csv.AppendLine($"\"Haircut\",\"{GetTextBoxValue(txtHaircut)}\"");
+                csv.AppendLine($"\"Haircut (Reservation)\",\"{GetTextBoxValue(txtHaircutReservation)}\"");
+                csv.AppendLine($"\"Haircut/Wash\",\"{GetTextBoxValue(txtHaircutWash)}\"");
+                csv.AppendLine($"\"Haircut/Hot Towel\",\"{GetTextBoxValue(txtHaircutHotTowel)}\"");
+                csv.AppendLine($"\"Haircut/Hair Dye\",\"{GetTextBoxValue(txtHaircutHairDye)}\"");
+                csv.AppendLine($"\"Haircut/Hair Color\",\"{GetTextBoxValue(txtHaircutHairColor)}\"");
+                csv.AppendLine($"\"Haircut/Highlights\",\"{GetTextBoxValue(txtHaircutHighlights)}\"");
+                csv.AppendLine($"\"Haircut/Hot Bleaching\",\"{GetTextBoxValue(txtHaircutHotBleaching)}\"");
+                csv.AppendLine($"\"Haircut/Perm\",\"{GetTextBoxValue(txtHaircutPerm)}\"");
+                csv.AppendLine($"\"Rebond/Short Hair\",\"{GetTextBoxValue(txtRebondShort)}\"");
+                csv.AppendLine($"\"Rebond/Long Hair\",\"{GetTextBoxValue(txtRebondLong)}\"");
+                csv.AppendLine($"\"Braid (Amount)\",\"₱{GetTextBoxValue(txtBraid)}\"");
+                csv.AppendLine();
+
+                // Employee Deduction
+                csv.AppendLine("\"=== EMPLOYEE DEDUCTION ===\"");
+                csv.AppendLine("\"Deduction Type\",\"Count/Amount\"");
+                csv.AppendLine($"\"Cash Advance\",\"₱{GetTextBoxValue(txtCashAdvance)}\"");
+                csv.AppendLine($"\"Late (Count)\",\"{GetTextBoxValue(txtLate)}\"");
+                csv.AppendLine($"\"Absent (Count)\",\"{GetTextBoxValue(txtAbsent)}\"");
+                csv.AppendLine($"\"Saving Fund\",\"₱{GetTextBoxValue(txtSavingFund)}\"");
+                csv.AppendLine($"\"Saving Fund Status\",\"{(isSavingFundEnabled ? "Deduction" : "Addition")}\"");
+                csv.AppendLine();
+
+                // Computation
+                csv.AppendLine("\"=== COMPUTATION ===\"");
+                csv.AppendLine("\"Description\",\"Amount\"");
+                csv.AppendLine($"\"Gross Pay\",\"₱{GetTextBoxValue(txtGrossPay)}\"");
+                csv.AppendLine($"\"Total Deduction\",\"₱{GetTextBoxValue(txtTotalDeduction)}\"");
+                csv.AppendLine($"\"Net Pay\",\"₱{GetTextBoxValue(txtNetPay)}\"");
+                csv.AppendLine();
+
+                // Release Date
+                string releaseDate = dpReleaseDate.SelectedDate.HasValue ? dpReleaseDate.SelectedDate.Value.ToString("yyyy-MM-dd") : "Not Set";
+                csv.AppendLine("\"=== RELEASE INFORMATION ===\"");
+                csv.AppendLine("\"Release Date\"");
+                csv.AppendLine($"\"{releaseDate}\"");
 
                 File.WriteAllText(saveFileDialog.FileName, csv.ToString(), new UTF8Encoding(true));
 
-                MessageBox.Show("✅ Payroll history successfully exported!", "Export Complete", MessageBoxButton.OK, MessageBoxImage.Information);
+                MessageBox.Show("✅ Payroll details successfully exported!", "Export Complete", MessageBoxButton.OK, MessageBoxImage.Information);
             }
             catch (Exception ex)
             {
                 MessageBox.Show($"Error exporting data:\n{ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
             }
+        }
+
+        private string GetTextBoxValue(TextBox textBox)
+        {
+            string text = textBox.Text.Trim();
+            if (string.IsNullOrWhiteSpace(text) || (text == "0" && textBox.Foreground == Brushes.Gray))
+                return "0";
+            return text;
         }
 
         private string FormatAmount(string amount)
@@ -295,10 +324,9 @@ namespace Capstone
 
         private async void Search_Click(object sender, RoutedEventArgs e)
         {
-            // Get selected employee ID from ComboBox
             string employeeId = "";
 
-            if (cmbItemID.SelectedItem is ComboBoxItem selectedItem && selectedItem.Tag is Employee)
+            if (cmbItemID.SelectedItem is ComboBoxItem selectedItem && selectedItem.Tag != null)
             {
                 employeeId = selectedItem.Content.ToString();
             }
@@ -313,15 +341,32 @@ namespace Capstone
 
             try
             {
-                var result = await supabase
-                    .From<Employee>()
-                    .Where(x => x.EmID == employeeId)
+                // Get services for this employee
+                var serviceResult = await supabase
+                    .From<ServiceRecord>()
+                    .Where(x => x.EmiD == employeeId)
                     .Get();
 
-                if (result.Models.Count > 0)
+                if (serviceResult.Models.Count > 0)
                 {
-                    var employee = result.Models.First();
-                    PopulateForm(employee);
+                    var firstService = serviceResult.Models.First();
+
+                    // Get employee role from Add_Employee table
+                    var employeeResult = await supabase
+                        .From<Employee>()
+                        .Where(x => x.EmID == employeeId)
+                        .Get();
+
+                    string role = "Barber"; // Default
+                    if (employeeResult.Models.Count > 0)
+                    {
+                        role = employeeResult.Models.First().Role ?? "Barber";
+                    }
+
+                    // Populate form with nickname and role
+                    txtName.Text = firstService.BN ?? ""; // Barber_Nickname
+                    txtRole.Text = role; // From Add_Employee
+
                     HideAllErrorMessages();
                 }
                 else
@@ -341,12 +386,6 @@ namespace Capstone
             {
                 MessageBox.Show($"Error searching for employee: {ex.Message}", "Search Error", MessageBoxButton.OK, MessageBoxImage.Error);
             }
-        }
-
-        private void PopulateForm(Employee employee)
-        {
-            txtName.Text = employee.Fname ?? "";
-            txtRole.Text = employee.Role ?? "";
         }
 
         private void ModalWindow_Closed(object sender, EventArgs e)
@@ -384,57 +423,89 @@ namespace Capstone
             }
         }
 
-        private void Compute_Click(object sender, RoutedEventArgs e)
+        private async void Compute_Click(object sender, RoutedEventArgs e)
         {
             try
             {
-                const decimal HAIRCUT_PRICE = 75;
-                const decimal HAIRCUT_RESERVATION_PRICE = 100;
-                const decimal HAIRCUT_WASH_PRICE = 125;
-                const decimal HAIRCUT_HOT_TOWEL_PRICE = 125;
-                const decimal HAIRCUT_HAIR_DYE_PRICE = 175;
-                const decimal HAIRCUT_HAIR_COLOR_PRICE = 200;
-                const decimal HAIRCUT_HIGHLIGHTS_PRICE = 250;
-                const decimal HAIRCUT_HOT_BLEACHING_PRICE = 400;
-                const decimal HAIRCUT_PERM_PRICE = 500;
-                const decimal REBOND_SHORT_PRICE = 500;
-                const decimal REBOND_LONG_PRICE = 500;
+                // Get selected employee ID
+                string employeeId = "";
+                if (cmbItemID.SelectedItem is ComboBoxItem selectedItem && selectedItem.Tag != null)
+                {
+                    employeeId = selectedItem.Content.ToString();
+                }
 
-                const decimal LATE_DEDUCTION = 30;
-                const decimal ABSENT_DEDUCTION = 50;
+                if (string.IsNullOrEmpty(employeeId) || cmbItemID.SelectedIndex == 0)
+                {
+                    MessageBox.Show("Please select an Employee ID first.", "Validation Error", MessageBoxButton.OK, MessageBoxImage.Warning);
+                    return;
+                }
 
-                int haircutCount = GetNumericValue(txtHaircut);
-                int haircutReservationCount = GetNumericValue(txtHaircutReservation);
-                int haircutWashCount = GetNumericValue(txtHaircutWash);
-                int haircutHotTowelCount = GetNumericValue(txtHaircutHotTowel);
-                int haircutHairDyeCount = GetNumericValue(txtHaircutHairDye);
-                int haircutHairColorCount = GetNumericValue(txtHaircutHairColor);
-                int haircutHighlightsCount = GetNumericValue(txtHaircutHighlights);
-                int haircutHotBleachingCount = GetNumericValue(txtHaircutHotBleaching);
-                int haircutPermCount = GetNumericValue(txtHaircutPerm);
-                int rebondShortCount = GetNumericValue(txtRebondShort);
-                int rebondLongCount = GetNumericValue(txtRebondLong);
+                // Get all services for this employee
+                var serviceResult = await supabase
+                    .From<ServiceRecord>()
+                    .Where(x => x.EmiD == employeeId)
+                    .Get();
 
+                if (serviceResult.Models.Count == 0)
+                {
+                    MessageBox.Show("No services found for this employee.", "Error", MessageBoxButton.OK, MessageBoxImage.Warning);
+                    return;
+                }
+
+                // Create a mapping of service names to their prices
+                var servicePrices = new Dictionary<string, decimal>();
+                foreach (var service in serviceResult.Models)
+                {
+                    if (decimal.TryParse(service.Price, out decimal price))
+                    {
+                        servicePrices[service.Service.Trim()] = price;
+                    }
+                }
+
+                // Service count mapping to service names (excluding Braid)
+                var serviceMapping = new Dictionary<TextBox, string>
+                {
+                    { txtHaircut, "Haircut" },
+                    { txtHaircutReservation, "Haircut (Reservation)" },
+                    { txtHaircutWash, "Haircut/Wash" },
+                    { txtHaircutHotTowel, "Haircut/Hot Towel" },
+                    { txtHaircutHairDye, "Haircut/Hair Dye" },
+                    { txtHaircutHairColor, "Haircut/Hair Color" },
+                    { txtHaircutHighlights, "Haircut/Highlights" },
+                    { txtHaircutHotBleaching, "Haircut/Hot Bleaching" },
+                    { txtHaircutPerm, "Haircut/Perm" },
+                    { txtRebondShort, "Rebond/Short Hair" },
+                    { txtRebondLong, "Rebond/Long Hair" }
+                };
+
+                decimal grossPay = 0;
+
+                // Calculate gross pay based on service counts (with 50% calculation)
+                foreach (var mapping in serviceMapping)
+                {
+                    int count = GetNumericValue(mapping.Key);
+                    if (count > 0)
+                    {
+                        string serviceName = mapping.Value;
+                        if (servicePrices.ContainsKey(serviceName))
+                        {
+                            decimal servicePrice = servicePrices[serviceName];
+                            // Calculate: (Price × 50%) × Count
+                            decimal barberShare = servicePrice * 0.5m; // 50% of price
+                            grossPay += barberShare * count;
+                        }
+                    }
+                }
+
+                // Add Braid amount directly (no 50% calculation, manual input)
                 decimal braidAmount = GetDecimalValue(txtBraid);
-
-                decimal haircutTotal = haircutCount * HAIRCUT_PRICE;
-                decimal haircutReservationTotal = haircutReservationCount * HAIRCUT_RESERVATION_PRICE;
-                decimal haircutWashTotal = haircutWashCount * HAIRCUT_WASH_PRICE;
-                decimal haircutHotTowelTotal = haircutHotTowelCount * HAIRCUT_HOT_TOWEL_PRICE;
-                decimal haircutHairDyeTotal = haircutHairDyeCount * HAIRCUT_HAIR_DYE_PRICE;
-                decimal haircutHairColorTotal = haircutHairColorCount * HAIRCUT_HAIR_COLOR_PRICE;
-                decimal haircutHighlightsTotal = haircutHighlightsCount * HAIRCUT_HIGHLIGHTS_PRICE;
-                decimal haircutHotBleachingTotal = haircutHotBleachingCount * HAIRCUT_HOT_BLEACHING_PRICE;
-                decimal haircutPermTotal = haircutPermCount * HAIRCUT_PERM_PRICE;
-                decimal rebondShortTotal = rebondShortCount * REBOND_SHORT_PRICE;
-                decimal rebondLongTotal = rebondLongCount * REBOND_LONG_PRICE;
-
-                decimal grossPay = haircutTotal + haircutReservationTotal + haircutWashTotal +
-                                  haircutHotTowelTotal + haircutHairDyeTotal + haircutHairColorTotal +
-                                  haircutHighlightsTotal + haircutHotBleachingTotal + haircutPermTotal +
-                                  rebondShortTotal + rebondLongTotal + braidAmount;
+                grossPay += braidAmount;
 
                 txtGrossPay.Text = grossPay.ToString("N2");
+
+                // Calculate deductions
+                const decimal LATE_DEDUCTION = 30;
+                const decimal ABSENT_DEDUCTION = 50;
 
                 decimal cashAdvance = GetDecimalValue(txtCashAdvance);
                 int lateCount = GetNumericValue(txtLate);
@@ -501,9 +572,8 @@ namespace Capstone
                 saveButton.IsEnabled = false;
                 HideAllErrorMessages();
 
-                // Get Employee ID from ComboBox
                 string employeeId = "";
-                if (cmbItemID.SelectedItem is ComboBoxItem selectedItem && selectedItem.Tag is Employee)
+                if (cmbItemID.SelectedItem is ComboBoxItem selectedItem && selectedItem.Tag != null)
                 {
                     employeeId = selectedItem.Content.ToString();
                 }
@@ -613,6 +683,25 @@ namespace Capstone
 
             [Column("Employee_ID")]
             public string EmID { get; set; }
+        }
+
+        [Table("AssignNew_Service")]
+        public class ServiceRecord : BaseModel
+        {
+            [PrimaryKey("id", false)]
+            public int Id { get; set; }
+
+            [Column("Emp_ID")]
+            public string EmiD { get; set; }
+
+            [Column("Barber_Nickname")]
+            public string BN { get; set; }
+
+            [Column("Service")]
+            public string Service { get; set; }
+
+            [Column("Price")]
+            public string Price { get; set; }
         }
 
         [Table("Payroll")]
