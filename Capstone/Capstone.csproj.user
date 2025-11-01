@@ -4,6 +4,9 @@
     <_LastSelectedProfileId>C:\Users\Mezzc\OneDrive\Documents\Barbershop\Capstone\Properties\PublishProfiles\Molave.pubxml</_LastSelectedProfileId>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Update="AppointmentOptions\AppointmentDeleteSuccessful.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Update="AppointmentOptions\AppointmentTracker.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -17,6 +20,9 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Update="AppointmentOptions\ConfirmDecline.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Update="AppointmentOptions\DeleteAppointment.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Update="AppointmentOptions\MangeServiceDelete.xaml.cs">

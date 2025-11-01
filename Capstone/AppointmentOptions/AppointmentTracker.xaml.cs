@@ -215,12 +215,13 @@ namespace Capstone.AppointmentOptions
         private async void Delete_Click(object sender, RoutedEventArgs e)
         {
             try
+
             {
-                // Check if there's an appointment loaded
-                if (currentAppointment == null)
+                string appointmentNumber = txtAppNumber.Text.Trim();
+
+                if (string.IsNullOrWhiteSpace(appointmentNumber))
                 {
-                    MessageBox.Show("Please search for an appointment first.", "No Appointment",
-                        MessageBoxButton.OK, MessageBoxImage.Warning);
+                    ShowError(txtAppNumberError, "Appointment Number is required");
                     return;
                 }
 
@@ -228,12 +229,12 @@ namespace Capstone.AppointmentOptions
                 ModalOverlay.Visibility = Visibility.Visible;
 
                 // Open delete confirmation as a regular window
-                currentModalWindow = new delete();
+                currentModalWindow = new DeleteAppointment();
                 currentModalWindow.Owner = this;
                 currentModalWindow.WindowStartupLocation = WindowStartupLocation.CenterOwner;
 
                 // Store reference for dialog result
-                delete deleteDialog = (delete)currentModalWindow;
+                DeleteAppointment deleteDialog = (DeleteAppointment)currentModalWindow;
 
                 // Subscribe to Closed event
                 currentModalWindow.Closed += ModalWindow_Closed;
@@ -269,7 +270,7 @@ namespace Capstone.AppointmentOptions
                 ModalOverlay.Visibility = Visibility.Visible;
 
                 // Open success window
-                currentModalWindow = new ItemSuccessfulDelete();
+                currentModalWindow = new AppointmentDeleteSuccessful();
                 currentModalWindow.Owner = this;
                 currentModalWindow.WindowStartupLocation = WindowStartupLocation.CenterOwner;
 
@@ -334,11 +335,11 @@ namespace Capstone.AppointmentOptions
         {
             try
             {
-                // Check if there's an appointment loaded
-                if (currentAppointment == null)
+                string appointmentNumber = txtAppNumber.Text.Trim();
+
+                if (string.IsNullOrWhiteSpace(appointmentNumber))
                 {
-                    MessageBox.Show("Please search for an appointment first.", "No Appointment",
-                        MessageBoxButton.OK, MessageBoxImage.Warning);
+                    ShowError(txtAppNumberError, "Appointment Number is required");
                     return;
                 }
 

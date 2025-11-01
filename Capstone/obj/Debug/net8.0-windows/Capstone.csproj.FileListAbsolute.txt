@@ -959,3 +959,7 @@ C:\Users\Mezzc\OneDrive\Documents\Barbershop\Capstone\obj\Debug\net8.0-windows\A
 C:\Users\Mezzc\OneDrive\Documents\Barbershop\Capstone\obj\Debug\net8.0-windows\AppointmentOptions\NotfoundAppNumber.baml
 C:\Users\Mezzc\OneDrive\Documents\Barbershop\Capstone\obj\Debug\net8.0-windows\AppointmentOptions\ConfirmDecline.g.cs
 C:\Users\Mezzc\OneDrive\Documents\Barbershop\Capstone\obj\Debug\net8.0-windows\AppointmentOptions\ConfirmDecline.baml
+C:\Users\Mezzc\OneDrive\Documents\Barbershop\Capstone\obj\Debug\net8.0-windows\AppointmentOptions\AppointmentDeleteSuccessful.g.cs
+C:\Users\Mezzc\OneDrive\Documents\Barbershop\Capstone\obj\Debug\net8.0-windows\AppointmentOptions\DeleteAppointment.g.cs
+C:\Users\Mezzc\OneDrive\Documents\Barbershop\Capstone\obj\Debug\net8.0-windows\AppointmentOptions\AppointmentDeleteSuccessful.baml
+C:\Users\Mezzc\OneDrive\Documents\Barbershop\Capstone\obj\Debug\net8.0-windows\AppointmentOptions\DeleteAppointment.baml
