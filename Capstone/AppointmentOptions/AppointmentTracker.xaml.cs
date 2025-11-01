@@ -216,79 +216,7 @@ namespace Capstone.AppointmentOptions
             ClearForm();
         }
 
-        private async void Update_Click(object sender, RoutedEventArgs e)
-        {
-            try
-            {
-                // Fix: Check the actual input TextBox
-                if (string.IsNullOrWhiteSpace(txtAppNumber.Text))
-                {
-                    ShowError(txtAppNumberError, "Appointment Number is required");
-                    return;
-                }
-
-                // Clear error message
-                txtAppNumberError.Visibility = Visibility.Collapsed;
-                txtAppNumberError.Text = string.Empty;
-
-                // Check if an appointment has been loaded
-                if (currentAppointment == null)
-                {
-                    MessageBox.Show("Please search for an appointment first.", "Validation Error",
-                        MessageBoxButton.OK, MessageBoxImage.Warning);
-                    return;
-                }
-
-                // Get selected values from ComboBoxes
-                string appointmentStatus = GetComboBoxSelectedValue(cmbAppStatus);
-                string paymentStatus = GetComboBoxSelectedValue(cmbPayStatus);
-
-                // Validate that both statuses are selected
-                if (string.IsNullOrEmpty(appointmentStatus))
-                {
-                    MessageBox.Show("Please select an Appointment Status.", "Validation Error",
-                        MessageBoxButton.OK, MessageBoxImage.Warning);
-                    return;
-                }
-
-                if (string.IsNullOrEmpty(paymentStatus))
-                {
-                    MessageBox.Show("Please select a Payment Status.", "Validation Error",
-                        MessageBoxButton.OK, MessageBoxImage.Warning);
-                    return;
-                }
-
-                // Store original date and time to preserve them
-                string originalDate = currentAppointment.Date;
-                TimeSpan? originalTime = currentAppointment.Time;
-
-                // Update only the status fields
-                currentAppointment.Status = appointmentStatus;
-                currentAppointment.PaymentStatus = paymentStatus;
-
-                // Ensure date and time remain unchanged
-                currentAppointment.Date = originalDate;
-                currentAppointment.Time = originalTime;
-
-                // Update in database using the model instance
-                await supabase
-                    .From<BarbershopManagementSystem>()
-                    .Update(currentAppointment);
-
-                ModalOverlay.Visibility = Visibility.Visible;
-
-                currentModalWindow = new ChangesSuccessfullyAppNumber();
-                currentModalWindow.Owner = this;
-                currentModalWindow.WindowStartupLocation = WindowStartupLocation.CenterOwner;
-                currentModalWindow.Closed += ModalWindow_Closed;
-                currentModalWindow.Show();
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show($"Error updating appointment: {ex.Message}", "Error",
-                    MessageBoxButton.OK, MessageBoxImage.Error);
-            }
-        }
+        
 
         private string GetComboBoxSelectedValue(ComboBox comboBox)
         {
@@ -326,6 +254,80 @@ namespace Capstone.AppointmentOptions
                 currentModalWindow.Close();
             }
             e.Handled = true;
+        }
+
+        private async void Update_Click(object sender, RoutedEventArgs e)
+        {
+            try
+            {
+                // Check if there's an appointment loaded
+                if (currentAppointment == null)
+                {
+                    MessageBox.Show("Please search for an appointment first.", "No Appointment",
+                        MessageBoxButton.OK, MessageBoxImage.Warning);
+                    return;
+                }
+
+                // Validate that status fields are selected
+                string appointmentStatus = GetComboBoxSelectedValue(cmbAppStatus);
+                string paymentStatus = GetComboBoxSelectedValue(cmbPayStatus);
+
+                if (string.IsNullOrEmpty(appointmentStatus))
+                {
+                    MessageBox.Show("Please select an Appointment Status.", "Validation Error",
+                        MessageBoxButton.OK, MessageBoxImage.Warning);
+                    return;
+                }
+
+                if (string.IsNullOrEmpty(paymentStatus))
+                {
+                    MessageBox.Show("Please select a Payment Status.", "Validation Error",
+                        MessageBoxButton.OK, MessageBoxImage.Warning);
+                    return;
+                }
+
+                // Confirm update
+                var result = MessageBox.Show(
+                    $"Are you sure you want to update this appointment?\n\n" +
+                    $"Appointment Status: {appointmentStatus}\n" +
+                    $"Payment Status: {paymentStatus}",
+                    "Confirm Update",
+                    MessageBoxButton.YesNo,
+                    MessageBoxImage.Question);
+
+                if (result != MessageBoxResult.Yes)
+                {
+                    return;
+                }
+
+                // Update the current appointment object
+                currentAppointment.Status = appointmentStatus;
+                currentAppointment.PaymentStatus = paymentStatus;
+
+                // Save to database
+                var updateResponse = await supabase
+                    .From<BarbershopManagementSystem>()
+                    .Update(currentAppointment);
+
+                if (updateResponse != null)
+                {
+                    MessageBox.Show("Appointment updated successfully!", "Success",
+                        MessageBoxButton.OK, MessageBoxImage.Information);
+
+                    // Optionally clear the form after successful update
+                    // ClearForm();
+                }
+                else
+                {
+                    MessageBox.Show("Failed to update appointment.", "Error",
+                        MessageBoxButton.OK, MessageBoxImage.Error);
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Error updating appointment: {ex.Message}", "Error",
+                    MessageBoxButton.OK, MessageBoxImage.Error);
+            }
         }
 
         [Table("appointment_sched")]

@@ -16,6 +16,9 @@
     <Compile Update="AppointmentOptions\ChangesSuccessfullyAppNumber.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Update="AppointmentOptions\ConfirmDecline.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Update="AppointmentOptions\MangeServiceDelete.xaml.cs">
       <SubType>Code</SubType>
     </Compile>

@@ -957,3 +957,5 @@ C:\Users\Mezzc\OneDrive\Documents\Barbershop\Capstone\obj\Debug\net8.0-windows\A
 C:\Users\Mezzc\OneDrive\Documents\Barbershop\Capstone\obj\Debug\net8.0-windows\AppointmentOptions\NotfoundAppNumber.g.cs
 C:\Users\Mezzc\OneDrive\Documents\Barbershop\Capstone\obj\Debug\net8.0-windows\AppointmentOptions\ChangesSuccessfullyAppNumber.baml
 C:\Users\Mezzc\OneDrive\Documents\Barbershop\Capstone\obj\Debug\net8.0-windows\AppointmentOptions\NotfoundAppNumber.baml
+C:\Users\Mezzc\OneDrive\Documents\Barbershop\Capstone\obj\Debug\net8.0-windows\AppointmentOptions\ConfirmDecline.g.cs
+C:\Users\Mezzc\OneDrive\Documents\Barbershop\Capstone\obj\Debug\net8.0-windows\AppointmentOptions\ConfirmDecline.baml
