@@ -25,6 +25,7 @@ namespace Capstone.AppointmentOptions
     public partial class AppointmentTracker : Window
     {
         private Client supabase;
+        private ObservableCollection<BarbershopManagementSystem> items = new ObservableCollection<BarbershopManagementSystem>();
         private ObservableCollection<BarbershopManagementSystem> employees;
         private BarbershopManagementSystem currentAppointment;
         private Window currentModalWindow;
@@ -211,12 +212,85 @@ namespace Capstone.AppointmentOptions
             txtAppNumberError.Text = string.Empty;
         }
 
-        private async void Clear_Click(object sender, RoutedEventArgs e)
+        private async void Delete_Click(object sender, RoutedEventArgs e)
         {
-            ClearForm();
+            try
+            {
+                // Check if there's an appointment loaded
+                if (currentAppointment == null)
+                {
+                    MessageBox.Show("Please search for an appointment first.", "No Appointment",
+                        MessageBoxButton.OK, MessageBoxImage.Warning);
+                    return;
+                }
+
+                // Show delete confirmation
+                ModalOverlay.Visibility = Visibility.Visible;
+
+                // Open delete confirmation as a regular window
+                currentModalWindow = new delete();
+                currentModalWindow.Owner = this;
+                currentModalWindow.WindowStartupLocation = WindowStartupLocation.CenterOwner;
+
+                // Store reference for dialog result
+                delete deleteDialog = (delete)currentModalWindow;
+
+                // Subscribe to Closed event
+                currentModalWindow.Closed += ModalWindow_Closed;
+
+                // Show the dialog
+                currentModalWindow.ShowDialog();
+
+                if (deleteDialog.DialogResult != true)
+                {
+                    // User clicked No or closed the dialog
+                    ModalOverlay.Visibility = Visibility.Collapsed;
+                    return;
+                }
+
+                // User clicked Yes - proceed with deletion
+                // Delete from database
+                await supabase
+                    .From<BarbershopManagementSystem>()
+                    .Where(x => x.Id == currentAppointment.Id)
+                    .Delete();
+
+                // Update local collection if it exists
+                if (employees != null)
+                {
+                    var localEmployee = employees.FirstOrDefault(e => e.Id == currentAppointment.Id);
+                    if (localEmployee != null)
+                    {
+                        employees.Remove(localEmployee);
+                    }
+                }
+
+                // Show success message with modal
+                ModalOverlay.Visibility = Visibility.Visible;
+
+                // Open success window
+                currentModalWindow = new ItemSuccessfulDelete();
+                currentModalWindow.Owner = this;
+                currentModalWindow.WindowStartupLocation = WindowStartupLocation.CenterOwner;
+
+                // Subscribe to Closed event
+                currentModalWindow.Closed += ModalWindow_Closed;
+
+                // Show as regular window
+                currentModalWindow.Show();
+
+                // Clear the form
+                ClearForm();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Error deleting appointment: {ex.Message}", "Error",
+                    MessageBoxButton.OK, MessageBoxImage.Error);
+                ModalOverlay.Visibility = Visibility.Collapsed;
+            }
         }
 
-        
+
 
         private string GetComboBoxSelectedValue(ComboBox comboBox)
         {
@@ -286,19 +360,6 @@ namespace Capstone.AppointmentOptions
                     return;
                 }
 
-                // Confirm update
-                var result = MessageBox.Show(
-                    $"Are you sure you want to update this appointment?\n\n" +
-                    $"Appointment Status: {appointmentStatus}\n" +
-                    $"Payment Status: {paymentStatus}",
-                    "Confirm Update",
-                    MessageBoxButton.YesNo,
-                    MessageBoxImage.Question);
-
-                if (result != MessageBoxResult.Yes)
-                {
-                    return;
-                }
 
                 // Update the current appointment object
                 currentAppointment.Status = appointmentStatus;
@@ -311,11 +372,15 @@ namespace Capstone.AppointmentOptions
 
                 if (updateResponse != null)
                 {
-                    MessageBox.Show("Appointment updated successfully!", "Success",
-                        MessageBoxButton.OK, MessageBoxImage.Information);
+                    ModalOverlay.Visibility = Visibility.Visible;
 
-                    // Optionally clear the form after successful update
-                    // ClearForm();
+                    currentModalWindow = new ChangesSuccessfullyAppNumber();
+                    currentModalWindow.Owner = this;
+                    currentModalWindow.WindowStartupLocation = WindowStartupLocation.CenterOwner;
+                    currentModalWindow.Closed += ModalWindow_Closed;
+                    currentModalWindow.Show();
+                    ClearForm();
+                    return;
                 }
                 else
                 {
