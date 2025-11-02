@@ -24,7 +24,6 @@ namespace Capstone.AppointmentOptions
 
             if (decimal.TryParse(str, out decimal number))
             {
-                // If whole number, no decimal places. Otherwise show 2 decimals
                 if (number == Math.Floor(number))
                     return $"₱ {number:N0}";
                 else
@@ -64,7 +63,7 @@ namespace Capstone.AppointmentOptions
         private ObservableCollection<BarbershopManagementSystem> employees = new ObservableCollection<BarbershopManagementSystem>();
 
         private int CurrentPage = 1;
-        private int PageSize = 5; // 5 employees per page
+        private int PageSize = 5;
         private int TotalPages = 1;
 
         public Manage_Services()
@@ -77,6 +76,7 @@ namespace Capstone.AppointmentOptions
         private async Task InitializeData()
         {
             await InitializeSupabaseAsync();
+            await SyncCompletedAppointments(); // Sync completed appointments first
             await LoadEmployees();
         }
 
@@ -100,6 +100,94 @@ namespace Capstone.AppointmentOptions
             await supabase.InitializeAsync();
         }
 
+        // ✅ NEW METHOD: Sync completed appointments to Manage Service
+        private async Task SyncCompletedAppointments()
+        {
+            if (supabase == null) return;
+
+            try
+            {
+                // Get all completed appointments
+                var completedAppointments = await supabase
+                    .From<AppointmentModel>()
+                    .Where(x => x.AppointmentStatus == "Completed")
+                    .Get();
+
+                if (completedAppointments.Models == null || completedAppointments.Models.Count == 0)
+                    return;
+
+                // Get all employees to match barber name to Employee_ID
+                var employees = await supabase
+                    .From<Employee>()
+                    .Get();
+
+                // Get existing services to avoid duplicates
+                var existingServices = await supabase
+                    .From<BarbershopManagementSystem>()
+                    .Get();
+
+                foreach (var appointment in completedAppointments.Models)
+                {
+                    // Skip if barber not assigned
+                    if (string.IsNullOrEmpty(appointment.BarberAssigned))
+                        continue;
+
+                    // Extract barber name from "MawPatalingjug - Barber" format
+                    string barberName = appointment.BarberAssigned;
+
+                    // Remove " - Barber" suffix if it exists
+                    if (barberName.Contains(" - Barber"))
+                    {
+                        barberName = barberName.Replace(" - Barber", "").Trim();
+                    }
+                    else if (barberName.Contains("-"))
+                    {
+                        // Handle other formats like "MawPatalingjug-Barber"
+                        barberName = barberName.Split('-')[0].Trim();
+                    }
+
+                    // Find employee by Full_Name matching the extracted barber name
+                    var employee = employees.Models.FirstOrDefault(e =>
+                        !string.IsNullOrEmpty(e.Fname) &&
+                        e.Fname.Trim().Equals(barberName, StringComparison.OrdinalIgnoreCase));
+
+                    if (employee == null)
+                    {
+                        // Log for debugging - could not find employee
+                        System.Diagnostics.Debug.WriteLine($"Could not find employee with name: {barberName}");
+                        continue;
+                    }
+
+                    // Check if this service already exists (avoid duplicates)
+                    bool serviceExists = existingServices.Models.Any(s =>
+                        s.EmiD == employee.EmID &&
+                        s.Service == appointment.ServiceId &&
+                        s.Price == appointment.Total);
+
+                    if (serviceExists)
+                        continue;
+
+                    // Create new service entry
+                    var newService = new BarbershopManagementSystem
+                    {
+                        EmiD = employee.EmID,              // Employee_ID (e.g., MSB-2025-0004)
+                        BN = employee.EmployeeNickname,     // Employee_Nickname (e.g., Meowru)
+                        Service = appointment.ServiceId ?? "N/A",  // Service (e.g., Haircut/Wash)
+                        Price = appointment.Total ?? "0"    // Price (e.g., 300)
+                    };
+
+                    // Insert into database
+                    await supabase
+                        .From<BarbershopManagementSystem>()
+                        .Insert(newService);
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Error syncing completed appointments: {ex.Message}");
+            }
+        }
+
         private async Task LoadEmployees()
         {
             if (supabase == null) return;
@@ -116,7 +204,6 @@ namespace Capstone.AppointmentOptions
             LoadPage(CurrentPage);
             GeneratePaginationButtons();
 
-            // Populate the ComboBox with Employee IDs
             PopulateComboBox();
         }
 
@@ -129,7 +216,6 @@ namespace Capstone.AppointmentOptions
                 .Take(PageSize)
                 .ToList();
 
-            // Add blank rows if less than PageSize
             while (pageData.Count < PageSize)
             {
                 pageData.Add(new BarbershopManagementSystem
@@ -262,27 +348,21 @@ namespace Capstone.AppointmentOptions
 
                 var service = btn.DataContext as BarbershopManagementSystem;
 
-                // ✅ CHECK IF EMPTY ROW - Just return silently
                 if (service == null || string.IsNullOrWhiteSpace(service.EmiD))
                 {
                     return;
                 }
 
-                // Show delete confirmation
                 ModalOverlay.Visibility = Visibility.Visible;
 
-                // Open delete confirmation as a regular window
                 currentModalWindow = new delete();
                 currentModalWindow.Owner = this;
                 currentModalWindow.WindowStartupLocation = WindowStartupLocation.CenterOwner;
 
-                // Store reference for dialog result
                 delete deleteDialog = (delete)currentModalWindow;
 
-                // Subscribe to Closed event
                 currentModalWindow.Closed += ModalWindow_Closed;
 
-                // Show as dialog
                 bool? result = deleteDialog.ShowDialog();
 
                 if (result == true)
@@ -324,7 +404,6 @@ namespace Capstone.AppointmentOptions
 
                 var service = btn.DataContext as BarbershopManagementSystem;
 
-                // ✅ CHECK IF EMPTY ROW - Just return silently
                 if (service == null || string.IsNullOrWhiteSpace(service.EmiD))
                 {
                     return;
@@ -332,13 +411,12 @@ namespace Capstone.AppointmentOptions
 
                 ModalOverlay.Visibility = Visibility.Visible;
 
-                // Pass all 5 required parameters
                 currentModalWindow = new Service_Description(
-                    service.Id,           // int id
-                    service.EmiD,         // string empId
-                    service.BN,           // string barberNickname
-                    service.Service,      // string service
-                    service.Price         // string price
+                    service.Id,
+                    service.EmiD,
+                    service.BN,
+                    service.Service,
+                    service.Price
                 );
                 currentModalWindow.Owner = this;
                 currentModalWindow.WindowStartupLocation = WindowStartupLocation.CenterOwner;
@@ -352,14 +430,10 @@ namespace Capstone.AppointmentOptions
             }
         }
 
-        // Replace the existing Search_Click method with this:
-
         private void Search_Click(object sender, RoutedEventArgs e)
         {
-            // Get the text from ComboBox (either typed or selected)
             string searchText = cmbItemID.Text.Trim();
 
-            // If empty, show all
             if (string.IsNullOrEmpty(searchText))
             {
                 employees = new ObservableCollection<BarbershopManagementSystem>(allEmployees);
@@ -373,12 +447,10 @@ namespace Capstone.AppointmentOptions
                 return;
             }
 
-            // Search by Employee ID (works for single character or full ID)
             var searchResults = allEmployees.Where(emp =>
                 !string.IsNullOrEmpty(emp.EmiD) &&
                 emp.EmiD.Contains(searchText, StringComparison.OrdinalIgnoreCase)).ToList();
 
-            // If NO results found - show notfound modal
             if (searchResults.Count == 0)
             {
                 ModalOverlay.Visibility = Visibility.Visible;
@@ -390,11 +462,9 @@ namespace Capstone.AppointmentOptions
                 currentModalWindow.Closed += ModalWindow_Closed;
                 currentModalWindow.Show();
 
-                // Don't clear form - keep the selection so user can try again
-                return; // Don't update table
+                return;
             }
 
-            // If results found - update table
             employees = new ObservableCollection<BarbershopManagementSystem>(searchResults);
 
             CurrentPage = 1;
@@ -418,11 +488,13 @@ namespace Capstone.AppointmentOptions
 
         private async void Refresh_Click(object sender, RoutedEventArgs e)
         {
+            await SyncCompletedAppointments(); // Sync again on refresh
             await LoadEmployees();
         }
 
         public async void RefreshGrid()
         {
+            await SyncCompletedAppointments();
             await LoadEmployees();
         }
 
@@ -430,7 +502,6 @@ namespace Capstone.AppointmentOptions
         {
             cmbItemID.Items.Clear();
 
-            // Get unique Employee IDs from the data
             var uniqueEmployeeIDs = allEmployees
                 .Where(emp => !string.IsNullOrWhiteSpace(emp.EmiD))
                 .Select(emp => emp.EmiD)
@@ -438,7 +509,6 @@ namespace Capstone.AppointmentOptions
                 .OrderBy(id => id)
                 .ToList();
 
-            // Add each Employee ID to the ComboBox
             foreach (var empId in uniqueEmployeeIDs)
             {
                 cmbItemID.Items.Add(empId);
@@ -462,6 +532,45 @@ namespace Capstone.AppointmentOptions
 
             [Column("Price")]
             public string Price { get; set; }
+        }
+
+        [Table("Add_Employee")]
+        public class Employee : BaseModel
+        {
+            [PrimaryKey("id", false)]
+            public int Id { get; set; }
+
+            [Column("Full_Name")]
+            public string Fname { get; set; }
+
+            [Column("Employee_Role")]
+            public string Role { get; set; }
+
+            [Column("Employee_ID")]
+            public string EmID { get; set; }
+
+            [Column("Employee_Nickname")]
+            public string EmployeeNickname { get; set; }
+        }
+
+        // ✅ NEW: Appointment Model to read completed appointments
+        [Table("appointment_sched")]
+        public class AppointmentModel : BaseModel
+        {
+            [PrimaryKey("id", false)]
+            public string Id { get; set; }
+
+            [Column("status")]
+            public string AppointmentStatus { get; set; }
+
+            [Column("total")]
+            public string Total { get; set; }
+
+            [Column("service_id")]
+            public string ServiceId { get; set; }
+
+            [Column("barber_id")]
+            public string BarberAssigned { get; set; }
         }
     }
 }
