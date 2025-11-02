@@ -28,6 +28,7 @@ namespace Capstone
     {
         private Supabase.Client? supabase;
         private ObservableCollection<BarbershopManagementSystem> employees = new();
+        private ObservableCollection<BarbershopManagementSystem> filteredEmployees = new();
 
         private int CurrentPage = 1;
         private int PageSize = 10;
@@ -39,6 +40,7 @@ namespace Capstone
             InitializeComponent();
             Loaded += async (s, e) => await InitializeData();
             ModalOverlay.PreviewMouseLeftButtonDown += ModalOverlay_Click;
+            cmbItemID.SelectionChanged += CmbItemID_SelectionChanged;
         }
 
         private async Task InitializeData()
@@ -78,8 +80,9 @@ namespace Capstone
                 .Get();
 
             employees = new ObservableCollection<BarbershopManagementSystem>(result.Models);
+            filteredEmployees = new ObservableCollection<BarbershopManagementSystem>(employees);
 
-            TotalPages = (int)Math.Ceiling(employees.Count / (double)PageSize);
+            TotalPages = (int)Math.Ceiling(filteredEmployees.Count / (double)PageSize);
             if (TotalPages == 0) TotalPages = 1;
 
             LoadPage(CurrentPage);
@@ -90,7 +93,7 @@ namespace Capstone
         {
             CurrentPage = pageNumber;
 
-            var pageData = employees
+            var pageData = filteredEmployees
                 .Skip((pageNumber - 1) * PageSize)
                 .Take(PageSize)
                 .ToList();
@@ -146,6 +149,47 @@ namespace Capstone
 
                 PaginationPanel.Children.Add(btn);
             }
+        }
+
+        private void CmbItemID_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            // If "Molave Street Legend" placeholder is selected, reset filter
+            if (cmbItemID.SelectedIndex == 0)
+            {
+                filteredEmployees = new ObservableCollection<BarbershopManagementSystem>(employees);
+                CurrentPage = 1;
+                TotalPages = (int)Math.Ceiling(filteredEmployees.Count / (double)PageSize);
+                if (TotalPages == 0) TotalPages = 1;
+
+                LoadPage(CurrentPage);
+                GeneratePaginationButtons();
+            }
+        }
+
+        private void SortButton_Click(object sender, RoutedEventArgs e)
+        {
+            if (cmbItemID.SelectedIndex == -1 || cmbItemID.SelectedIndex == 0)
+            {
+                MessageBox.Show("Please select a badge to sort by.", "No Selection", MessageBoxButton.OK, MessageBoxImage.Warning);
+                return;
+            }
+
+            ComboBoxItem selectedItem = (ComboBoxItem)cmbItemID.SelectedItem;
+            string selectedBadge = selectedItem.Content.ToString();
+
+            // Filter employees based on selected badge
+            filteredEmployees = new ObservableCollection<BarbershopManagementSystem>(
+                employees.Where(emp => emp.CustomerBadge == selectedBadge).ToList()
+            );
+
+            // Reset to first page and recalculate pagination
+            CurrentPage = 1;
+            TotalPages = (int)Math.Ceiling(filteredEmployees.Count / (double)PageSize);
+            if (TotalPages == 0) TotalPages = 1;
+
+            LoadPage(CurrentPage);
+            GeneratePaginationButtons();
+
         }
 
         private void Home_Click(object sender, MouseButtonEventArgs e)
@@ -219,17 +263,17 @@ namespace Capstone
             e.Handled = true;
         }
 
-        [Table("badge_tracker")]
+        [Table("appointment_sched")]
         public class BarbershopManagementSystem : BaseModel
         {
             [PrimaryKey("id", false)]
             public Guid Id { get; set; }
 
-            [Column("badge_name")]
-            public string BadgeName { get; set; } = string.Empty;
+            [Column("customer_name")]
+            public string CustomerName { get; set; } = string.Empty;
 
-            [Column("completed_count")]
-            public string completed { get; set; }
+            [Column("customer_badge")]
+            public string CustomerBadge { get; set; }
         }
     }
 }

@@ -23,5 +23,11 @@ namespace Capstone.AppointmentOptions
         {
             InitializeComponent();
         }
+
+        private void Successfully_Click(object sender, RoutedEventArgs e)
+        {
+            // Close the success popup window
+            this.Close();
+        }
     }
 }

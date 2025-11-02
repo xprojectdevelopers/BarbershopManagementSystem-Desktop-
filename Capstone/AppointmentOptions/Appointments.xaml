@@ -77,13 +77,7 @@
 
                 <StackPanel Grid.Column="1"/>
 
-                <!-- Notification Icon -->
-                <Button Grid.Column="2"
-                        Style="{StaticResource ResponsiveButton}"
-                        ToolTip="Notifications" Cursor="Hand"
-                        Click="Notification_Click">
-                    <Image Source="/Icon/bell.png" Style="{StaticResource TopBarIcon}"/>
-                </Button>
+
 
                 <!-- Settings Icon -->
                 <Button Grid.Column="3"
@@ -160,7 +154,7 @@
         <!-- DataGrid Section -->
         <Border x:Name="DataGridContainer" Grid.Row="2" BorderBrush="Black" BorderThickness="1" Padding="20" CornerRadius="8" Margin="55,-10,55,30">
             <StackPanel>
-                <!-- Header with Title and Refresh -->
+                <!-- Header with Title, Refresh, and Test Notification -->
                 <Grid Margin="0,0,0,20">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="*"/>
@@ -172,8 +166,9 @@
                                HorizontalAlignment="Left"
                                VerticalAlignment="Center"/>
 
-                    <!-- Refresh Button -->
+                    <!-- Buttons on the right -->
                     <StackPanel Orientation="Horizontal" Grid.Column="1" HorizontalAlignment="Right">
+                        <!-- Refresh Button -->
                         <Button Content="Refresh"
                                 Background="Black" Foreground="White"
                                 FontWeight="Bold"
@@ -196,8 +191,7 @@
                           HeadersVisibility="Column"
                           RowHeight="35" FontSize="14"
                           BorderBrush="#DDD" BorderThickness="1"
-                          GridLinesVisibility="All"
-                          SelectionChanged="AppointmentsGrid_SelectionChanged">
+                          GridLinesVisibility="All">
                     <DataGrid.ColumnHeaderStyle>
                         <Style TargetType="DataGridColumnHeader">
                             <Setter Property="Background" Value="Black"/>

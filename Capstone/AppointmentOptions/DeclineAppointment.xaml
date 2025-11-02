@@ -116,7 +116,8 @@
                           FontSize="16" 
                           SelectedIndex="-1" 
                           Style="{StaticResource TextBoxStyleComboBox}"
-                          Margin="0,0,0,5" Width="265">
+                          Margin="35,0,35,0" 
+                          HorizontalAlignment="Stretch">
                     <ComboBoxItem IsEnabled="False" IsSelected="True" Foreground="Gray">
                         Select reason for decline
                     </ComboBoxItem>
@@ -127,15 +128,18 @@
                     <ComboBoxItem>Shop closed/holiday</ComboBoxItem>
                 </ComboBox>
 
+                <!-- Error Message - Below ComboBox and Aligned -->
                 <TextBlock x:Name="cmbItemIDError" 
                            Foreground="Red" 
                            FontSize="12" 
-                           Margin="0,5,0,20"
+                           Margin="35,5,35,20"
+                           HorizontalAlignment="Left"
                            Visibility="Collapsed"/>
 
 
                 <!-- Confirm Decline Button (RED) -->
                 <Button Content="Confirm Decline"
+                        Click="ConfirmDecline_Click"
                         Width="265" 
                         Cursor="Hand"
                         Height="50"
@@ -160,7 +164,7 @@
                 </Button>
 
                 <!-- Back Button (BLACK) -->
-                <Button Content="Back"
+                <Button Content="Back" Click="Back_Click"
                         Width="265" 
                         Cursor="Hand"
                         Height="50"
@@ -185,5 +189,11 @@
                 </Button>
             </StackPanel>
         </Border>
+
+        <!-- Gray Overlay for Modal Effect -->
+        <Border x:Name="ModalOverlay"
+                Background="#80000000"
+                Visibility="Collapsed"
+                IsHitTestVisible="True"/>
     </Grid>
 </Window>
