@@ -112,7 +112,7 @@ namespace Capstone.AppointmentOptions
         private void ModalOverlay_Click(object sender, MouseButtonEventArgs e)
         {
             if (currentModalWindow != null)
-            {
+            { 
                 currentModalWindow.Close();
             }
             e.Handled = true;
