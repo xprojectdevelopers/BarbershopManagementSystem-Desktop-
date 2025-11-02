@@ -187,7 +187,7 @@ namespace Capstone
             TotalPages = (int)Math.Ceiling(filteredEmployees.Count / (double)PageSize);
             if (TotalPages == 0) TotalPages = 1;
 
-            LoadPage(CurrentPage);
+            LoadPage(CurrentPage); 
             GeneratePaginationButtons();
 
         }
