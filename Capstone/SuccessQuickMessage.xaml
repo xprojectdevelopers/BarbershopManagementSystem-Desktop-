@@ -1,0 +1,58 @@
+﻿<Window x:Class="Capstone.SuccessQuickMessage"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Success"
+        Height="480"
+        Width="500"
+        WindowStartupLocation="CenterScreen"
+        WindowStyle="None"
+        ResizeMode="NoResize"
+        Background="White">
+
+    <Grid>
+        <Border BorderBrush="Black" BorderThickness="1" CornerRadius="10" Margin="20">
+            <Grid>
+                <Image HorizontalAlignment="Center" 
+                       VerticalAlignment="Top"
+                       Margin="0,40,0,0" 
+                       Height="189" Width="200"
+                       Source="/Pop out image/slang-to-the-moon.png"/>
+
+                <StackPanel VerticalAlignment="Center" Margin="0,160,0,0" HorizontalAlignment="Center">
+                    <TextBlock Text="Customer quick message has been" 
+                               FontSize="20"
+                               FontWeight="Bold"
+                               TextAlignment="Center"/>
+                    <TextBlock Text="successfully resolved."
+                               FontSize="20"
+                               FontWeight="Bold"
+                               TextAlignment="Center"
+                               Margin="0,5,0,0"/>
+                </StackPanel>
+
+                <Button Content="Continue"
+                        Width="170" Cursor="Hand"
+                        Height="50"
+                        Margin="0,358,0,0"
+                        HorizontalAlignment="Center"
+                        VerticalAlignment="Top"
+                        Foreground="White"
+                        FontSize="18"
+                        FontWeight="Bold"
+                        Click="Continue_Click">
+                    <Button.Template>
+                        <ControlTemplate TargetType="Button">
+                            <Border Background="Green"
+                                    CornerRadius="30"
+                                    BorderBrush="Black"
+                                    BorderThickness="1">
+                                <ContentPresenter HorizontalAlignment="Center"
+                                                  VerticalAlignment="Center"/>
+                            </Border>
+                        </ControlTemplate>
+                    </Button.Template>
+                </Button>
+            </Grid>
+        </Border>
+    </Grid>
+</Window>

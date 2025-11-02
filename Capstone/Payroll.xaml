@@ -1,0 +1,693 @@
+﻿<Window x:Class="Capstone.Payroll"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:Capstone"
+        mc:Ignorable="d"
+        Title="Payroll" Height="2000" Width="1280"
+        WindowState="Maximized"
+        ResizeMode="CanResize"
+        Background="White">
+
+    <Window.Resources>
+        <!-- Custom DatePicker Style -->
+        <Style x:Key="TextBoxStyleDatePicker" TargetType="DatePicker">
+            <Setter Property="Background" Value="White"/>
+            <Setter Property="BorderBrush" Value="Gray"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="FontSize" Value="20"/>
+            <Setter Property="Height" Value="40"/>
+            <Setter Property="Padding" Value="10,5"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="DatePicker">
+                        <Grid>
+                            <Border Name="Border"
+    Background="{TemplateBinding Background}"
+    BorderBrush="{TemplateBinding BorderBrush}"
+    BorderThickness="{TemplateBinding BorderThickness}"
+    CornerRadius="4">
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="Auto"/>
+                                    </Grid.ColumnDefinitions>
+
+                                    <!-- TextBox part -->
+                                    <DatePickerTextBox Grid.Column="0" 
+                       x:Name="PART_TextBox"
+                       Margin="{TemplateBinding Padding}"
+                       Background="Transparent"
+                       BorderThickness="0"
+                       FontSize="{TemplateBinding FontSize}"
+                       VerticalAlignment="Center"/>
+
+                                    <TextBlock Grid.Column="0"
+               x:Name="PlaceholderText"
+               Text="{TemplateBinding Tag}"
+               Foreground="Gray"
+               FontSize="{TemplateBinding FontSize}"
+               Margin="{TemplateBinding Padding}"
+               VerticalAlignment="Center"
+               IsHitTestVisible="False"
+               Visibility="Collapsed"/>
+
+                                    <!-- Calendar button -->
+                                    <Button Grid.Column="1" 
+            x:Name="PART_Button"
+            Background="Transparent"
+            BorderThickness="0"
+            Width="20"
+            Height="20"
+            Margin="0,0,5,0"
+            VerticalAlignment="Center">
+                                        <!-- Calendar icon -->
+                                        <Path Fill="Gray" 
+              Data="M19,3H18V1H16V3H8V1H6V3H5C3.89,3 3,3.9 3,5V19A2,2 0 0,0 5,21H19A2,2 0 0,0 21,19V5A2,2 0 0,0 19,3M19,19H5V8H19V19Z"
+              Stretch="Uniform"
+              Width="12"
+              Height="12"/>
+                                    </Button>
+
+                                    <!-- Popup for calendar -->
+                                    <Popup Grid.Column="0" Grid.ColumnSpan="2"
+           x:Name="PART_Popup"
+           PlacementTarget="{Binding ElementName=Border}"
+           Placement="Bottom"
+           StaysOpen="False"/>
+                                </Grid>
+                            </Border>
+                        </Grid>
+                        <ControlTemplate.Triggers>
+                            <!-- Show placeholder when no date selected -->
+                            <Trigger Property="SelectedDate" Value="{x:Null}">
+                                <Setter TargetName="PlaceholderText" Property="Visibility" Value="Visible"/>
+                                <Setter TargetName="PART_TextBox" Property="Visibility" Value="Collapsed"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <Style x:Key="TextBoxStyleComboBox" TargetType="ComboBox">
+            <Setter Property="Background" Value="White"/>
+            <Setter Property="BorderBrush" Value="Gray"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="Padding" Value="10,5"/>
+            <Setter Property="VerticalContentAlignment" Value="Center"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="ComboBox">
+                        <Grid>
+                            <Border Name="Border"
+                        Background="{TemplateBinding Background}"
+                        BorderBrush="{TemplateBinding BorderBrush}"
+                        BorderThickness="{TemplateBinding BorderThickness}"
+                        CornerRadius="4">
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="Auto"/>
+                                    </Grid.ColumnDefinitions>
+
+                                    <!-- Content Presenter -->
+                                    <ContentPresenter Grid.Column="0"
+                                          x:Name="PART_ContentPresenter"
+                                          Margin="{TemplateBinding Padding}"
+                                          Content="{TemplateBinding SelectionBoxItem}"
+                                          ContentTemplate="{TemplateBinding SelectionBoxItemTemplate}"
+                                          VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
+                                          HorizontalAlignment="Left"
+                                          IsHitTestVisible="False"/>
+
+                                    <ToggleButton Grid.Column="1"
+                                      x:Name="PART_DropDownToggle"
+                                      Background="Transparent"
+                                      BorderThickness="0"
+                                      Width="20"
+                                      Height="20"
+                                      Margin="0,0,8,0"
+                                      VerticalAlignment="Center"
+                                      IsChecked="{Binding IsDropDownOpen, RelativeSource={RelativeSource TemplatedParent}}"
+                                      ClickMode="Press">
+                                        <Path Fill="Gray"
+                                  Data="M7,10L12,15L17,10H7Z"
+                                  Stretch="Uniform"
+                                  Width="10"
+                                  Height="8"/>
+                                    </ToggleButton>
+
+                                    <!-- Popup -->
+                                    <Popup x:Name="PART_Popup"
+                               Grid.ColumnSpan="2"
+                               IsOpen="{TemplateBinding IsDropDownOpen}"
+                               Placement="Bottom"
+                               PlacementTarget="{Binding ElementName=Border}"
+                               StaysOpen="False">
+                                        <Border Background="White"
+                                    BorderBrush="Gray"
+                                    BorderThickness="1"
+                                    CornerRadius="4"
+                                    MinWidth="{Binding ActualWidth, ElementName=Border}">
+                                            <ScrollViewer>
+                                                <ItemsPresenter/>
+                                            </ScrollViewer>
+                                        </Border>
+                                    </Popup>
+                                </Grid>
+                            </Border>
+                        </Grid>
+                        <ControlTemplate.Triggers>
+                            <!-- Hover effect -->
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="Border" Property="BorderBrush" Value="#333"/>
+                            </Trigger>
+                            <!-- Focus effect -->
+                            <Trigger Property="IsFocused" Value="True">
+                                <Setter TargetName="Border" Property="BorderBrush" Value="#0078D4"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <!-- Responsive button style for notification and settings -->
+        <Style x:Key="ResponsiveButton" TargetType="Button">
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Padding" Value="12"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="HorizontalAlignment" Value="Center"/>
+            <Setter Property="VerticalAlignment" Value="Center"/>
+            <Setter Property="MinWidth" Value="40"/>
+            <Setter Property="MinHeight" Value="40"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border Background="{TemplateBinding Background}" 
+                     BorderBrush="{TemplateBinding BorderBrush}"
+                     BorderThickness="{TemplateBinding BorderThickness}"
+                     Padding="{TemplateBinding Padding}"
+                     CornerRadius="20">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter Property="Background" Value="Transparent"/>
+                            </Trigger>
+                            <Trigger Property="IsPressed" Value="True">
+                                <Setter Property="Background" Value="Transparent"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <!-- Simple icon style for top bar -->
+        <Style x:Key="TopBarIcon" TargetType="Image">
+            <Setter Property="Width" Value="24"/>
+            <Setter Property="Height" Value="24"/>
+        </Style>
+    </Window.Resources>
+
+    <Grid>
+        <ScrollViewer VerticalScrollBarVisibility="Auto"
+              HorizontalScrollBarVisibility="Disabled"
+              PanningMode="VerticalOnly">
+
+            <StackPanel Margin="40" Width="1205">
+
+                <!-- Header Section -->
+                <StackPanel Grid.Row="0" Margin="0,0,0,0" Width="1205">
+                    <Grid Margin="20,0,20,0">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="Auto"/>
+                        </Grid.ColumnDefinitions>
+
+                        <!-- Home -->
+                        <StackPanel Orientation="Horizontal" Grid.Column="0" VerticalAlignment="Center"
+                     MouseLeftButtonUp="Home_Click" Cursor="Hand" Margin="0,0,15,0">
+                            <Image Source="/Icon/house.png" Width="30" Height="30"/>
+                            <Label Content="Home" FontWeight="Bold" FontSize="20" VerticalAlignment="Center" Margin="5,0,0,0"/>
+                        </StackPanel>
+
+
+                        <StackPanel Grid.Column="1"/>
+                        <!-- Settings Icon -->
+                        <Button Grid.Column="3" Cursor="Hand"
+                 Style="{StaticResource ResponsiveButton}"
+                 ToolTip="Settings"
+                 Click="Setting_Click">
+                            <Image Source="/Icon/gear.png" Style="{StaticResource TopBarIcon}"/>
+                        </Button>
+                    </Grid>
+
+                    <Label Content="Payroll" FontSize="20" FontWeight="Bold" Margin="20,20,20,15"/>
+                </StackPanel>
+                <UniformGrid Columns="3" Rows="1" Height="250" Margin="20,-20,20,0">
+
+                    <Border BorderBrush="#000" BorderThickness="1" CornerRadius="8" Padding="15" Margin="0,0,0,0">
+                        <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
+                            <Image Source="/Icon/stack-of-money.png" Stretch="Uniform" Width="170" Height="150"/>
+                        </StackPanel>
+                    </Border>
+
+                    <Border BorderBrush="#000" BorderThickness="1" CornerRadius="8" Padding="15" Margin="10,0,-385,0">
+                        <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center" Margin="40,0,0,0">
+                            <Image Source="/quotes-fill.png" Stretch="Uniform" Width="80" Height="50" Margin="0,0,640,0"/>
+                            <TextBlock Text="Better is the poor who walks in his " FontSize="25" FontWeight="Bold" Width="675"/>
+                            <TextBlock Text="integrity than one perverse in his ways," FontSize="25" FontWeight="Bold" Width="675"/>
+                            <TextBlock Text="though he be rich." FontSize="25" FontWeight="Bold" Width="675"/>
+                            <TextBlock Text="Proverbs 28:6" FontSize="15" Margin="10,15,0,0"/>
+                        </StackPanel>
+                    </Border>
+                </UniformGrid>
+
+                <!-- Employee Table -->
+                <Border BorderBrush="Black" BorderThickness="1" Padding="20" CornerRadius="8" Margin="0,20,0,60" Height="1510" Width="1160">
+                    <StackPanel Margin="-20,0,0,0">
+                        <TextBlock Text="Calculate Molave Street Barbers Payroll"
+                   FontSize="30" FontWeight="Bold"
+                   HorizontalAlignment="Center" Margin="0,20,0,20"/>
+
+                        <!-- Search Section -->
+                        <Grid Margin="40,70,40,20" Height="120">
+                            <Label Content="Employee ID" FontSize="20" HorizontalAlignment="Left" Margin="20,0,0,0" VerticalAlignment="Top"/>
+                            <ComboBox x:Name="cmbItemID" SelectionChanged="cmbItemID_SelectionChanged" Height="47" FontSize="16" 
+              Style="{StaticResource TextBoxStyleComboBox}" HorizontalAlignment="Left" Margin="20,36,0,36" Width="205">
+                            </ComboBox>
+                            <TextBlock x:Name="txtEmployeeIDError" Foreground="Red" FontSize="12" 
+               Margin="20,80,0,0" HorizontalAlignment="Left" VerticalAlignment="Top" Visibility="Collapsed"/>
+
+                            <Button Content="Search" Click="Search_Click"
+            Width="160" Cursor="Hand" Height="40"
+            Margin="245,37,0,0"
+            HorizontalAlignment="Left" VerticalAlignment="Top"
+            Foreground="white">
+                                <Button.Template>
+                                    <ControlTemplate TargetType="Button">
+                                        <Border Background="black" CornerRadius="20" BorderBrush="Black" BorderThickness="1">
+                                            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center">
+                                                <Image Source="/Icon/magnifying-glass.png" Width="16" Height="16" Margin="0,0,8,0" VerticalAlignment="Center"/>
+                                                <TextBlock Text="{TemplateBinding Content}" Foreground="{TemplateBinding Foreground}" VerticalAlignment="Center"/>
+                                            </StackPanel>
+                                        </Border>
+                                    </ControlTemplate>
+                                </Button.Template>
+                            </Button>
+
+                            <Button Content="Export" Cursor="Hand" Width="205" Height="40"
+            Margin="830,37,0,0" Click="ExportButton_Click"
+            HorizontalAlignment="Left" VerticalAlignment="Top"
+            Foreground="Blue">
+                                <Button.Template>
+                                    <ControlTemplate TargetType="Button">
+                                        <Border Background="White" BorderBrush="gray" BorderThickness="1">
+                                            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center">
+                                                <Image Source="/Icon/export.png" Width="16" Height="16" Margin="0,0,8,0" VerticalAlignment="Center"/>
+                                                <TextBlock Text="{TemplateBinding Content}" Foreground="{TemplateBinding Foreground}" VerticalAlignment="Center"/>
+                                            </StackPanel>
+                                        </Border>
+                                    </ControlTemplate>
+                                </Button.Template>
+                            </Button>
+                        </Grid>
+
+                        <!-- Basic Payroll Information Section -->
+                        <Grid Margin="30,0,30,0" Width="1020" Height="160">
+                            <TextBlock Text="Basic Payroll Information"
+                                       FontSize="20" FontWeight="Bold"
+                                       HorizontalAlignment="Left" Margin="0,20,0,0" VerticalAlignment="Top"/>
+
+                            <Grid Margin="0,70,0,0" Height="90">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="270"/>
+                                    <ColumnDefinition Width="270"/>
+                                    <ColumnDefinition Width="270"/>
+                                    <ColumnDefinition Width="270"/>
+                                </Grid.ColumnDefinitions>
+
+                                <Grid Grid.Column="0">
+                                    <Label Content="Nickname" FontSize="20" Margin="0,0,0,0" VerticalAlignment="Top"/>
+                                    <TextBox x:Name="txtName" VerticalContentAlignment="Center" IsReadOnly="True" FontSize="20" Height="40" Width="205" 
+                                             HorizontalAlignment="Left" Margin="0,37,0,0" VerticalAlignment="Top"/>
+                                    <TextBlock x:Name="txtNameError" Foreground="Red" FontSize="12" 
+                                               Margin="10,60,0,0" VerticalAlignment="Top" Visibility="Collapsed"/>
+                                </Grid>
+
+                                <Grid Grid.Column="1">
+                                    <Label Content="Role" FontSize="20" Margin="0,0,0,0" VerticalAlignment="Top"/>
+                                    <TextBox x:Name="txtRole" VerticalContentAlignment="Center"  IsReadOnly="True" FontSize="20" Height="40" Width="205" 
+                                             HorizontalAlignment="Left" Margin="0,37,0,0" VerticalAlignment="Top"/>
+                                    <TextBlock x:Name="txtRoleError" Foreground="Red" FontSize="12" 
+                                               Margin="0,90,0,0" VerticalAlignment="Top" Visibility="Collapsed"/>
+                                </Grid>
+
+                                <Grid Grid.Column="2">
+                                    <Label Content="Start Date" FontSize="20" Margin="0,0,0,0" VerticalAlignment="Top"/>
+                                    <DatePicker x:Name="dpStartDate" Style="{StaticResource TextBoxStyleDatePicker}" 
+                                                Tag="Select Start Date"
+                                                Width="205" Height="40" HorizontalAlignment="Left" 
+                                                Margin="0,37,0,0" VerticalAlignment="Top"/>
+                                    <TextBlock x:Name="txtStartDateError" Foreground="Red" FontSize="12" 
+                                               Margin="0,80,0,0" VerticalAlignment="Top" Visibility="Collapsed"/>
+                                </Grid>
+
+                                <Grid Grid.Column="3">
+                                    <Label Content="End Date" FontSize="20" Margin="0,0,0,0" VerticalAlignment="Top"/>
+                                    <DatePicker x:Name="dpEndDate" Style="{StaticResource TextBoxStyleDatePicker}" 
+                                                Tag="Select End Date"
+                                                Width="205" Height="40" HorizontalAlignment="Left" 
+                                                Margin="0,37,0,0" VerticalAlignment="Top"/>
+                                    <TextBlock x:Name="txtEndDateError" Foreground="Red" FontSize="12" 
+                                               Margin="0,80,0,0" VerticalAlignment="Top" Visibility="Collapsed"/>
+                                </Grid>
+                            </Grid>
+                        </Grid>
+
+                        <!-- Service Count Section -->
+                        <Grid Margin="45,20,30,0" Width="1034" Height="380">
+                            <TextBlock Text="Service Count"
+                                       FontSize="20" FontWeight="Bold"
+                                       HorizontalAlignment="Left" Margin="0,20,0,0" VerticalAlignment="Top"/>
+
+                            <!-- First Row -->
+                            <Grid Margin="0,-180,0,0" Height="90">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="270"/>
+                                    <ColumnDefinition Width="270"/>
+                                    <ColumnDefinition Width="270"/>
+                                    <ColumnDefinition Width="270"/>
+                                </Grid.ColumnDefinitions>
+
+                                <Grid Grid.Column="0">
+                                    <Label Content="Haircut" FontSize="20" VerticalAlignment="Top"/>
+                                    <TextBox x:Name="txtHaircut" VerticalContentAlignment="Center"  FontSize="20" Height="40" Width="205" 
+                                             HorizontalAlignment="Left" Margin="0,37,0,0" VerticalAlignment="Top"/>
+                                    <TextBlock Foreground="Red" FontSize="12" Margin="0,90,0,0" VerticalAlignment="Top" Visibility="Collapsed"/>
+                                </Grid>
+
+                                <Grid Grid.Column="1">
+                                    <Label Content="Haircut (Reservation)" FontSize="20" VerticalAlignment="Top"/>
+                                    <TextBox x:Name="txtHaircutReservation" VerticalContentAlignment="Center"  FontSize="20" Height="40" Width="205" 
+                                             HorizontalAlignment="Left" Margin="0,37,0,0" VerticalAlignment="Top"/>
+                                    <TextBlock Foreground="Red" FontSize="12" Margin="0,90,0,0" VerticalAlignment="Top" Visibility="Collapsed"/>
+                                </Grid>
+
+                                <Grid Grid.Column="2">
+                                    <Label Content="Haircut/Wash" FontSize="20" VerticalAlignment="Top"/>
+                                    <TextBox x:Name="txtHaircutWash" VerticalContentAlignment="Center"  FontSize="20" Height="40" Width="205" 
+                                             HorizontalAlignment="Left" Margin="0,37,0,0" VerticalAlignment="Top"/>
+                                    <TextBlock Foreground="Red" FontSize="12" Margin="0,90,0,0" VerticalAlignment="Top" Visibility="Collapsed"/>
+                                </Grid>
+
+                                <Grid Grid.Column="3">
+                                    <Label Content="Haircut/Hot Towel" FontSize="20" VerticalAlignment="Top"/>
+                                    <TextBox x:Name="txtHaircutHotTowel" VerticalContentAlignment="Center"  FontSize="20" Height="40" Width="205" 
+                                             HorizontalAlignment="Left" Margin="0,37,0,0" VerticalAlignment="Top"/>
+                                    <TextBlock Foreground="Red" FontSize="12" Margin="0,90,0,0" VerticalAlignment="Top" Visibility="Collapsed"/>
+                                </Grid>
+                            </Grid>
+
+                            <!-- Second Row -->
+                            <Grid Margin="0,50,0,0" Height="90">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="270"/>
+                                    <ColumnDefinition Width="270"/>
+                                    <ColumnDefinition Width="270"/>
+                                    <ColumnDefinition Width="270"/>
+                                </Grid.ColumnDefinitions>
+
+                                <Grid Grid.Column="0">
+                                    <Label Content="Haircut/Hair Dye" FontSize="20" VerticalAlignment="Top"/>
+                                    <TextBox x:Name="txtHaircutHairDye" VerticalContentAlignment="Center"  FontSize="20" Height="40" Width="205" 
+                                             HorizontalAlignment="Left" Margin="0,37,0,0" VerticalAlignment="Top"/>
+                                    <TextBlock Foreground="Red" FontSize="12" Margin="0,90,0,0" VerticalAlignment="Top" Visibility="Collapsed"/>
+                                </Grid>
+
+                                <Grid Grid.Column="1">
+                                    <Label Content="Haircut/Hair Color" FontSize="20" VerticalAlignment="Top"/>
+                                    <TextBox x:Name="txtHaircutHairColor" VerticalContentAlignment="Center"  FontSize="20" Height="40" Width="205" 
+                                             HorizontalAlignment="Left" Margin="0,37,0,0" VerticalAlignment="Top"/>
+                                    <TextBlock Foreground="Red" FontSize="12" Margin="0,90,0,0" VerticalAlignment="Top" Visibility="Collapsed"/>
+                                </Grid>
+
+                                <Grid Grid.Column="2">
+                                    <Label Content="Haircut/Highlights" FontSize="20" VerticalAlignment="Top"/>
+                                    <TextBox x:Name="txtHaircutHighlights" VerticalContentAlignment="Center"  FontSize="20" Height="40" Width="205" 
+                                             HorizontalAlignment="Left" Margin="0,37,0,0" VerticalAlignment="Top"/>
+                                    <TextBlock Foreground="Red" FontSize="12" Margin="0,90,0,0" VerticalAlignment="Top" Visibility="Collapsed"/>
+                                </Grid>
+
+                                <Grid Grid.Column="3">
+                                    <Label Content="Haircut/Hot Bleaching" FontSize="20" VerticalAlignment="Top"/>
+                                    <TextBox x:Name="txtHaircutHotBleaching" VerticalContentAlignment="Center"  FontSize="20" Height="40" Width="205" 
+                                             HorizontalAlignment="Left" Margin="0,37,0,0" VerticalAlignment="Top"/>
+                                    <TextBlock Foreground="Red" FontSize="12" Margin="0,90,0,0" VerticalAlignment="Top" Visibility="Collapsed"/>
+                                </Grid>
+                            </Grid>
+
+                            <!-- Third Row -->
+                            <Grid Margin="0,270,0,0" Height="90">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="270"/>
+                                    <ColumnDefinition Width="270"/>
+                                    <ColumnDefinition Width="270"/>
+                                    <ColumnDefinition Width="270"/>
+                                </Grid.ColumnDefinitions>
+
+                                <Grid Grid.Column="0">
+                                    <Label Content="Haircut/Perm" FontSize="20" VerticalAlignment="Top"/>
+                                    <TextBox x:Name="txtHaircutPerm" VerticalContentAlignment="Center"  FontSize="20" Height="40" Width="205" 
+                                             HorizontalAlignment="Left" Margin="0,37,0,0" VerticalAlignment="Top"/>
+                                    <TextBlock Foreground="Red" FontSize="12" Margin="0,90,0,0" VerticalAlignment="Top" Visibility="Collapsed"/>
+                                </Grid>
+
+                                <Grid Grid.Column="1">
+                                    <Label Content="Rebond/Short Hair" FontSize="20" VerticalAlignment="Top"/>
+                                    <TextBox x:Name="txtRebondShort" VerticalContentAlignment="Center"  FontSize="20" Height="40" Width="205" 
+                                             HorizontalAlignment="Left" Margin="0,37,0,0" VerticalAlignment="Top"/>
+                                    <TextBlock Foreground="Red" FontSize="12" Margin="0,90,0,0" VerticalAlignment="Top" Visibility="Collapsed"/>
+                                </Grid>
+
+                                <Grid Grid.Column="2">
+                                    <Label Content="Rebond/Long Hair" FontSize="20" VerticalAlignment="Top"/>
+                                    <TextBox x:Name="txtRebondLong" VerticalContentAlignment="Center"  FontSize="20" Height="40" Width="205" 
+                                             HorizontalAlignment="Left" Margin="0,37,0,0" VerticalAlignment="Top"/>
+                                    <TextBlock Foreground="Red" FontSize="12" Margin="0,90,0,0" VerticalAlignment="Top" Visibility="Collapsed"/>
+                                </Grid>
+
+                                <Grid Grid.Column="3">
+                                    <Label Content="Braid" FontSize="20" VerticalAlignment="Top"/>
+                                    <TextBox x:Name="txtBraid" Padding="23,0,10,0" VerticalContentAlignment="Center"  FontSize="20" Height="40" Width="205" 
+                                             HorizontalAlignment="Left" Margin="0,37,0,0" VerticalAlignment="Top"/>
+                                    <TextBlock Text="₱" 
+                                             FontSize="20"
+                                             Foreground="Black"
+                                             VerticalAlignment="Center"
+                                             Margin="10,23,0,0"
+                                             IsHitTestVisible="False"/>
+                                    <TextBlock Foreground="Red" FontSize="12" Margin="0,90,0,0" VerticalAlignment="Top" Visibility="Collapsed"/>
+                                </Grid>
+                            </Grid>
+                        </Grid>
+
+                        <!-- Employee Deduction Section -->
+                        <Grid Margin="60,20,30,0" Width="1070" Height="160">
+                            <TextBlock Text="Employee Deduction"
+                                       FontSize="20" FontWeight="Bold"
+                                       HorizontalAlignment="Left" Margin="0,20,0,0" VerticalAlignment="Top"/>
+
+                            <Grid Margin="0,70,0,0" Height="90">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="270"/>
+                                    <ColumnDefinition Width="270"/>
+                                    <ColumnDefinition Width="270"/>
+                                    <ColumnDefinition Width="270"/>
+                                </Grid.ColumnDefinitions>
+
+                                <Grid Grid.Column="0">
+                                    <Label Content="Cash Advance" FontSize="20" VerticalAlignment="Top"/>
+                                    <TextBox x:Name="txtCashAdvance" Padding="23,0,10,0" VerticalContentAlignment="Center"  FontSize="20" Height="40" Width="205" 
+                                             HorizontalAlignment="Left" Margin="0,37,0,0" VerticalAlignment="Top"/>
+                                    <TextBlock Text="₱" 
+                                             FontSize="20"
+                                             Foreground="Black"
+                                             VerticalAlignment="Center"
+                                             Margin="10,23,0,0"
+                                             IsHitTestVisible="False"/>
+                                    <TextBlock Foreground="Red" FontSize="12" Margin="0,90,0,0" VerticalAlignment="Top" Visibility="Collapsed"/>
+                                </Grid>
+
+                                <Grid Grid.Column="1">
+                                    <Label Content="Late" FontSize="20" VerticalAlignment="Top"/>
+                                    <TextBox x:Name="txtLate" VerticalContentAlignment="Center"  FontSize="20" Height="40" Width="205" 
+                                             HorizontalAlignment="Left" Margin="0,37,0,0" VerticalAlignment="Top"/>
+                                    <TextBlock Foreground="Red" FontSize="12" Margin="0,90,0,0" VerticalAlignment="Top" Visibility="Collapsed"/>
+                                </Grid>
+
+                                <Grid Grid.Column="2">
+                                    <Label Content="Absent" FontSize="20" VerticalAlignment="Top"/>
+                                    <TextBox x:Name="txtAbsent" VerticalContentAlignment="Center"  FontSize="20" Height="40" Width="205" 
+                                             HorizontalAlignment="Left" Margin="0,37,0,0" VerticalAlignment="Top"/>
+                                    <TextBlock Foreground="Red" FontSize="12" Margin="0,90,0,0" VerticalAlignment="Top" Visibility="Collapsed"/>
+                                </Grid>
+
+                                <Grid Grid.Column="3">
+                                    <Label Content="Saving Fund" FontSize="20" VerticalAlignment="Top"/>
+                                    <TextBox x:Name="txtSavingFund" Padding="23,0,10,0" VerticalContentAlignment="Center"  FontSize="20" Height="40" Width="205" 
+                                             HorizontalAlignment="Left" Margin="0,37,0,0" VerticalAlignment="Top"/>
+                                    <TextBlock Text="₱" 
+                                             FontSize="20"
+                                             Foreground="Black"
+                                             VerticalAlignment="Center"
+                                             Margin="10,23,0,0"
+                                             IsHitTestVisible="False"/>
+                                    <TextBlock Foreground="Red" FontSize="12" Margin="0,90,0,0" VerticalAlignment="Top" Visibility="Collapsed"/>
+                                </Grid>
+
+                                <Button Content="On" Cursor="Hand" Width="60" Height="30" Click="ToggleSavingFund_Click"
+        Margin="130,42,0,0" HorizontalAlignment="Left" VerticalAlignment="Top"
+        Foreground="white" Grid.Column="3">
+                                    <Button.Template>
+                                        <ControlTemplate TargetType="Button">
+                                            <Border Background="Blue" CornerRadius="15" BorderBrush="Blue" BorderThickness="1">
+                                                <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center">
+                                                    <TextBlock Text="{TemplateBinding Content}" Foreground="{TemplateBinding Foreground}" VerticalAlignment="Center"/>
+                                                </StackPanel>
+                                            </Border>
+                                        </ControlTemplate>
+                                    </Button.Template>
+                                </Button>
+                            </Grid>
+                        </Grid>
+
+                        <!-- Computation Section -->
+                        <Grid Margin="60,20,30,0" Width="1070" Height="200">
+                            <TextBlock Text="Computation"
+                                       FontSize="20" FontWeight="Bold"
+                                       HorizontalAlignment="Left" Margin="0,20,0,0" VerticalAlignment="Top"/>
+
+                            <Grid Margin="0,70,0,0" Height="130">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="230"/>
+                                    <ColumnDefinition Width="150"/>
+                                    <ColumnDefinition Width="220"/>
+                                    <ColumnDefinition Width="212"/>
+                                    <ColumnDefinition Width="245"/>
+                                </Grid.ColumnDefinitions>
+
+                                <Grid Grid.Column="0">
+                                    <Label Content="Gross Pay" FontSize="20" VerticalAlignment="Top"/>
+                                    <TextBox x:Name="txtGrossPay" Padding="23,0,10,0" IsReadOnly="True" VerticalContentAlignment="Center" FontSize="20" Height="40" Width="205" 
+                                             HorizontalAlignment="Left" Margin="0,37,0,0" VerticalAlignment="Top"/>
+                                    <TextBlock Text="₱" 
+                                             FontSize="20"
+                                             Foreground="Black"
+                                             VerticalAlignment="Center"
+                                             Margin="10,-18,0,0"
+                                             IsHitTestVisible="False"/>
+                                    <TextBlock Foreground="Red" FontSize="12" Margin="0,90,0,0" VerticalAlignment="Top" Visibility="Collapsed"/>
+                                </Grid>
+
+                                <TextBlock Text="-" FontSize="60" Grid.Column="1" 
+                                           HorizontalAlignment="Center" VerticalAlignment="Center" Margin="0,-30,0,0"/>
+
+                                <Grid Grid.Column="2">
+                                    <Label Content="Total Deduction" FontSize="20" VerticalAlignment="Top"/>
+                                    <TextBox x:Name="txtTotalDeduction" Padding="23,0,10,0" IsReadOnly="True" VerticalContentAlignment="Center" FontSize="20" Height="40" Width="205" 
+                                             HorizontalAlignment="Left" Margin="0,37,0,0" VerticalAlignment="Top"/>
+                                    <TextBlock Text="₱" 
+                                             FontSize="20"
+                                             Foreground="Black"
+                                             VerticalAlignment="Center"
+                                             Margin="10,-18,0,0"
+                                             IsHitTestVisible="False"/>
+                                    <TextBlock Foreground="Red" FontSize="12" Margin="0,90,0,0" VerticalAlignment="Top" Visibility="Collapsed"/>
+                                </Grid>
+
+                                <TextBlock Text="=" FontSize="60" Grid.Column="3" 
+                                           HorizontalAlignment="Center" VerticalAlignment="Center" Margin="0,-30,0,0"/>
+
+                                <Grid Grid.Column="4">
+                                    <Label Content="Net Pay" FontSize="20" VerticalAlignment="Top"/>
+                                    <TextBox x:Name="txtNetPay" IsReadOnly="True" VerticalContentAlignment="Center" FontSize="20" Height="40" Width="205" 
+                                             HorizontalAlignment="Left" Margin="0,37,0,0" VerticalAlignment="Top"/>
+                                    <TextBlock Foreground="Red" FontSize="12" Margin="0,90,0,0" VerticalAlignment="Top" Visibility="Collapsed"/>
+                                </Grid>
+                            </Grid>
+                        </Grid>
+
+                        <!-- Buttons Section -->
+                        <Grid Margin="60,20,20,0" Height="160">
+                            <Button Content="Clear" Cursor="Hand" Click="Clear_Click" Width="160" Height="40"
+                                    Margin="0,30,0,0" HorizontalAlignment="Left" VerticalAlignment="Top"
+                                    Foreground="white">
+                                <Button.Template>
+                                    <ControlTemplate TargetType="Button">
+                                        <Border Background="black" CornerRadius="20" BorderBrush="Black" BorderThickness="1">
+                                            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center">
+                                                <TextBlock Text="{TemplateBinding Content}" Foreground="{TemplateBinding Foreground}" VerticalAlignment="Center"/>
+                                            </StackPanel>
+                                        </Border>
+                                    </ControlTemplate>
+                                </Button.Template>
+                            </Button>
+
+                            <Button Content="Compute" Cursor="Hand" Click="Compute_Click" Width="160" Height="40"
+                                    Margin="180,30,0,0" HorizontalAlignment="Left" VerticalAlignment="Top"
+                                    Foreground="white">
+                                <Button.Template>
+                                    <ControlTemplate TargetType="Button">
+                                        <Border Background="black" CornerRadius="20" BorderBrush="Black" BorderThickness="1">
+                                            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center">
+                                                <TextBlock Text="{TemplateBinding Content}" Foreground="{TemplateBinding Foreground}" VerticalAlignment="Center"/>
+                                            </StackPanel>
+                                        </Border>
+                                    </ControlTemplate>
+                                </Button.Template>
+                            </Button>
+
+                            <Label Content="Release Date" FontSize="20" Margin="810,-27,0,0" HorizontalAlignment="Left" VerticalAlignment="Top"/>
+                            <DatePicker x:Name="dpReleaseDate" Style="{StaticResource TextBoxStyleDatePicker}" 
+                                        Tag="Select Release Date"
+                                        Width="205" Height="40" 
+                                        Margin="810,10,0,0" HorizontalAlignment="Left" VerticalAlignment="Top"/>
+                            <TextBlock x:Name="txtReleasDateError" Foreground="Red" FontSize="12" Margin="815,53,0,0" VerticalAlignment="Top" Visibility="Collapsed"/>
+                            <TextBlock x:Name="txtReleasDateSame" Foreground="Red" FontSize="12" Margin="815,53,0,0" VerticalAlignment="Top" Visibility="Collapsed"/>
+                            <Button Content="Release" Cursor="Hand" Width="205" Height="40"
+                                    Margin="810,90,0,0" HorizontalAlignment="Left" VerticalAlignment="Top"
+                                    Foreground="white" Click="Release_Click">
+
+                                <Button.Template>
+                                    <ControlTemplate TargetType="Button">
+                                        <Border Background="Blue" CornerRadius="20" BorderBrush="Blue" BorderThickness="1">
+                                            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center">
+                                                <TextBlock Text="{TemplateBinding Content}" Foreground="{TemplateBinding Foreground}" VerticalAlignment="Center"/>
+                                            </StackPanel>
+                                        </Border>
+                                    </ControlTemplate>
+                                </Button.Template>
+                            </Button>
+                        </Grid>
+                    </StackPanel>
+                </Border>
+            </StackPanel>
+        </ScrollViewer>
+
+        <!-- Gray Overlay for Modal Effect -->
+        <Border x:Name="ModalOverlay"
+                Grid.RowSpan="3"
+                Background="#80000000"
+                Visibility="Collapsed"
+                IsHitTestVisible="True"
+                MouseLeftButtonDown="ModalOverlay_Click"/>
+    </Grid>
+</Window>
