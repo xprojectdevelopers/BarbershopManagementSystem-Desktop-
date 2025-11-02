@@ -52,7 +52,7 @@ namespace Capstone {
                 return;
             }
             _contentLoaded = true;
-            System.Uri resourceLocater = new System.Uri("/Capstone;V1.0.0.0;component/successquickmessage.xaml", System.UriKind.Relative);
+            System.Uri resourceLocater = new System.Uri("/Capstone;component/successquickmessage.xaml", System.UriKind.Relative);
             
             #line 1 "..\..\..\SuccessQuickMessage.xaml"
             System.Windows.Application.LoadComponent(this, resourceLocater);
