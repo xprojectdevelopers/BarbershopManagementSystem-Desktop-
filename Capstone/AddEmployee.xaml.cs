@@ -641,7 +641,8 @@ namespace Capstone
                     ECnumber = string.IsNullOrWhiteSpace(txtEmergencyNumber.Text) ? null : txtEmergencyNumber.Text.Trim(),
                     DateHired = dateHiredPicker.SelectedDate,
                     Estatus = GetSelectedComboBoxValue(cmbEmploymentStatus),
-                    Wsched = GetSelectedWorkSchedule()
+                    Wsched = GetSelectedWorkSchedule(),
+                    dayoff = GetDayOffSchedule()
                 };
 
                 if (newEmployee.Role == "Cashier")
@@ -654,6 +655,7 @@ namespace Capstone
                     newEmployee.BarberExpertise = GetSelectedComboBoxValue(cmbBarberExpertise);
                     newEmployee.Epassword = null;
                 }
+
 
                 // Validate required fields first
                 bool isRequiredValid = ValidateAllRequiredFieldsInline(newEmployee);
@@ -815,6 +817,21 @@ namespace Capstone
             e.Handled = true;
         }
 
+        private string GetDayOffSchedule()
+        {
+            var dayOffList = new List<string>();
+
+            foreach (var child in workSchedulePanel.Children)
+            {
+                if (child is CheckBox checkBox && checkBox.IsChecked == false)
+                {
+                    dayOffList.Add(checkBox.Content.ToString());
+                }
+            }
+
+            return dayOffList.Count > 0 ? string.Join(", ", dayOffList) : null;
+        }
+
         [Table("Add_Employee")] // pangalan ng table sa Supabase
         public class BarbershopManagementSystem : BaseModel
         {
@@ -871,6 +888,9 @@ namespace Capstone
 
             [Column("Photo")]
             public string Photo { get; set; } // Base64 string
+
+            [Column("dayOff")]
+            public string dayoff { get; set; }
         }
     }
 }

@@ -467,6 +467,7 @@
                                     </DataGridTemplateColumn.CellTemplate>
                                 </DataGridTemplateColumn>
                                 <DataGridTextColumn Header="Supplier" Binding="{Binding SupplierName}" Width="*"/>
+                                <DataGridTextColumn Header="Supplier Contact" Binding="{Binding SCNumber}" Width="*"/>
                                 <DataGridTextColumn Header="Last Update" Binding="{Binding Date}" Width="*"/>
                             </DataGrid.Columns>
                         </DataGrid>

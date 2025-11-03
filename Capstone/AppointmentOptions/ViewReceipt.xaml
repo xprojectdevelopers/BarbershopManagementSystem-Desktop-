@@ -43,7 +43,8 @@
                            HorizontalAlignment="Center"
                            Margin="0,0,0,5"/>
 
-                <TextBlock Text="Appointment Number" 
+                <TextBlock x:Name="txtAppointmentNumber"
+                           Text="MSB-0000" 
                            FontSize="14" 
                            FontWeight="Bold"
                            HorizontalAlignment="Center"
@@ -54,18 +55,20 @@
                            HorizontalAlignment="Center"
                            Margin="0,0,0,5"/>
 
-                <TextBlock Text="Date and Time" 
+                <TextBlock x:Name="txtDateTime"
+                           Text="1/1/2025 (1:00 AM)" 
                            FontSize="14" 
                            FontWeight="Bold"
                            HorizontalAlignment="Center"
                            Margin="0,0,0,15"/>
 
-                <TextBlock Text="Payment Status" 
+                <TextBlock Text="Payment Status:" 
                            FontSize="14" 
                            HorizontalAlignment="Center"
                            Margin="0,0,0,5"/>
 
-                <TextBlock Text="Status" 
+                <TextBlock x:Name="txtPaymentStatus"
+                           Text="Status" 
                            FontSize="14" 
                            FontWeight="Bold"
                            HorizontalAlignment="Center"
