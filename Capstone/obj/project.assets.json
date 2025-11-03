@@ -1203,23 +1203,23 @@
     ]
   },
   "packageFolders": {
-    "C:\\Users\\Mezzc\\.nuget\\packages\\": {},
+    "C:\\Users\\seanc\\.nuget\\packages\\": {},
     "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages": {}
   },
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\Mezzc\\OneDrive\\Documents\\Barbershop\\Capstone\\Capstone.csproj",
+      "projectUniqueName": "C:\\capstone\\desktop\\Capstone\\Capstone.csproj",
       "projectName": "Capstone",
-      "projectPath": "C:\\Users\\Mezzc\\OneDrive\\Documents\\Barbershop\\Capstone\\Capstone.csproj",
-      "packagesPath": "C:\\Users\\Mezzc\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\Mezzc\\OneDrive\\Documents\\Barbershop\\Capstone\\obj\\",
+      "projectPath": "C:\\capstone\\desktop\\Capstone\\Capstone.csproj",
+      "packagesPath": "C:\\Users\\seanc\\.nuget\\packages\\",
+      "outputPath": "C:\\capstone\\desktop\\Capstone\\obj\\",
       "projectStyle": "PackageReference",
       "fallbackFolders": [
         "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
       ],
       "configFilePaths": [
-        "C:\\Users\\Mezzc\\AppData\\Roaming\\NuGet\\NuGet.Config",
+        "C:\\Users\\seanc\\AppData\\Roaming\\NuGet\\NuGet.Config",
         "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
         "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
       ],

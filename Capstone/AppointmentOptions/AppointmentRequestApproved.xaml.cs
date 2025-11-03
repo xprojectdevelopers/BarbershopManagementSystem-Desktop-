@@ -19,9 +19,14 @@ namespace Capstone.AppointmentOptions
     /// </summary>
     public partial class AppointmentRequestApproved : Window
     {
+        public string AppointmentDetails { get; set; } = "Appointment has been successfully approved!";
+
         public AppointmentRequestApproved()
         {
             InitializeComponent();
+            Loaded += (s, e) => {
+                // Update the message text if custom details are provided
+            };
         }
 
         private void Successfully_Click(object sender, RoutedEventArgs e)
