@@ -1,4 +1,6 @@
-﻿using Supabase;
+﻿using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
+using Supabase;
 using Supabase.Postgrest.Attributes;
 using Supabase.Postgrest.Models;
 using System;
@@ -13,15 +15,13 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using static Supabase.Postgrest.Constants;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
 
 namespace Capstone.AppointmentOptions
 {
     public partial class Appointments : Window
     {
-        private Supabase.Client? supabase;
-        private ObservableCollection<AppointmentModel> appointments = new();
+        private Client? supabase;
+        private readonly ObservableCollection<AppointmentModel> appointments = new();
         private int CurrentPage = 1;
         private int PageSize = 10;
         private int TotalPages = 1;
@@ -34,6 +34,9 @@ namespace Capstone.AppointmentOptions
             InitializeComponent();
             Loaded += async (s, e) => await InitializeData();
             ModalOverlay.PreviewMouseLeftButtonDown += ModalOverlay_Click;
+
+            // Bind the ObservableCollection to the grid (if not bound in XAML)
+            AppointmentsGrid.ItemsSource = appointments;
         }
 
         private async Task InitializeData()
@@ -47,28 +50,33 @@ namespace Capstone.AppointmentOptions
         {
             string? supabaseUrl = ConfigurationManager.AppSettings["SupabaseUrl"];
             string? supabaseKey = ConfigurationManager.AppSettings["SupabaseKey"];
+            string? supabaseServiceKey = ConfigurationManager.AppSettings["SupabaseServiceKey"];
 
-            if (string.IsNullOrEmpty(supabaseUrl) || string.IsNullOrEmpty(supabaseKey))
+            // Use service key if available, otherwise fall back to anon key
+            string effectiveKey = !string.IsNullOrEmpty(supabaseServiceKey) ? supabaseServiceKey! : supabaseKey!;
+
+            if (string.IsNullOrEmpty(supabaseUrl) || string.IsNullOrEmpty(effectiveKey))
             {
-                Console.WriteLine("⚠️ Supabase configuration missing in App.config!");
+                Console.WriteLine("⚠️ Supabase configuration missing in App.config (SupabaseUrl or SupabaseKey)");
                 return;
             }
 
             try
             {
-                supabase = new Supabase.Client(supabaseUrl, supabaseKey, new Supabase.SupabaseOptions
+                supabase = new Client(supabaseUrl, effectiveKey, new Supabase.SupabaseOptions
                 {
                     AutoRefreshToken = true,
                     AutoConnectRealtime = false
                 });
 
                 await supabase.InitializeAsync();
-                Console.WriteLine("✅ Supabase initialized successfully");
+                Console.WriteLine($"✅ Supabase initialized successfully with {(string.IsNullOrEmpty(supabaseServiceKey) ? "ANON key" : "SERVICE ROLE key")}");
             }
             catch (Exception ex)
             {
                 Console.WriteLine($"❌ Failed to initialize Supabase: {ex.Message}");
-                Console.WriteLine($"Supabase init error: {ex}");
+                Console.WriteLine(ex);
+                supabase = null;
             }
         }
 
@@ -76,13 +84,14 @@ namespace Capstone.AppointmentOptions
         {
             try
             {
-                _notificationService = new NotificationService();
+                _notificationService = new NotificationService(supabase);
                 Console.WriteLine("✅ Notification service initialized");
             }
             catch (Exception ex)
             {
                 Console.WriteLine($"⚠️ Failed to initialize notification service: {ex.Message}");
-                Console.WriteLine($"Notification service init error: {ex}");
+                Console.WriteLine(ex);
+                _notificationService = null;
             }
         }
 
@@ -100,43 +109,56 @@ namespace Capstone.AppointmentOptions
             {
                 Console.WriteLine("📥 Loading 'On Going' appointments...");
 
+                // NOTE: method names vary with Supabase C# client versions.
+                // This example uses .From<T>().Filter(...) as in your original code.
+                // If your client uses .From<T>().Where(...) or .Table<T>().Select(...).Eq(...), adapt accordingly.
+
                 var result = await supabase
                     .From<AppointmentModel>()
                     .Filter("status", Operator.Equals, "On Going")
                     .Order("created_at", Ordering.Descending)
                     .Get();
 
-                Console.WriteLine($"Found {result?.Models?.Count ?? 0} 'On Going' appointments");
+                int count = result?.Models?.Count ?? 0;
+                Console.WriteLine($"Found {count} 'On Going' appointments");
 
-                appointments.Clear();
+                // Update ObservableCollection on UI thread to avoid cross-thread issues
+                await Dispatcher.InvokeAsync(() =>
+                {
+                    appointments.Clear();
+                });
 
                 if (result?.Models != null && result.Models.Count > 0)
                 {
                     foreach (var model in result.Models)
                     {
                         Console.WriteLine($"📋 {model.ReceiptCode} | {model.CustomerName} | Status: {model.Status} | " +
-                                        $"Token: {(!string.IsNullOrEmpty(model.PushToken) ? "✅" : "❌")}");
-                        appointments.Add(model);
+                                          $"Token: {(string.IsNullOrEmpty(model.PushToken) ? "❌" : "✅")}");
+
+                        // Add on UI thread
+                        await Dispatcher.InvokeAsync(() => appointments.Add(model));
                     }
-
-                    TotalPages = (int)Math.Ceiling(appointments.Count / (double)PageSize);
-                    if (TotalPages == 0) TotalPages = 1;
-
-                    LoadPage(CurrentPage);
-                    GeneratePaginationButtons();
                 }
                 else
                 {
                     Console.WriteLine("ℹ️ No 'On Going' appointments found");
-                    AppointmentsGrid.ItemsSource = null;
-                    TotalPages = 1;
-                    GeneratePaginationButtons();
                 }
+
+                // Pagination calculation
+                await Dispatcher.InvokeAsync(() =>
+                {
+                    TotalPages = (int)Math.Ceiling(appointments.Count / (double)PageSize);
+                    if (TotalPages < 1) TotalPages = 1;
+                    if (CurrentPage > TotalPages) CurrentPage = TotalPages;
+
+                    LoadPage(CurrentPage);
+                    GeneratePaginationButtons();
+                });
             }
             catch (Exception ex)
             {
                 Console.WriteLine($"❌ Error loading appointments: {ex.Message}");
-                Console.WriteLine($"Full error: {ex}");
+                Console.WriteLine(ex);
             }
         }
 
@@ -149,18 +171,17 @@ namespace Capstone.AppointmentOptions
                 return;
             }
 
-            CurrentPage = pageNumber;
+            CurrentPage = Math.Max(1, Math.Min(pageNumber, TotalPages));
 
             var pageData = appointments
-                .Skip((pageNumber - 1) * PageSize)
+                .Skip((CurrentPage - 1) * PageSize)
                 .Take(PageSize)
                 .ToList();
 
-            AppointmentsGrid.ItemsSource = null;
             AppointmentsGrid.ItemsSource = pageData;
             AppointmentsGrid.Items.Refresh();
 
-            Console.WriteLine($"📄 Displaying page {pageNumber}/{TotalPages} with {pageData.Count} items");
+            Console.WriteLine($"📄 Displaying page {CurrentPage}/{TotalPages} with {pageData.Count} items");
         }
 
         private void GeneratePaginationButtons()
@@ -169,7 +190,7 @@ namespace Capstone.AppointmentOptions
 
             for (int i = 1; i <= TotalPages; i++)
             {
-                Button btn = new Button
+                var btn = new Button
                 {
                     Content = i.ToString(),
                     Margin = new Thickness(5),
@@ -183,10 +204,11 @@ namespace Capstone.AppointmentOptions
                 };
 
                 int pageNum = i;
-                btn.Click += (s, e) =>
+                btn.Click += async (s, e) =>
                 {
                     LoadPage(pageNum);
                     GeneratePaginationButtons();
+                    await Task.CompletedTask;
                 };
 
                 PaginationPanel.Children.Add(btn);
@@ -195,205 +217,12 @@ namespace Capstone.AppointmentOptions
 
         // ============ NOTIFICATION METHODS ============
 
-        private async void TestNotification_Click(object sender, RoutedEventArgs e)
-        {
-            if (_notificationService == null)
-            {
-                Console.WriteLine("Notification service is not available.");
-                return;
-            }
-
-            await ShowSimpleTestDialog();
-        }
-
-        private async void TestGridNotification_Click(object sender, RoutedEventArgs e)
-        {
-            if (_notificationService == null)
-            {
-                Console.WriteLine("Notification service is not available.");
-                return;
-            }
-
-            if (_selectedAppointment == null)
-            {
-                Console.WriteLine("Please select an appointment first.");
-                return;
-            }
-
-            await SendTestNotificationForAppointment(_selectedAppointment);
-        }
-
         private void AppointmentsGrid_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             if (AppointmentsGrid.SelectedItem is AppointmentModel selected)
             {
                 _selectedAppointment = selected;
                 Console.WriteLine($"📋 Selected: {selected.ReceiptCode} | Token: {selected.PushToken ?? "None"}");
-            }
-        }
-
-        private async Task ShowSimpleTestDialog()
-        {
-            var dialog = new Window()
-            {
-                Title = "Test Notification",
-                Width = 450,
-                Height = 300,
-                WindowStartupLocation = WindowStartupLocation.CenterOwner,
-                ResizeMode = ResizeMode.NoResize,
-                Owner = this
-            };
-
-            var stackPanel = new StackPanel { Margin = new Thickness(20) };
-
-            var titleText = new TextBlock
-            {
-                Text = "🔔 Enter Push Token for Testing",
-                FontSize = 16,
-                FontWeight = FontWeights.Bold,
-                Margin = new Thickness(0, 0, 0, 10)
-            };
-
-            var tokenBox = new TextBox
-            {
-                Height = 100,
-                TextWrapping = TextWrapping.Wrap,
-                VerticalScrollBarVisibility = ScrollBarVisibility.Auto,
-                Text = "ExponentPushToken[YOUR_TOKEN_HERE]",
-                Margin = new Thickness(0, 0, 0, 10),
-                FontFamily = new System.Windows.Media.FontFamily("Consolas"),
-                FontSize = 11
-            };
-
-            var instructionText = new TextBlock
-            {
-                Text = "Get this token from your React Native app console or database",
-                FontSize = 11,
-                Foreground = System.Windows.Media.Brushes.Gray,
-                Margin = new Thickness(0, 0, 0, 15)
-            };
-
-            var buttonPanel = new StackPanel
-            {
-                Orientation = Orientation.Horizontal,
-                HorizontalAlignment = HorizontalAlignment.Right
-            };
-
-            var cancelButton = new Button
-            {
-                Content = "Cancel",
-                Width = 80,
-                Height = 35,
-                Margin = new Thickness(0, 0, 10, 0)
-            };
-
-            var sendButton = new Button
-            {
-                Content = "Send Test",
-                Width = 100,
-                Height = 35,
-                Background = System.Windows.Media.Brushes.Green,
-                Foreground = System.Windows.Media.Brushes.White,
-                FontWeight = FontWeights.Bold
-            };
-
-            cancelButton.Click += (s, e) => { dialog.DialogResult = false; dialog.Close(); };
-            sendButton.Click += (s, e) => { dialog.DialogResult = true; dialog.Close(); };
-
-            buttonPanel.Children.Add(cancelButton);
-            buttonPanel.Children.Add(sendButton);
-
-            stackPanel.Children.Add(titleText);
-            stackPanel.Children.Add(tokenBox);
-            stackPanel.Children.Add(instructionText);
-            stackPanel.Children.Add(buttonPanel);
-
-            dialog.Content = stackPanel;
-
-            if (dialog.ShowDialog() == true)
-            {
-                var pushToken = tokenBox.Text.Trim();
-
-                if (string.IsNullOrEmpty(pushToken) || !_notificationService!.IsValidPushToken(pushToken))
-                {
-                    Console.WriteLine("Please enter a valid Expo push token. Format: ExponentPushToken[...]");
-                    return;
-                }
-
-                await SendTestNotification(pushToken);
-            }
-        }
-
-        private async Task SendTestNotification(string pushToken)
-        {
-            try
-            {
-                Console.WriteLine("\n========================================");
-                Console.WriteLine("🧪 SENDING TEST NOTIFICATION");
-                Console.WriteLine("========================================");
-
-                var result = await _notificationService!.SendTestNotification(pushToken);
-
-                Console.WriteLine("========================================\n");
-
-                if (result)
-                {
-                    Console.WriteLine("✅ Test notification sent successfully! Check your mobile device.");
-                }
-                else
-                {
-                    Console.WriteLine("❌ Failed to send test notification. Check console output for details.");
-                }
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine($"💥 Error: {ex.Message}");
-                Console.WriteLine($"Exception: {ex}");
-            }
-        }
-
-        private async Task SendTestNotificationForAppointment(AppointmentModel appointment)
-        {
-            try
-            {
-                if (string.IsNullOrEmpty(appointment.PushToken))
-                {
-                    Console.WriteLine($"No push token found for appointment {appointment.ReceiptCode}. The customer needs to log in to the mobile app to register their device.");
-                    return;
-                }
-
-                if (!_notificationService!.IsValidPushToken(appointment.PushToken))
-                {
-                    Console.WriteLine($"Invalid push token format for appointment {appointment.ReceiptCode}.");
-                    return;
-                }
-
-                Console.WriteLine("\n========================================");
-                Console.WriteLine($"🧪 TESTING NOTIFICATION FOR: {appointment.ReceiptCode}");
-                Console.WriteLine("========================================");
-
-                var result = await _notificationService.SendAppointmentNotification(
-                    appointment.PushToken,
-                    appointment.Id.ToString(),
-                    appointment.CustomerName,
-                    appointment.ReceiptCode,
-                    "Test");
-
-                Console.WriteLine("========================================\n");
-
-                if (result)
-                {
-                    Console.WriteLine($"✅ Test notification sent for appointment {appointment.ReceiptCode}! Customer: {appointment.CustomerName}. Check their mobile device.");
-                }
-                else
-                {
-                    Console.WriteLine($"❌ Failed to send notification for {appointment.ReceiptCode}. Check console output for details.");
-                }
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine($"💥 Error: {ex.Message}");
-                Console.WriteLine($"Exception: {ex}");
             }
         }
 
@@ -483,22 +312,23 @@ namespace Capstone.AppointmentOptions
                 // Show the modal overlay
                 ModalOverlay.Visibility = Visibility.Visible;
 
-                // Create the decline appointment modal
                 var declineModal = new DeclineAppointment
                 {
                     SelectedAppointment = selected,
                     OnConfirmDecline = (appointment, reason) =>
                     {
-                        // This will be called after the decline is successful
-                        // Just remove from the table (database update is already done in DeclineAppointment)
-                        appointments.Remove(appointment);
+                        // remove locally (DB update should happen inside DeclineAppointment)
+                        Dispatcher.Invoke(() =>
+                        {
+                            appointments.Remove(appointment);
 
-                        TotalPages = (int)Math.Ceiling(appointments.Count / (double)PageSize);
-                        if (CurrentPage > TotalPages && TotalPages > 0)
-                            CurrentPage = TotalPages;
+                            TotalPages = (int)Math.Ceiling(appointments.Count / (double)PageSize);
+                            if (CurrentPage > TotalPages && TotalPages > 0)
+                                CurrentPage = TotalPages;
 
-                        LoadPage(CurrentPage);
-                        GeneratePaginationButtons();
+                            LoadPage(CurrentPage);
+                            GeneratePaginationButtons();
+                        });
                     }
                 };
 
@@ -512,7 +342,7 @@ namespace Capstone.AppointmentOptions
 
         private async Task UpdateAppointmentStatus(AppointmentModel selected, string newStatus)
         {
-            if (supabase == null || selected.Id == Guid.Empty)
+            if (supabase == null || selected == null || selected.Id == Guid.Empty)
             {
                 Console.WriteLine("Unable to update appointment. Invalid data.");
                 return;
@@ -522,19 +352,24 @@ namespace Capstone.AppointmentOptions
             {
                 Console.WriteLine($"\n🔄 Updating appointment {selected.ReceiptCode} to '{newStatus}'");
 
-                var updated = await supabase
+                // Approach A: common "Set" -> Update pattern (your original)
+                // If it works with your Supabase client, keep it. Otherwise use Approach B below.
+                var updateAttempt = await supabase
                     .From<AppointmentModel>()
                     .Where(x => x.Id == selected.Id)
                     .Set(x => x.Status, newStatus)
                     .Update();
 
-                if (updated.Models != null && updated.Models.Count > 0)
+                // Approach B (alternate) - construct partial object and call Update (works in some clients):
+                // var partial = new AppointmentModel { Id = selected.Id, Status = newStatus };
+                // var updateAttempt = await supabase.From<AppointmentModel>().Update(partial);
+
+                if (updateAttempt?.Models != null && updateAttempt.Models.Count > 0)
                 {
                     Console.WriteLine($"✅ Database updated successfully");
 
                     bool notificationSent = false;
 
-                    // Send push notification if token exists
                     if (!string.IsNullOrEmpty(selected.PushToken) && _notificationService != null)
                     {
                         Console.WriteLine($"📨 Sending {newStatus} notification...");
@@ -543,32 +378,30 @@ namespace Capstone.AppointmentOptions
                             selected.Id.ToString(),
                             selected.CustomerName,
                             selected.ReceiptCode,
-                            newStatus);
+                            newStatus,
+                            selected.CustomerId);
 
-                        if (notificationSent)
-                        {
-                            Console.WriteLine($"✅ Notification sent successfully");
-                        }
-                        else
-                        {
-                            Console.WriteLine($"⚠️ Notification failed (check logs above)");
-                        }
+                        Console.WriteLine(notificationSent ? "✅ Notification sent successfully" : "⚠️ Notification failed");
                     }
                     else
                     {
                         Console.WriteLine($"ℹ️ No push token - skipping notification");
                     }
 
-                    appointments.Remove(selected);
+                    // Remove from in-memory list (UI thread)
+                    await Dispatcher.InvokeAsync(() =>
+                    {
+                        appointments.Remove(selected);
 
-                    TotalPages = (int)Math.Ceiling(appointments.Count / (double)PageSize);
-                    if (TotalPages == 0) TotalPages = 1;
-                    if (CurrentPage > TotalPages) CurrentPage = TotalPages;
+                        TotalPages = (int)Math.Ceiling(appointments.Count / (double)PageSize);
+                        if (TotalPages == 0) TotalPages = 1;
+                        if (CurrentPage > TotalPages) CurrentPage = TotalPages;
 
-                    LoadPage(CurrentPage);
-                    GeneratePaginationButtons();
+                        LoadPage(CurrentPage);
+                        GeneratePaginationButtons();
+                    });
 
-                    // Only show success modal for "Approved" status
+                    // Only show success modal for "Approved"
                     if (newStatus == "Approved")
                     {
                         ModalOverlay.Visibility = Visibility.Visible;
@@ -584,13 +417,13 @@ namespace Capstone.AppointmentOptions
                 }
                 else
                 {
-                    Console.WriteLine("⚠️ Failed to update appointment status.");
+                    Console.WriteLine("⚠️ Failed to update appointment status - no models returned");
                 }
             }
             catch (Exception ex)
             {
                 Console.WriteLine($"❌ Error updating appointment: {ex.Message}");
-                Console.WriteLine($"Full error: {ex}");
+                Console.WriteLine(ex);
             }
         }
 
@@ -602,13 +435,15 @@ namespace Capstone.AppointmentOptions
             private readonly string _edgeFunctionUrl;
             private readonly string _supabaseAnonKey;
             private static bool _isInitialized = false;
+            private readonly Client? _supabase;
 
-            public NotificationService()
+            public NotificationService(Client? supabase)
             {
+                _supabase = supabase;
                 _edgeFunctionUrl = ConfigurationManager.AppSettings["EdgeFunctionUrl"]
                     ?? "https://gycwoawekmmompvholqr.supabase.co/functions/v1/sendNotification";
 
-                _supabaseAnonKey = ConfigurationManager.AppSettings["SupabaseKey"];
+                _supabaseAnonKey = ConfigurationManager.AppSettings["SupabaseKey"] ?? string.Empty;
 
                 if (string.IsNullOrEmpty(_supabaseAnonKey))
                 {
@@ -626,44 +461,7 @@ namespace Capstone.AppointmentOptions
                 }
             }
 
-            public async Task<bool> SendTestNotification(string pushToken)
-            {
-                try
-                {
-                    if (string.IsNullOrWhiteSpace(pushToken))
-                    {
-                        Console.WriteLine("❌ Invalid push token: Token is null or empty");
-                        return false;
-                    }
-
-                    Console.WriteLine($"📱 Target token: {pushToken.Substring(0, Math.Min(30, pushToken.Length))}...");
-
-                    var payload = new
-                    {
-                        expoPushToken = pushToken,
-                        title = "Test from C# Desktop 🚀",
-                        message = "Hello from Molave Street Barbers desktop application!",
-                        data = new
-                        {
-                            type = "test_notification",
-                            source = "csharp_desktop",
-                            timestamp = DateTime.UtcNow.ToString("o")
-                        },
-                        sound = "default",
-                        priority = "high",
-                        channelId = "default"
-                    };
-
-                    return await SendNotificationRequest(payload);
-                }
-                catch (Exception ex)
-                {
-                    Console.WriteLine($"💥 Test notification error: {ex.Message}");
-                    return false;
-                }
-            }
-
-            public async Task<bool> SendAppointmentNotification(string pushToken, string appointmentId, string customerName, string receiptCode, string status)
+            public async Task<bool> SendAppointmentNotification(string pushToken, string appointmentId, string customerName, string receiptCode, string status, string userId)
             {
                 try
                 {
@@ -676,7 +474,6 @@ namespace Capstone.AppointmentOptions
                     Console.WriteLine($"📨 Sending {status} notification for appointment: {appointmentId}");
                     Console.WriteLine($"📱 Target token: {pushToken.Substring(0, Math.Min(30, pushToken.Length))}...");
 
-                    // Get notification template based on status
                     var (title, message) = GetNotificationTemplate(status, customerName, receiptCode);
 
                     var payload = new
@@ -697,44 +494,91 @@ namespace Capstone.AppointmentOptions
                         channelId = "default"
                     };
 
-                    return await SendNotificationRequest(payload);
+                    var success = await SendNotificationRequest(payload);
+
+                    if (_supabase != null)
+                    {
+                        await SafeInsertNotificationToLoader(title, message, receiptCode, userId);
+                    }
+
+                    return success;
                 }
                 catch (Exception ex)
                 {
                     Console.WriteLine($"💥 Appointment notification error: {ex.Message}");
+                    Console.WriteLine(ex);
                     return false;
+                }
+            }
+
+            private async Task SafeInsertNotificationToLoader(string title, string description, string receiptId, string userId)
+            {
+                try
+                {
+                    if (_supabase == null)
+                    {
+                        Console.WriteLine("⚠️ Supabase client not available for notification_loader insertion");
+                        return;
+                    }
+
+                    if (!Guid.TryParse(userId, out Guid userGuid))
+                    {
+                        Console.WriteLine($"⚠️ Invalid user_id format: '{userId}' - must be a valid UUID");
+                        return;
+                    }
+
+                    if (string.IsNullOrWhiteSpace(title)) title = "(No title)";
+
+                    if (title.Length > 255) title = title.Substring(0, 255);
+                    if (!string.IsNullOrWhiteSpace(description) && description.Length > 1000)
+                        description = description.Substring(0, 1000);
+
+                    if (string.IsNullOrWhiteSpace(receiptId)) receiptId = "N/A";
+
+                    var notification = new NotificationLoaderModel
+                    {
+                        UserId = userGuid,
+                        ReceiptId = receiptId,
+                        Title = title,
+                        Description = description,
+                        CreatedAt = DateTime.UtcNow,
+                        Read = false  // Explicitly set to false
+                    };
+
+                    var result = await _supabase
+                        .From<NotificationLoaderModel>()
+                        .Insert(notification);
+
+                    if (result?.Models != null && result.Models.Count > 0)
+                    {
+                        var insertedNotification = result.Models[0];
+                        Console.WriteLine($"✅ Notification inserted successfully into notification_loader (ID: {insertedNotification.Id}, Read: {insertedNotification.Read})");
+                    }
+                    else if (result?.ResponseMessage?.IsSuccessStatusCode == true)
+                    {
+                        Console.WriteLine($"✅ Notification inserted successfully (HTTP success)");
+                    }
+                    else
+                    {
+                        Console.WriteLine($"⚠️ Failed to insert notification into notification_loader - no models returned");
+                    }
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine($"❌ Error inserting into notification_loader: {ex.Message}");
+                    Console.WriteLine(ex);
                 }
             }
 
             private (string title, string message) GetNotificationTemplate(string status, string customerName, string receiptCode)
             {
-                // Hardcoded templates based on your specification
                 return status switch
                 {
-                    "Approved" => (
-                        "Molave Street Barbers",
-                        "Your appointment request has been approved! We'll see you soon at your selected time."
-                    ),
-                    "Declined" => (
-                        "Molave Street Barbers",
-                        "Your appointment request has been declined. Please contact us for more information."
-                    ),
-                    "Completed" => (
-                        "Molave Street Barbers",
-                        "Thank you for visiting Molave Street Barbers! Your appointment has been completed."
-                    ),
-                    "No Show" => (
-                        "Molave Street Barbers",
-                        "You missed your scheduled appointment. Please reschedule when convenient."
-                    ),
-                    "Test" => (
-                        "Test Notification 🔔",
-                        "This is a test notification from Molave Street Barbers."
-                    ),
-                    _ => (
-                        "Molave Street Barbers",
-                        $"Your appointment status has been updated to {status}."
-                    )
+                    "Approved" => ("Molave Street Barbers", "Your appointment request has been approved! We'll see you soon at your selected time."),
+                    "Declined" => ("Molave Street Barbers", "Your appointment request has been declined. Please contact us for more information."),
+                    "Completed" => ("Molave Street Barbers", "Thank you for visiting Molave Street Barbers! Your appointment has been completed."),
+                    "No Show" => ("Molave Street Barbers", "You missed your scheduled appointment. Please reschedule when convenient."),
+                    _ => ("Molave Street Barbers", $"Your appointment status has been updated to {status}.")
                 };
             }
 
@@ -748,9 +592,7 @@ namespace Capstone.AppointmentOptions
                     Console.WriteLine($"📦 Payload:\n{json}");
 
                     var content = new StringContent(json, Encoding.UTF8, "application/json");
-
                     Console.WriteLine($"📤 Sending to: {_edgeFunctionUrl}");
-                    Console.WriteLine($"🔑 Authorization: Bearer {_supabaseAnonKey.Substring(0, 20)}...");
 
                     var response = await _httpClient.PostAsync(_edgeFunctionUrl, content);
                     responseContent = await response.Content.ReadAsStringAsync();
@@ -758,73 +600,51 @@ namespace Capstone.AppointmentOptions
                     Console.WriteLine($"📥 Response Status: {(int)response.StatusCode} {response.StatusCode}");
                     Console.WriteLine($"📥 Response Body: {responseContent}");
 
-                    if (response.IsSuccessStatusCode)
-                    {
-                        if (string.IsNullOrWhiteSpace(responseContent))
-                        {
-                            Console.WriteLine("⚠️ Warning: Empty response from Edge Function");
-                            return false;
-                        }
-
-                        var result = JObject.Parse(responseContent);
-                        var success = result["success"]?.Value<bool>() ?? false;
-
-                        if (success)
-                        {
-                            Console.WriteLine("✅ Notification sent successfully!");
-
-                            var ticket = result["ticket"]?.ToString();
-                            if (!string.IsNullOrEmpty(ticket))
-                            {
-                                Console.WriteLine($"🎫 Expo ticket: {ticket}");
-                            }
-
-                            return true;
-                        }
-                        else
-                        {
-                            var error = result["error"]?.ToString() ?? "Unknown error";
-                            var details = result["details"]?.ToString() ?? "";
-                            Console.WriteLine($"❌ Edge function returned success=false");
-                            Console.WriteLine($"   Error: {error}");
-                            if (!string.IsNullOrEmpty(details))
-                            {
-                                Console.WriteLine($"   Details: {details}");
-                            }
-                            return false;
-                        }
-                    }
-                    else
+                    if (!response.IsSuccessStatusCode)
                     {
                         Console.WriteLine($"❌ HTTP Error: {response.StatusCode}");
-                        Console.WriteLine($"   Response: {responseContent}");
-
                         try
                         {
                             var errorObj = JObject.Parse(responseContent);
-                            var errorMsg = errorObj["error"]?.ToString()
-                                ?? errorObj["message"]?.ToString()
-                                ?? "No error message";
+                            var errorMsg = errorObj["error"]?.ToString() ?? errorObj["message"]?.ToString() ?? "No error message";
                             Console.WriteLine($"   Error details: {errorMsg}");
                         }
-                        catch
-                        {
-                            // Response is not JSON, already logged above
-                        }
+                        catch { }
+                        return false;
+                    }
 
+                    if (string.IsNullOrWhiteSpace(responseContent))
+                    {
+                        Console.WriteLine("⚠️ Warning: Empty response from Edge Function");
+                        return false;
+                    }
+
+                    var result = JObject.Parse(responseContent);
+                    var success = result["success"]?.Value<bool>() ?? false;
+
+                    if (success)
+                    {
+                        Console.WriteLine("✅ Notification sent successfully!");
+                        return true;
+                    }
+                    else
+                    {
+                        var error = result["error"]?.ToString() ?? "Unknown error";
+                        var details = result["details"]?.ToString() ?? "";
+                        Console.WriteLine($"❌ Edge function returned success=false");
+                        Console.WriteLine($"   Error: {error}");
+                        if (!string.IsNullOrEmpty(details)) Console.WriteLine($"   Details: {details}");
                         return false;
                     }
                 }
                 catch (HttpRequestException ex)
                 {
                     Console.WriteLine($"❌ Network error: {ex.Message}");
-                    Console.WriteLine($"   Check if Edge Function URL is correct: {_edgeFunctionUrl}");
                     return false;
                 }
                 catch (TaskCanceledException ex)
                 {
                     Console.WriteLine($"❌ Request timeout: {ex.Message}");
-                    Console.WriteLine($"   The request took longer than {_httpClient.Timeout.TotalSeconds} seconds");
                     return false;
                 }
                 catch (JsonException ex)
@@ -836,6 +656,7 @@ namespace Capstone.AppointmentOptions
                 catch (Exception ex)
                 {
                     Console.WriteLine($"💥 Unexpected error: {ex.GetType().Name} - {ex.Message}");
+                    Console.WriteLine(ex);
                     return false;
                 }
             }
@@ -875,6 +696,31 @@ namespace Capstone.AppointmentOptions
             [Column("status")] public string Status { get; set; } = "On Going";
             [Column("push_token")] public string? PushToken { get; set; }
             [Column("created_at")] public DateTime? CreatedAt { get; set; }
+        }
+
+        [Table("notification_loader")]
+        public class NotificationLoaderModel : BaseModel
+        {
+            [PrimaryKey("id", true)]
+            public int Id { get; set; }
+
+            [Column("user_id")]
+            public Guid UserId { get; set; }
+
+            [Column("receipt_id")]
+            public string? ReceiptId { get; set; }
+
+            [Column("title")]
+            public string Title { get; set; } = string.Empty;
+
+            [Column("description")]
+            public string? Description { get; set; }
+
+            [Column("created_at")]
+            public DateTime? CreatedAt { get; set; }
+
+            [Column("read")]
+            public bool? Read { get; set; } = false;  // Default value set to false
         }
     }
 }

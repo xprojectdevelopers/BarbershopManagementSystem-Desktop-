@@ -59,7 +59,12 @@ namespace Capstone.AppointmentOptions
         {
             string supabaseUrl = ConfigurationManager.AppSettings["SupabaseUrl"];
             string supabaseKey = ConfigurationManager.AppSettings["SupabaseKey"];
-            supabase = new Client(supabaseUrl, supabaseKey, new SupabaseOptions
+            string supabaseServiceKey = ConfigurationManager.AppSettings["SupabaseServiceKey"];
+
+            // Use service key if available, otherwise fall back to anon key
+            string effectiveKey = !string.IsNullOrEmpty(supabaseServiceKey) ? supabaseServiceKey : supabaseKey;
+
+            supabase = new Client(supabaseUrl, effectiveKey, new SupabaseOptions
             {
                 AutoRefreshToken = true,
                 AutoConnectRealtime = false
@@ -71,14 +76,12 @@ namespace Capstone.AppointmentOptions
         {
             try
             {
-                _notificationService = new NotificationService();
+                _notificationService = new NotificationService(supabase);
                 Console.WriteLine("✅ Notification service initialized for AppointmentTracker");
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"⚠️ Failed to initialize notification service: {ex.Message}\n\nNotifications will not work.",
-                              "Warning", MessageBoxButton.OK, MessageBoxImage.Warning);
-                Console.WriteLine($"Notification service init error: {ex}");
+                Console.WriteLine($"⚠️ Failed to initialize notification service: {ex.Message}");
             }
         }
 
@@ -124,10 +127,6 @@ namespace Capstone.AppointmentOptions
                 Console.WriteLine($"\n🔍 Found appointment: {currentAppointment.ReceiptCode}");
                 Console.WriteLine($"👤 Customer: {currentAppointment.CustomerName}");
                 Console.WriteLine($"📱 Push Token: {(string.IsNullOrEmpty(currentAppointment.PushToken) ? "❌ NOT FOUND" : "✅ FOUND")}");
-                if (!string.IsNullOrEmpty(currentAppointment.PushToken))
-                {
-                    Console.WriteLine($"   Token: {currentAppointment.PushToken}");
-                }
 
                 // Auto-fill the form
                 PopulateForm(currentAppointment);
@@ -400,22 +399,34 @@ namespace Capstone.AppointmentOptions
 
                 if (updateResponse != null)
                 {
-                    // Check if status was changed to "Completed" or "No Show"
+                    // Check if status was changed to "Completed" or "No Show" or "Approved"
                     bool wasChangedToCompleted = (oldStatus?.ToLower() != "completed" &&
                                                 appointmentStatus.ToLower() == "completed");
 
                     bool wasChangedToNoShow = (oldStatus?.ToLower() != "no show" &&
                                              appointmentStatus.ToLower() == "no show");
 
-                    if (wasChangedToCompleted)
-                    {
-                        Console.WriteLine($"\n🔄 Appointment marked as completed: {currentAppointment.ReceiptCode}");
-                        Console.WriteLine($"👤 Customer: {currentAppointment.CustomerName}");
+                    bool wasChangedToApproved = (oldStatus?.ToLower() != "approved" &&
+                                               appointmentStatus.ToLower() == "approved");
 
-                        // Send completion notification if notification service is available
+                    if (wasChangedToCompleted || wasChangedToNoShow || wasChangedToApproved)
+                    {
+                        Console.WriteLine($"\n🔄 Status changed to {appointmentStatus}: {currentAppointment.ReceiptCode}");
+
+                        // Send notification if notification service is available
                         if (_notificationService != null)
                         {
-                            await SendStatusNotification(currentAppointment, "Completed");
+                            try
+                            {
+                                await SendStatusNotification(currentAppointment, appointmentStatus);
+                            }
+                            catch (Exception notifEx)
+                            {
+                                Console.WriteLine($"💥 Notification error: {notifEx.Message}");
+                                // Still show success for appointment update, but warn about notification
+                                MessageBox.Show($"Appointment updated but notification failed: {notifEx.Message}",
+                                    "Partial Success", MessageBoxButton.OK, MessageBoxImage.Warning);
+                            }
                         }
                         else
                         {
@@ -423,29 +434,14 @@ namespace Capstone.AppointmentOptions
                         }
 
                         // Optional: Verify the badge was updated if customer ID exists
-                        if (currentAppointment.CustomerId != Guid.Empty)
+                        if (wasChangedToCompleted && currentAppointment.CustomerId != Guid.Empty)
                         {
                             await CheckBadgeUpdate(currentAppointment.CustomerId);
                         }
                     }
-                    else if (wasChangedToNoShow)
-                    {
-                        Console.WriteLine($"\n🚫 Appointment marked as no show: {currentAppointment.ReceiptCode}");
-                        Console.WriteLine($"👤 Customer: {currentAppointment.CustomerName}");
-
-                        // Send no show notification if notification service is available
-                        if (_notificationService != null)
-                        {
-                            await SendStatusNotification(currentAppointment, "No Show");
-                        }
-                        else
-                        {
-                            Console.WriteLine("❌ Notification service is not available");
-                        }
-                    }
                     else
                     {
-                        Console.WriteLine($"ℹ️ Status changed to: {appointmentStatus}, but not sending notification (not changed to completed or no show)");
+                        Console.WriteLine($"ℹ️ Status changed to: {appointmentStatus}, but not sending notification");
                     }
 
                     ModalOverlay.Visibility = Visibility.Visible;
@@ -475,49 +471,50 @@ namespace Capstone.AppointmentOptions
         {
             try
             {
-                Console.WriteLine($"\n🔍 Checking push token for appointment: {appointment.ReceiptCode}");
-                Console.WriteLine($"📱 Push token available: {!string.IsNullOrEmpty(appointment.PushToken)}");
+                Console.WriteLine($"\n🔍 Checking push token for: {appointment.ReceiptCode}");
+                Console.WriteLine($"📱 Token exists: {!string.IsNullOrEmpty(appointment.PushToken)}");
 
                 if (!string.IsNullOrEmpty(appointment.PushToken))
                 {
-                    Console.WriteLine($"📨 Sending {status} notification for appointment: {appointment.ReceiptCode}");
-                    Console.WriteLine($"👤 Customer: {appointment.CustomerName}");
-                    Console.WriteLine($"🔑 Token: {appointment.PushToken.Substring(0, Math.Min(30, appointment.PushToken.Length))}...");
+                    // Check if token is in valid format
+                    bool isValidToken = _notificationService.IsValidPushToken(appointment.PushToken);
+                    Console.WriteLine($"📱 Token valid format: {isValidToken}");
 
-                    var notificationSent = await _notificationService.SendAppointmentNotification(
-                        appointment.PushToken,
-                        appointment.Id.ToString(),
-                        appointment.CustomerName,
-                        appointment.ReceiptCode,
-                        status);
-
-                    if (notificationSent)
+                    if (isValidToken)
                     {
-                        Console.WriteLine($"✅ {status} notification sent successfully to {appointment.CustomerName}");
-                        // Show success message to user
-                        MessageBox.Show($"✅ Appointment marked as {status}!\n\n📱 Notification sent to {appointment.CustomerName}",
-                                      "Success", MessageBoxButton.OK, MessageBoxImage.Information);
+                        Console.WriteLine($"📨 Sending {status} notification for: {appointment.ReceiptCode}");
+
+                        var notificationSent = await _notificationService.SendAppointmentNotification(
+                            appointment.PushToken,
+                            appointment.Id.ToString(),
+                            appointment.CustomerName,
+                            appointment.ReceiptCode,
+                            status,
+                            appointment.CustomerId.ToString());
+
+                        if (notificationSent)
+                        {
+                            Console.WriteLine($"✅ {status} notification sent successfully");
+                        }
+                        else
+                        {
+                            Console.WriteLine($"⚠️ Failed to send {status} notification");
+                        }
                     }
                     else
                     {
-                        Console.WriteLine($"⚠️ Failed to send {status} notification for {appointment.ReceiptCode}");
-                        MessageBox.Show($"✅ Appointment marked as {status}!\n\n⚠️ Failed to send notification to customer",
-                                      "Success", MessageBoxButton.OK, MessageBoxImage.Information);
+                        Console.WriteLine($"❌ Invalid push token format for: {appointment.CustomerName}");
                     }
                 }
                 else
                 {
-                    Console.WriteLine($"ℹ️ No push token found in appointment record for: {appointment.CustomerName}");
-                    MessageBox.Show($"✅ Appointment marked as {status}!\n\nℹ️ No push token found - notification not sent",
-                                  "Success", MessageBoxButton.OK, MessageBoxImage.Information);
+                    Console.WriteLine($"ℹ️ No push token found for: {appointment.CustomerName}");
                 }
             }
             catch (Exception ex)
             {
                 Console.WriteLine($"💥 Error sending {status} notification: {ex.Message}");
-                Console.WriteLine($"Stack trace: {ex.StackTrace}");
-                MessageBox.Show($"✅ Appointment marked as {status}!\n\n💥 Error sending notification: {ex.Message}",
-                              "Success", MessageBoxButton.OK, MessageBoxImage.Warning);
+                throw; // Re-throw to be handled by caller
             }
         }
 
@@ -634,9 +631,11 @@ namespace Capstone.AppointmentOptions
             private readonly string _edgeFunctionUrl;
             private readonly string _supabaseAnonKey;
             private static bool _isInitialized = false;
+            private readonly Supabase.Client? _supabase;
 
-            public NotificationService()
+            public NotificationService(Supabase.Client? supabase)
             {
+                _supabase = supabase;
                 _edgeFunctionUrl = ConfigurationManager.AppSettings["EdgeFunctionUrl"]
                     ?? "https://gycwoawekmmompvholqr.supabase.co/functions/v1/sendNotification";
 
@@ -658,20 +657,24 @@ namespace Capstone.AppointmentOptions
                 }
             }
 
-            public async Task<bool> SendAppointmentNotification(string pushToken, string appointmentId, string customerName, string receiptCode, string status)
+            public async Task<bool> SendAppointmentNotification(string pushToken, string appointmentId, string customerName, string receiptCode, string status, string userId)
             {
                 try
                 {
                     if (string.IsNullOrWhiteSpace(pushToken))
                     {
-                        Console.WriteLine("❌ Invalid push token for appointment notification");
+                        Console.WriteLine("❌ Push token is null or empty");
                         return false;
                     }
 
-                    Console.WriteLine($"📨 Sending {status} notification for appointment: {appointmentId}");
-                    Console.WriteLine($"📱 Target token: {pushToken.Substring(0, Math.Min(30, pushToken.Length))}...");
+                    if (!IsValidPushToken(pushToken))
+                    {
+                        Console.WriteLine("❌ Push token format is invalid");
+                        return false;
+                    }
 
-                    // Get notification template based on status
+                    Console.WriteLine($"📨 Sending {status} notification for: {receiptCode}");
+
                     var (title, message) = GetNotificationTemplate(status);
 
                     var payload = new
@@ -684,7 +687,7 @@ namespace Capstone.AppointmentOptions
                             type = $"appointment_{status.ToLower().Replace(" ", "_")}",
                             appointment_id = appointmentId,
                             status = status,
-                            source = "csharp_desktop",
+                            source = "appointment_tracker",
                             timestamp = DateTime.UtcNow.ToString("o")
                         },
                         sound = "default",
@@ -692,18 +695,164 @@ namespace Capstone.AppointmentOptions
                         channelId = "default"
                     };
 
-                    return await SendNotificationRequest(payload);
+                    var success = await SendNotificationRequest(payload);
+
+                    // Save to notification_loader for important statuses
+                    if (_supabase != null && ShouldSaveToNotificationLoader(status))
+                    {
+                        bool loaderSuccess = false;
+
+                        try
+                        {
+                            loaderSuccess = await InsertNotificationToLoader(title, message, receiptCode, userId);
+                        }
+                        catch (Exception reloadEx) when (reloadEx.Message.Contains("deleted method") || reloadEx.Message.Contains("HotReload"))
+                        {
+                            Console.WriteLine($"🔥 Hot reload issue detected - continuing without database save: {reloadEx.Message}");
+                            loaderSuccess = true; // Continue anyway to not block notifications
+                        }
+
+                        // Silent operation - no alert boxes shown to user
+                        if (!loaderSuccess)
+                        {
+                            Console.WriteLine($"⚠️ Notification sent but failed to save to database for: {receiptCode}");
+                        }
+                    }
+
+                    return success;
                 }
                 catch (Exception ex)
                 {
-                    Console.WriteLine($"💥 Appointment notification error: {ex.Message}");
+                    Console.WriteLine($"💥 Error in SendAppointmentNotification: {ex.Message}");
+                    return false;
+                }
+            }
+
+            private bool ShouldSaveToNotificationLoader(string status)
+            {
+                return status.ToLower() switch
+                {
+                    "completed" => true,
+                    "no show" => true,
+                    "approved" => true,
+                    _ => false
+                };
+            }
+
+            private async Task<bool> InsertNotificationToLoader(string title, string description, string receiptId, string userId)
+            {
+                try
+                {
+                    // Debug mode detection
+                    if (System.Diagnostics.Debugger.IsAttached)
+                    {
+                        Console.WriteLine("⚠️ Debugger attached - application may be in debug mode");
+                    }
+
+                    if (_supabase == null)
+                    {
+                        Console.WriteLine("⚠️ Supabase client not available");
+                        return false;
+                    }
+
+                    if (!Guid.TryParse(userId, out Guid userGuid))
+                    {
+                        Console.WriteLine($"⚠️ Invalid user_id format: '{userId}'");
+                        return false;
+                    }
+
+                    if (string.IsNullOrWhiteSpace(title))
+                    {
+                        Console.WriteLine($"⚠️ Title cannot be empty");
+                        return false;
+                    }
+
+                    // Ensure required fields have values
+                    if (string.IsNullOrWhiteSpace(description))
+                        description = "No description";
+                    if (string.IsNullOrWhiteSpace(receiptId))
+                        receiptId = "N/A";
+
+                    // Trim fields if too long
+                    if (title.Length > 255) title = title.Substring(0, 255);
+                    if (description.Length > 1000) description = description.Substring(0, 1000);
+
+                    Console.WriteLine($"📝 Inserting into notification_loader for: {receiptId}");
+
+                    var notification = new NotificationLoaderModel
+                    {
+                        UserId = userGuid,
+                        ReceiptId = receiptId,
+                        Title = title,
+                        Description = description,
+                        CreatedAt = DateTime.UtcNow,
+                        Read = false  // Explicitly set to false
+                    };
+
+                    // Use a robust approach to handle insertion
+                    var result = await _supabase
+                        .From<NotificationLoaderModel>()
+                        .Insert(notification);
+
+                    // Check for successful insertion using multiple methods
+                    if (result != null)
+                    {
+                        // Check if we have models (normal case)
+                        if (result.Models != null && result.Models.Count > 0)
+                        {
+                            var insertedNotification = result.Models[0];
+                            Console.WriteLine($"✅ Notification saved to loader. ID: {insertedNotification.Id}, Read: {insertedNotification.Read}");
+                            return true;
+                        }
+                        // Also check if response was successful even if Models is null
+                        else if (result.ResponseMessage?.IsSuccessStatusCode == true)
+                        {
+                            Console.WriteLine($"✅ Notification saved successfully (alternative check)");
+                            return true;
+                        }
+                        else
+                        {
+                            Console.WriteLine($"⚠️ Insertion may have failed - no models returned");
+                            // Try to get more info
+                            if (result.ResponseMessage != null)
+                            {
+                                Console.WriteLine($"⚠️ HTTP Status: {result.ResponseMessage.StatusCode}");
+                                var responseContent = await result.ResponseMessage.Content.ReadAsStringAsync();
+                                if (!string.IsNullOrEmpty(responseContent))
+                                {
+                                    Console.WriteLine($"⚠️ Response: {responseContent}");
+                                }
+                            }
+                            return false;
+                        }
+                    }
+                    else
+                    {
+                        Console.WriteLine($"❌ Insert returned null result");
+                        return false;
+                    }
+                }
+                catch (Supabase.Postgrest.Exceptions.PostgrestException pgEx)
+                {
+                    Console.WriteLine($"❌ PostgreSQL error: {pgEx.Message}");
+                    Console.WriteLine($"❌ PostgreSQL details: {pgEx.Reason}");
+                    return false;
+                }
+                catch (Exception ex) when (ex.Message.Contains("deleted method") || ex.Message.Contains("HotReload"))
+                {
+                    Console.WriteLine($"🔥 Hot reload issue detected - please restart application: {ex.Message}");
+                    return false;
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine($"❌ Error inserting into loader: {ex.Message}");
+                    Console.WriteLine($"❌ Stack trace: {ex.StackTrace}");
                     return false;
                 }
             }
 
             private (string title, string message) GetNotificationTemplate(string status)
             {
-                // Hardcoded templates based on your specification
                 return status switch
                 {
                     "Completed" => (
@@ -722,10 +871,6 @@ namespace Capstone.AppointmentOptions
                         "Molave Street Barbers",
                         "You didn't attend your scheduled appointment. Repeated no-shows can lead to booking restrictions. Please schedule responsibly."
                     ),
-                    "Test" => (
-                        "Test Notification 🔔",
-                        "This is a test notification from Molave Street Barbers."
-                    ),
                     _ => (
                         "Molave Street Barbers",
                         $"Your appointment status has been updated to {status}."
@@ -739,25 +884,17 @@ namespace Capstone.AppointmentOptions
 
                 try
                 {
-                    var json = JsonConvert.SerializeObject(payload, Formatting.Indented);
-                    Console.WriteLine($"📦 Payload:\n{json}");
-
+                    var json = JsonConvert.SerializeObject(payload);
                     var content = new StringContent(json, Encoding.UTF8, "application/json");
-
-                    Console.WriteLine($"📤 Sending to: {_edgeFunctionUrl}");
-                    Console.WriteLine($"🔑 Authorization: Bearer {_supabaseAnonKey.Substring(0, 20)}...");
 
                     var response = await _httpClient.PostAsync(_edgeFunctionUrl, content);
                     responseContent = await response.Content.ReadAsStringAsync();
-
-                    Console.WriteLine($"📥 Response Status: {(int)response.StatusCode} {response.StatusCode}");
-                    Console.WriteLine($"📥 Response Body: {responseContent}");
 
                     if (response.IsSuccessStatusCode)
                     {
                         if (string.IsNullOrWhiteSpace(responseContent))
                         {
-                            Console.WriteLine("⚠️ Warning: Empty response from Edge Function");
+                            Console.WriteLine("⚠️ Empty response from Edge Function");
                             return false;
                         }
 
@@ -766,27 +903,25 @@ namespace Capstone.AppointmentOptions
 
                         if (success)
                         {
-                            Console.WriteLine("✅ Notification sent successfully!");
+                            Console.WriteLine("✅ Notification sent successfully");
                             return true;
                         }
                         else
                         {
                             var error = result["error"]?.ToString() ?? "Unknown error";
-                            Console.WriteLine($"❌ Edge function returned success=false");
-                            Console.WriteLine($"   Error: {error}");
+                            Console.WriteLine($"❌ Edge function error: {error}");
                             return false;
                         }
                     }
                     else
                     {
                         Console.WriteLine($"❌ HTTP Error: {response.StatusCode}");
-                        Console.WriteLine($"   Response: {responseContent}");
                         return false;
                     }
                 }
                 catch (Exception ex)
                 {
-                    Console.WriteLine($"💥 Unexpected error: {ex.GetType().Name} - {ex.Message}");
+                    Console.WriteLine($"💥 Request error: {ex.Message}");
                     return false;
                 }
             }
@@ -840,11 +975,9 @@ namespace Capstone.AppointmentOptions
             [Column("receipt_code")]
             public string ReceiptCode { get; set; } = string.Empty;
 
-            // Using customer_id
             [Column("customer_id")]
             public Guid CustomerId { get; set; }
 
-            // ADD THIS: Push token column in appointment_sched table
             [Column("push_token")]
             public string? PushToken { get; set; }
         }
@@ -869,6 +1002,31 @@ namespace Capstone.AppointmentOptions
 
             [Column("created_at")]
             public DateTime CreatedAt { get; set; }
+        }
+
+        [Table("notification_loader")]
+        public class NotificationLoaderModel : BaseModel
+        {
+            [PrimaryKey("id", false)] // FIXED: Changed from true to false - let database handle auto-increment
+            public int Id { get; set; }
+
+            [Column("user_id")]
+            public Guid UserId { get; set; }
+
+            [Column("receipt_id")]
+            public string ReceiptId { get; set; } = string.Empty; // FIXED: Don't make nullable
+
+            [Column("title")]
+            public string Title { get; set; } = string.Empty;
+
+            [Column("description")]
+            public string Description { get; set; } = string.Empty; // FIXED: Don't make nullable
+
+            [Column("created_at")]
+            public DateTime CreatedAt { get; set; } = DateTime.UtcNow; // FIXED: Set default value
+
+            [Column("read")]
+            public bool Read { get; set; } = false; // FIXED: Set default value to false
         }
 
         // Class to represent badge progress

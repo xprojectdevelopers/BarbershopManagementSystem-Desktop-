@@ -4,6 +4,7 @@ using Supabase.Postgrest.Attributes;
 using Supabase.Postgrest.Models;
 using System.Collections.ObjectModel;
 using System.Configuration;
+using System.IO;
 using System.Text.RegularExpressions;
 using System.Windows;
 using System.Windows.Controls;
@@ -16,11 +17,12 @@ namespace Capstone
 {
     public partial class EmployeeProfile : Window
     {
-        private Client supabase;
+        private Supabase.Client supabase; // Fixed: Explicitly specify Supabase.Client
         private ObservableCollection<BarbershopManagementSystem> employees;
         private string currentPhotoPath;
         private bool isPhotoChanged = false;
         private Window currentModalWindow;
+        private string photoPublicUrl = string.Empty;
 
         public EmployeeProfile()
         {
@@ -34,7 +36,7 @@ namespace Capstone
             string supabaseUrl = ConfigurationManager.AppSettings["SupabaseUrl"];
             string supabaseKey = ConfigurationManager.AppSettings["SupabaseKey"];
 
-            supabase = new Client(supabaseUrl, supabaseKey, new SupabaseOptions
+            supabase = new Supabase.Client(supabaseUrl, supabaseKey, new Supabase.SupabaseOptions // Fixed: Explicit namespace
             {
                 AutoRefreshToken = true,
                 AutoConnectRealtime = false
@@ -71,15 +73,26 @@ namespace Capstone
             this.Close();
         }
 
-        private void UploadPhoto_Click(object sender, RoutedEventArgs e)
+        private async void UploadPhoto_Click(object sender, RoutedEventArgs e)
         {
             OpenFileDialog openFileDialog = new OpenFileDialog();
             openFileDialog.Filter = "Image files (*.png;*.jpg;*.jpeg)|*.png;*.jpg;*.jpeg";
+            openFileDialog.Title = "Select Employee Photo";
 
             if (openFileDialog.ShowDialog() == true)
             {
                 try
                 {
+                    // Validate file size (limit to 5MB)
+                    FileInfo fileInfo = new FileInfo(openFileDialog.FileName);
+                    if (fileInfo.Length > 5 * 1024 * 1024)
+                    {
+                        MessageBox.Show("Photo size must be less than 5MB.", "File Too Large",
+                                      MessageBoxButton.OK, MessageBoxImage.Warning);
+                        return;
+                    }
+
+                    // Load and display image
                     BitmapImage bitmap = new BitmapImage();
                     bitmap.BeginInit();
                     bitmap.CacheOption = BitmapCacheOption.OnLoad;
@@ -88,12 +101,72 @@ namespace Capstone
 
                     PhotoPreview.Source = bitmap;
                     currentPhotoPath = openFileDialog.FileName;
-                    isPhotoChanged = true;
+
+                    // Upload to Supabase Storage and get public URL
+                    photoPublicUrl = await UploadImageToSupabaseStorage(openFileDialog.FileName);
+
+                    if (string.IsNullOrEmpty(photoPublicUrl))
+                    {
+                        MessageBox.Show("Failed to upload image to storage.", "Upload Error",
+                                      MessageBoxButton.OK, MessageBoxImage.Error);
+                        // Reset photo if failed
+                        PhotoPreview.Source = new BitmapImage(new Uri("/Icon/profile.png", UriKind.Relative));
+                        currentPhotoPath = string.Empty;
+                        photoPublicUrl = string.Empty;
+                    }
+                    else
+                    {
+                        isPhotoChanged = true;
+                    }
                 }
                 catch (Exception ex)
                 {
-                    MessageBox.Show("Failed to load image: " + ex.Message);
+                    MessageBox.Show("Failed to load image: " + ex.Message, "Error",
+                                  MessageBoxButton.OK, MessageBoxImage.Error);
+
+                    // Reset photo if failed
+                    PhotoPreview.Source = new BitmapImage(new Uri("/Icon/profile.png", UriKind.Relative));
+                    currentPhotoPath = string.Empty;
+                    photoPublicUrl = string.Empty;
                 }
+            }
+        }
+
+        private async Task<string> UploadImageToSupabaseStorage(string imagePath)
+        {
+            try
+            {
+                // Generate unique filename to avoid conflicts
+                string fileName = $"{DateTime.Now:yyyyMMddHHmmssfff}_{Path.GetFileName(imagePath)}";
+
+                // Read the file bytes
+                byte[] fileBytes = File.ReadAllBytes(imagePath);
+
+                // Upload to Supabase Storage - use barbers_bucket instead of Employee_Profile
+                var storage = supabase.Storage;
+                var bucket = storage.From("barbers_bucket"); // Changed to barbers_bucket
+
+                // Upload the file
+                var result = await bucket.Upload(fileBytes, fileName);
+
+                if (result != null)
+                {
+                    // Get public URL for the uploaded file
+                    var publicUrl = bucket.GetPublicUrl(fileName);
+                    return publicUrl;
+                }
+                else
+                {
+                    MessageBox.Show("Upload returned null result.", "Upload Warning",
+                                  MessageBoxButton.OK, MessageBoxImage.Warning);
+                    return null;
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Storage upload failed: {ex.Message}",
+                              "Upload Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                return null;
             }
         }
 
@@ -221,6 +294,7 @@ namespace Capstone
             SetCheckBoxes(workSchedulePanel, employee.Wsched);
 
             currentPhotoPath = employee.PhotoPath;
+            photoPublicUrl = employee.PhotoPath;
             isPhotoChanged = false;
             LoadEmployeePhoto(employee.PhotoPath);
         }
@@ -231,7 +305,8 @@ namespace Capstone
             {
                 if (!string.IsNullOrEmpty(photoPath))
                 {
-                    if (System.IO.File.Exists(photoPath))
+                    // Check if it's a URL from Supabase storage
+                    if (photoPath.Contains("barbers_bucket") || Uri.IsWellFormedUriString(photoPath, UriKind.Absolute))
                     {
                         BitmapImage bitmap = new BitmapImage();
                         bitmap.BeginInit();
@@ -240,8 +315,9 @@ namespace Capstone
                         bitmap.EndInit();
                         PhotoPreview.Source = bitmap;
                     }
-                    else if (Uri.IsWellFormedUriString(photoPath, UriKind.Absolute))
+                    else if (System.IO.File.Exists(photoPath))
                     {
+                        // Local file path
                         BitmapImage bitmap = new BitmapImage();
                         bitmap.BeginInit();
                         bitmap.CacheOption = BitmapCacheOption.OnLoad;
@@ -370,6 +446,7 @@ namespace Capstone
             ClearCheckBoxes(workSchedulePanel);
             PhotoPreview.Source = new BitmapImage(new Uri("/Icon/profile.png", UriKind.Relative));
             currentPhotoPath = null;
+            photoPublicUrl = string.Empty;
             isPhotoChanged = false;
         }
 
@@ -538,6 +615,13 @@ namespace Capstone
                 {
                     var employee = employeeToDelete.Models.First();
 
+                    // Delete photo from storage if it's a URL
+                    if (!string.IsNullOrEmpty(employee.PhotoPath) &&
+                        employee.PhotoPath.Contains("barbers_bucket"))
+                    {
+                        await DeletePhotoFromStorage(employee.PhotoPath);
+                    }
+
                     await supabase
                         .From<BarbershopManagementSystem>()
                         .Where(x => x.Id == employee.Id)
@@ -566,6 +650,25 @@ namespace Capstone
             catch (Exception ex)
             {
                 MessageBox.Show($"Error deleting employee: {ex.Message}", "Delete Error", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+        }
+
+        private async Task DeletePhotoFromStorage(string photoUrl)
+        {
+            try
+            {
+                // Extract filename from URL
+                var uri = new Uri(photoUrl);
+                string fileName = Path.GetFileName(uri.AbsolutePath);
+
+                var storage = supabase.Storage;
+                var bucket = storage.From("barbers_bucket"); // Changed to barbers_bucket
+                await bucket.Remove(new List<string> { fileName });
+            }
+            catch (Exception ex)
+            {
+                // Log but don't fail the main operation if photo deletion fails
+                Console.WriteLine($"Failed to delete photo from storage: {ex.Message}");
             }
         }
 
@@ -661,9 +764,18 @@ namespace Capstone
                 employee.Estatus = GetComboBoxSelectedValue(cmbEmploymentStatus);
                 employee.Wsched = GetSelectedCheckBoxes(workSchedulePanel);
 
-                if (isPhotoChanged && !string.IsNullOrEmpty(currentPhotoPath))
+                // Handle photo update
+                if (isPhotoChanged)
                 {
-                    employee.PhotoPath = currentPhotoPath;
+                    // Delete old photo from storage if it exists and is from storage
+                    if (!string.IsNullOrEmpty(employee.PhotoPath) &&
+                        employee.PhotoPath.Contains("barbers_bucket"))
+                    {
+                        await DeletePhotoFromStorage(employee.PhotoPath);
+                    }
+
+                    // Use the new photo URL
+                    employee.PhotoPath = !string.IsNullOrEmpty(photoPublicUrl) ? photoPublicUrl : currentPhotoPath;
                 }
 
                 await supabase

@@ -12,15 +12,16 @@ using System.Windows.Controls;
 using static Supabase.Postgrest.Constants;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
+using Supabase;
 
 namespace Capstone.AppointmentOptions
 {
     public partial class DeclineAppointment : Window
     {
-        private Supabase.Client? supabase;
+        private Client? supabase;
         public Appointments.AppointmentModel? SelectedAppointment { get; set; }
         public Action<Appointments.AppointmentModel, string>? OnConfirmDecline { get; set; }
-        private NotificationService? _notificationService;
+        private DeclineNotificationService? _notificationService;
 
         public DeclineAppointment()
         {
@@ -38,14 +39,18 @@ namespace Capstone.AppointmentOptions
         {
             string? supabaseUrl = ConfigurationManager.AppSettings["SupabaseUrl"];
             string? supabaseKey = ConfigurationManager.AppSettings["SupabaseKey"];
+            string? supabaseServiceKey = ConfigurationManager.AppSettings["SupabaseServiceKey"];
 
-            if (string.IsNullOrEmpty(supabaseUrl) || string.IsNullOrEmpty(supabaseKey))
+            // Use service key if available, otherwise fall back to anon key
+            string effectiveKey = !string.IsNullOrEmpty(supabaseServiceKey) ? supabaseServiceKey! : supabaseKey!;
+
+            if (string.IsNullOrEmpty(supabaseUrl) || string.IsNullOrEmpty(effectiveKey))
             {
-                MessageBox.Show("⚠️ Supabase configuration missing in App.config!");
+                MessageBox.Show("⚠️ Supabase configuration missing in App.config!", "Configuration Error", MessageBoxButton.OK, MessageBoxImage.Warning);
                 return;
             }
 
-            supabase = new Supabase.Client(supabaseUrl, supabaseKey, new Supabase.SupabaseOptions
+            supabase = new Client(supabaseUrl, effectiveKey, new Supabase.SupabaseOptions
             {
                 AutoRefreshToken = true,
                 AutoConnectRealtime = false
@@ -58,7 +63,7 @@ namespace Capstone.AppointmentOptions
         {
             try
             {
-                _notificationService = new NotificationService();
+                _notificationService = new DeclineNotificationService(supabase);
                 Console.WriteLine("✅ Notification service initialized in DeclineAppointment");
             }
             catch (Exception ex)
@@ -87,7 +92,7 @@ namespace Capstone.AppointmentOptions
 
             if (supabase == null || SelectedAppointment == null || SelectedAppointment.Id == Guid.Empty)
             {
-                MessageBox.Show("⚠️ Unable to update appointment. Missing data.");
+                MessageBox.Show("⚠️ Unable to update appointment. Missing data.", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
                 return;
             }
 
@@ -95,7 +100,7 @@ namespace Capstone.AppointmentOptions
             {
                 Console.WriteLine($"\n🔄 Declining appointment {SelectedAppointment.ReceiptCode} with reason: {selectedReason}");
 
-                // Update both Status and Reason_Decline in database using the correct model
+                // Update both Status and Reason_Decline in database
                 var updated = await supabase
                     .From<AppointmentModel>()
                     .Where(x => x.Id == SelectedAppointment.Id)
@@ -107,12 +112,46 @@ namespace Capstone.AppointmentOptions
                 {
                     Console.WriteLine($"✅ Database updated successfully");
 
+                    // Save notification to notification_loader table
+                    bool notificationSaved = false;
+                    string notificationSaveMessage = "";
+
+                    if (_notificationService != null && !string.IsNullOrEmpty(SelectedAppointment.CustomerId))
+                    {
+                        Console.WriteLine($"💾 Attempting to save notification for customer: {SelectedAppointment.CustomerId}");
+
+                        // ✅ FIXED: Call the correct method name
+                        notificationSaved = await _notificationService.SaveDeclineNotificationToLoader(
+                            SelectedAppointment.CustomerName,
+                            SelectedAppointment.ReceiptCode,  // This becomes receipt_id in database
+                            selectedReason,
+                            SelectedAppointment.CustomerId
+                        );
+
+                        if (notificationSaved)
+                        {
+                            notificationSaveMessage = "✅ Notification saved to history!";
+                            Console.WriteLine($"✅ Notification successfully saved to database");
+                        }
+                        else
+                        {
+                            notificationSaveMessage = "⚠️ Notification failed to save to history.";
+                            Console.WriteLine($"❌ Notification failed to save to database");
+                        }
+                    }
+                    else
+                    {
+                        notificationSaveMessage = "⚠️ Cannot save notification - missing customer information.";
+                        Console.WriteLine($"❌ Cannot save notification - missing service or customer ID");
+                    }
+
                     // Send push notification if token exists
                     bool notificationSent = false;
+                    string pushNotificationMessage = "";
 
                     if (!string.IsNullOrEmpty(SelectedAppointment.PushToken) && _notificationService != null)
                     {
-                        Console.WriteLine($"📨 Sending decline notification for reason: {selectedReason}");
+                        Console.WriteLine($"📨 Sending decline push notification...");
                         Console.WriteLine($"📱 Push Token: {SelectedAppointment.PushToken}");
 
                         notificationSent = await _notificationService.SendDeclineNotification(
@@ -120,24 +159,37 @@ namespace Capstone.AppointmentOptions
                             SelectedAppointment.Id.ToString(),
                             SelectedAppointment.CustomerName,
                             SelectedAppointment.ReceiptCode,
-                            selectedReason);
+                            selectedReason,
+                            SelectedAppointment.CustomerId);
 
                         if (notificationSent)
                         {
-                            Console.WriteLine($"✅ Decline notification sent successfully");
+                            Console.WriteLine($"✅ Push notification sent successfully");
+                            pushNotificationMessage = "📨 Push notification sent to customer.";
                         }
                         else
                         {
-                            Console.WriteLine($"⚠️ Decline notification failed");
+                            Console.WriteLine($"❌ Push notification failed");
+                            pushNotificationMessage = "⚠️ Push notification failed to send.";
                         }
                     }
                     else
                     {
-                        Console.WriteLine($"ℹ️ No push token - skipping notification");
-                        if (SelectedAppointment.PushToken == null)
-                            Console.WriteLine($"ℹ️ PushToken is null");
-                        else
-                            Console.WriteLine($"ℹ️ PushToken is empty");
+                        Console.WriteLine($"ℹ️ No push token available - skipping push notification");
+                        pushNotificationMessage = "ℹ️ No push token available for customer.";
+                    }
+
+                    // Show accurate result message
+                    string resultMessage = "✅ Appointment declined successfully!\n\n";
+                    resultMessage += $"{notificationSaveMessage}\n{pushNotificationMessage}";
+
+                    if (notificationSaved && notificationSent)
+                    {
+                        MessageBox.Show(resultMessage, "Success", MessageBoxButton.OK, MessageBoxImage.Information);
+                    }
+                    else
+                    {
+                        MessageBox.Show(resultMessage, "Partial Success", MessageBoxButton.OK, MessageBoxImage.Warning);
                     }
 
                     // Call the decline action to remove from table
@@ -157,37 +209,44 @@ namespace Capstone.AppointmentOptions
                 }
                 else
                 {
-                    MessageBox.Show("⚠️ No rows were updated.");
+                    MessageBox.Show("⚠️ No rows were updated. Appointment may have already been modified.",
+                                  "Update Failed",
+                                  MessageBoxButton.OK,
+                                  MessageBoxImage.Warning);
                 }
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"❌ Error declining appointment: {ex.Message}");
+                MessageBox.Show($"❌ Error declining appointment: {ex.Message}",
+                              "Error",
+                              MessageBoxButton.OK,
+                              MessageBoxImage.Error);
                 Console.WriteLine($"Full error: {ex}");
             }
         }
 
         private void Back_Click(object sender, RoutedEventArgs e)
         {
-            // Just close the modal without doing anything
             this.Close();
         }
 
         // ============ NOTIFICATION SERVICE CLASS ============
 
-        public class NotificationService
+        public class DeclineNotificationService
         {
             private static readonly HttpClient _httpClient = new HttpClient();
             private readonly string _edgeFunctionUrl;
             private readonly string _supabaseAnonKey;
             private static bool _isInitialized = false;
+            private readonly Client? _supabase;
 
-            public NotificationService()
+            public DeclineNotificationService(Client? supabase)
             {
+                _supabase = supabase;
                 _edgeFunctionUrl = ConfigurationManager.AppSettings["EdgeFunctionUrl"]
                     ?? "https://gycwoawekmmompvholqr.supabase.co/functions/v1/sendNotification";
 
-                _supabaseAnonKey = ConfigurationManager.AppSettings["SupabaseKey"];
+                _supabaseAnonKey = ConfigurationManager.AppSettings["SupabaseKey"] ?? string.Empty;
 
                 if (string.IsNullOrEmpty(_supabaseAnonKey))
                 {
@@ -205,7 +264,112 @@ namespace Capstone.AppointmentOptions
                 }
             }
 
-            public async Task<bool> SendDeclineNotification(string pushToken, string appointmentId, string customerName, string receiptCode, string declineReason)
+            public async Task<bool> SaveDeclineNotificationToLoader(string customerName, string receiptCode, string declineReason, string userId)
+            {
+                try
+                {
+                    Console.WriteLine($"\n========================================");
+                    Console.WriteLine($"💾 [DECLINE] Starting SaveDeclineNotificationToLoader");
+                    Console.WriteLine($"   Customer: '{customerName}'");
+                    Console.WriteLine($"   ReceiptCode: '{receiptCode}'");
+                    Console.WriteLine($"   Reason: '{declineReason}'");
+                    Console.WriteLine($"   UserId: '{userId}'");
+                    Console.WriteLine($"========================================\n");
+
+                    if (_supabase == null)
+                    {
+                        Console.WriteLine("❌ CRITICAL: Supabase client is NULL");
+                        return false;
+                    }
+
+                    if (string.IsNullOrEmpty(userId))
+                    {
+                        Console.WriteLine($"❌ CRITICAL: userId is null or empty");
+                        return false;
+                    }
+
+                    if (!Guid.TryParse(userId, out Guid userGuid))
+                    {
+                        Console.WriteLine($"❌ CRITICAL: Invalid user_id format: '{userId}'");
+                        return false;
+                    }
+
+                    Console.WriteLine($"✅ UserId parsed successfully: {userGuid}");
+
+                    // Get the decline-specific message
+                    var (title, description) = GetDeclineNotificationTemplate(declineReason);
+
+                    // Validate and truncate
+                    if (string.IsNullOrWhiteSpace(title)) title = "Molave Street Barbers";
+                    if (title.Length > 255) title = title.Substring(0, 255);
+
+                    if (!string.IsNullOrWhiteSpace(description) && description.Length > 1000)
+                        description = description.Substring(0, 1000);
+
+                    if (string.IsNullOrWhiteSpace(receiptCode)) receiptCode = "N/A";
+
+                    var notification = new NotificationLoaderModel
+                    {
+                        UserId = userGuid,
+                        ReceiptId = receiptCode,
+                        Title = title,
+                        Description = description,
+                        CreatedAt = DateTime.UtcNow,
+                        Read = false
+                    };
+
+                    Console.WriteLine($"💾 Inserting notification into notification_loader...");
+                    Console.WriteLine($"   UserId: {notification.UserId}");
+                    Console.WriteLine($"   ReceiptId: {notification.ReceiptId}");
+                    Console.WriteLine($"   Title: {notification.Title}");
+                    Console.WriteLine($"   Description: {notification.Description?.Substring(0, Math.Min(50, description?.Length ?? 0))}...");
+
+                    var result = await _supabase
+                        .From<NotificationLoaderModel>()
+                        .Insert(notification);
+
+                    if (result?.Models != null && result.Models.Count > 0)
+                    {
+                        var inserted = result.Models[0];
+                        Console.WriteLine($"✅ Notification saved successfully to notification_loader!");
+                        Console.WriteLine($"   Database ID: {inserted.Id}");
+                        Console.WriteLine($"   Receipt ID: {inserted.ReceiptId}");
+                        return true;
+                    }
+                    else if (result?.ResponseMessage?.IsSuccessStatusCode == true)
+                    {
+                        Console.WriteLine($"✅ Notification saved successfully (HTTP 200)");
+                        return true;
+                    }
+                    else
+                    {
+                        Console.WriteLine($"❌ Failed to save notification - no models returned");
+
+                        if (result?.ResponseMessage != null)
+                        {
+                            Console.WriteLine($"   HTTP Status: {result.ResponseMessage.StatusCode}");
+                            try
+                            {
+                                var responseContent = await result.ResponseMessage.Content.ReadAsStringAsync();
+                                Console.WriteLine($"   Response: {responseContent}");
+                            }
+                            catch (Exception ex)
+                            {
+                                Console.WriteLine($"   Could not read response: {ex.Message}");
+                            }
+                        }
+                        return false;
+                    }
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine($"❌ ERROR saving decline notification: {ex.Message}");
+                    Console.WriteLine($"   Stack: {ex.StackTrace}");
+                    return false;
+                }
+            }
+
+            public async Task<bool> SendDeclineNotification(string pushToken, string appointmentId, string customerName, string receiptCode, string declineReason, string userId)
             {
                 try
                 {
@@ -215,17 +379,11 @@ namespace Capstone.AppointmentOptions
                         return false;
                     }
 
-                    Console.WriteLine($"\n========================================");
-                    Console.WriteLine($"📨 SENDING DECLINE NOTIFICATION");
-                    Console.WriteLine($"========================================");
-                    Console.WriteLine($"Appointment: {receiptCode}");
-                    Console.WriteLine($"Customer: {customerName}");
-                    Console.WriteLine($"Reason: {declineReason}");
-                    Console.WriteLine($"Target token: {pushToken.Substring(0, Math.Min(30, pushToken.Length))}...");
+                    Console.WriteLine($"📨 Sending decline notification for appointment: {appointmentId}");
 
-                    // Get notification template based on decline reason
                     var (title, message) = GetDeclineNotificationTemplate(declineReason);
 
+                    // SEND PUSH NOTIFICATION ONLY (notification already saved in ConfirmDecline_Click)
                     var payload = new
                     {
                         expoPushToken = pushToken,
@@ -245,10 +403,7 @@ namespace Capstone.AppointmentOptions
                         channelId = "default"
                     };
 
-                    var result = await SendNotificationRequest(payload);
-
-                    Console.WriteLine($"========================================\n");
-                    return result;
+                    return await SendNotificationRequest(payload);
                 }
                 catch (Exception ex)
                 {
@@ -259,7 +414,6 @@ namespace Capstone.AppointmentOptions
 
             private (string title, string message) GetDeclineNotificationTemplate(string declineReason)
             {
-                // Notification templates based on your specification
                 return declineReason.ToLower() switch
                 {
                     "time slot unavailable" => (
@@ -296,18 +450,12 @@ namespace Capstone.AppointmentOptions
                 try
                 {
                     var json = JsonConvert.SerializeObject(payload, Formatting.Indented);
-                    Console.WriteLine($"📦 Payload:\n{json}");
-
                     var content = new StringContent(json, Encoding.UTF8, "application/json");
-
-                    Console.WriteLine($"📤 Sending to: {_edgeFunctionUrl}");
-                    Console.WriteLine($"🔑 Authorization: Bearer {_supabaseAnonKey.Substring(0, 20)}...");
 
                     var response = await _httpClient.PostAsync(_edgeFunctionUrl, content);
                     responseContent = await response.Content.ReadAsStringAsync();
 
                     Console.WriteLine($"📥 Response Status: {(int)response.StatusCode} {response.StatusCode}");
-                    Console.WriteLine($"📥 Response Body: {responseContent}");
 
                     if (response.IsSuccessStatusCode)
                     {
@@ -323,70 +471,24 @@ namespace Capstone.AppointmentOptions
                         if (success)
                         {
                             Console.WriteLine("✅ Notification sent successfully!");
-
-                            var ticket = result["ticket"]?.ToString();
-                            if (!string.IsNullOrEmpty(ticket))
-                            {
-                                Console.WriteLine($"🎫 Expo ticket: {ticket}");
-                            }
-
                             return true;
                         }
                         else
                         {
                             var error = result["error"]?.ToString() ?? "Unknown error";
-                            var details = result["details"]?.ToString() ?? "";
-                            Console.WriteLine($"❌ Edge function returned success=false");
-                            Console.WriteLine($"   Error: {error}");
-                            if (!string.IsNullOrEmpty(details))
-                            {
-                                Console.WriteLine($"   Details: {details}");
-                            }
+                            Console.WriteLine($"❌ Edge function returned success=false: {error}");
                             return false;
                         }
                     }
                     else
                     {
                         Console.WriteLine($"❌ HTTP Error: {response.StatusCode}");
-                        Console.WriteLine($"   Response: {responseContent}");
-
-                        try
-                        {
-                            var errorObj = JObject.Parse(responseContent);
-                            var errorMsg = errorObj["error"]?.ToString()
-                                ?? errorObj["message"]?.ToString()
-                                ?? "No error message";
-                            Console.WriteLine($"   Error details: {errorMsg}");
-                        }
-                        catch
-                        {
-                            // Response is not JSON, already logged above
-                        }
-
                         return false;
                     }
                 }
-                catch (HttpRequestException ex)
-                {
-                    Console.WriteLine($"❌ Network error: {ex.Message}");
-                    Console.WriteLine($"   Check if Edge Function URL is correct: {_edgeFunctionUrl}");
-                    return false;
-                }
-                catch (TaskCanceledException ex)
-                {
-                    Console.WriteLine($"❌ Request timeout: {ex.Message}");
-                    Console.WriteLine($"   The request took longer than {_httpClient.Timeout.TotalSeconds} seconds");
-                    return false;
-                }
-                catch (JsonException ex)
-                {
-                    Console.WriteLine($"❌ JSON parsing error: {ex.Message}");
-                    Console.WriteLine($"   Response content: {responseContent}");
-                    return false;
-                }
                 catch (Exception ex)
                 {
-                    Console.WriteLine($"💥 Unexpected error: {ex.GetType().Name} - {ex.Message}");
+                    Console.WriteLine($"💥 Notification request error: {ex.Message}");
                     return false;
                 }
             }
@@ -402,7 +504,8 @@ namespace Capstone.AppointmentOptions
             }
         }
 
-        // Use the same model as the main Appointments window
+        // ============ MODEL DEFINITIONS ============
+
         [Table("appointment_sched")]
         public class AppointmentModel : BaseModel
         {
@@ -423,6 +526,34 @@ namespace Capstone.AppointmentOptions
 
             [Column("receipt_code")]
             public string ReceiptCode { get; set; } = string.Empty;
+
+            [Column("customer_id")]
+            public string CustomerId { get; set; } = string.Empty;
+        }
+
+        [Table("notification_loader")]
+        public class NotificationLoaderModel : BaseModel
+        {
+            [PrimaryKey("id", true)]
+            public int Id { get; set; }
+
+            [Column("user_id")]
+            public Guid UserId { get; set; }
+
+            [Column("receipt_id")]
+            public string? ReceiptId { get; set; }
+
+            [Column("title")]
+            public string Title { get; set; } = string.Empty;
+
+            [Column("description")]
+            public string? Description { get; set; }
+
+            [Column("created_at")]
+            public DateTime? CreatedAt { get; set; }
+
+            [Column("read")]
+            public bool? Read { get; set; }
         }
     }
 }

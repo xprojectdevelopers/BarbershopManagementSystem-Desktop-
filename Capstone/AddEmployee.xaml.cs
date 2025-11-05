@@ -3,12 +3,16 @@ using Microsoft.Win32;
 using Supabase;
 using Supabase.Postgrest.Attributes;
 using Supabase.Postgrest.Models;
+using Supabase.Storage;
 using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Configuration;
 using System.Globalization;
 using System.IO;
+using System.Linq;
 using System.Text.RegularExpressions;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
@@ -18,13 +22,12 @@ using System.Windows.Media.Imaging;
 
 namespace Capstone
 {
-
     public partial class AddEmployee : Window
     {
-        private Client supabase;
+        private Supabase.Client supabase; // Explicitly specify Supabase.Client
         private ObservableCollection<BarbershopManagementSystem> employees;
         private string selectedPhotoPath = string.Empty;
-        private string photoBase64 = string.Empty;
+        private string photoPublicUrl = string.Empty;
         private bool isSaving = false;
         private Window currentModalWindow;
 
@@ -60,7 +63,7 @@ namespace Capstone
             string supabaseUrl = ConfigurationManager.AppSettings["SupabaseUrl"];
             string supabaseKey = ConfigurationManager.AppSettings["SupabaseKey"];
 
-            supabase = new Client(supabaseUrl, supabaseKey, new SupabaseOptions
+            supabase = new Supabase.Client(supabaseUrl, supabaseKey, new Supabase.SupabaseOptions
             {
                 AutoRefreshToken = true,
                 AutoConnectRealtime = false
@@ -83,8 +86,6 @@ namespace Capstone
             }
         }
 
-
-
         private void Home_Click(object sender, MouseButtonEventArgs e)
         {
             EMenu EMenu = new EMenu();
@@ -92,7 +93,7 @@ namespace Capstone
             this.Close();
         }
 
-        private void UploadPhoto_Click(object sender, RoutedEventArgs e)
+        private async void UploadPhoto_Click(object sender, RoutedEventArgs e)
         {
             OpenFileDialog openFileDialog = new OpenFileDialog();
             openFileDialog.Filter = "Image files (*.png;*.jpg;*.jpeg)|*.png;*.jpg;*.jpeg";
@@ -121,11 +122,23 @@ namespace Capstone
                     PhotoPreview.Source = bitmap;
                     selectedPhotoPath = openFileDialog.FileName;
 
-                    // Convert to Base64 for database storage
-                    photoBase64 = ConvertImageToBase64(openFileDialog.FileName);
+                    // Upload to Supabase Storage and get public URL
+                    photoPublicUrl = await UploadImageToSupabaseStorage(openFileDialog.FileName);
 
-                    // Clear any photo error messages
-                    txtPhotoError.Visibility = Visibility.Collapsed;
+                    if (string.IsNullOrEmpty(photoPublicUrl))
+                    {
+                        MessageBox.Show("Failed to upload image to storage.", "Upload Error",
+                                      MessageBoxButton.OK, MessageBoxImage.Error);
+                        // Reset photo if failed
+                        PhotoPreview.Source = new BitmapImage(new Uri("/profile.png", UriKind.Relative));
+                        selectedPhotoPath = string.Empty;
+                        photoPublicUrl = string.Empty;
+                    }
+                    else
+                    {
+                        // Clear any photo error messages
+                        txtPhotoError.Visibility = Visibility.Collapsed;
+                    }
                 }
                 catch (Exception ex)
                 {
@@ -135,23 +148,42 @@ namespace Capstone
                     // Reset photo if failed
                     PhotoPreview.Source = new BitmapImage(new Uri("/profile.png", UriKind.Relative));
                     selectedPhotoPath = string.Empty;
-                    photoBase64 = string.Empty;
+                    photoPublicUrl = string.Empty;
                 }
             }
         }
 
-        private string ConvertImageToBase64(string imagePath)
+        private async Task<string> UploadImageToSupabaseStorage(string imagePath)
         {
             try
             {
-                byte[] imageBytes = File.ReadAllBytes(imagePath);
-                return Convert.ToBase64String(imageBytes);
+                // Generate unique filename to avoid conflicts
+                string fileName = $"{DateTime.Now:yyyyMMddHHmmssfff}_{Path.GetFileName(imagePath)}";
+
+                // Read the file bytes
+                byte[] fileBytes = File.ReadAllBytes(imagePath);
+
+                // Upload to Supabase Storage
+                var storage = supabase.Storage;
+                var bucket = storage.From("barbers_bucket"); // Your bucket name
+
+                // Upload the file
+                var result = await bucket.Upload(fileBytes, fileName);
+
+                if (result != null)
+                {
+                    // Get public URL for the uploaded file
+                    var publicUrl = bucket.GetPublicUrl(fileName);
+                    return publicUrl;
+                }
+
+                return null;
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Error converting image: {ex.Message}", "Conversion Error",
+                MessageBox.Show($"Error uploading image to storage: {ex.Message}", "Upload Error",
                               MessageBoxButton.OK, MessageBoxImage.Error);
-                return string.Empty;
+                return null;
             }
         }
 
@@ -308,7 +340,6 @@ namespace Capstone
             }
         }
 
-
         private static T FindVisualChild<T>(DependencyObject parent, string childName) where T : DependencyObject
         {
             if (parent != null)
@@ -371,7 +402,7 @@ namespace Capstone
             ClearAllValidationErrors();
 
             // Photo validation - required field
-            if (string.IsNullOrWhiteSpace(photoBase64))
+            if (string.IsNullOrWhiteSpace(photoPublicUrl))
             {
                 ShowValidationError(txtPhotoError, "Employee photo is required");
                 isValid = false;
@@ -628,16 +659,14 @@ namespace Capstone
                     Eid = txtEmployeeID.Text.Trim(),
                     Nickname = txtNickname.Text.Trim(),
                     Role = (cmbRole.SelectedItem as ComboBoxItem)?.Content.ToString(),
-                    Photo = photoBase64,
+                    Photo = photoPublicUrl, // Now storing the public URL instead of Base64
 
                     Bdate = bdate.SelectedDate,
                     Gender = GetSelectedComboBoxValue(Gender),
                     Address = txtAddress.Text.Trim(),
-                    // Keep the leading zero by storing as string - trim but preserve the zero
                     Cnumber = string.IsNullOrWhiteSpace(txtContactNumber.Text) ? null : txtContactNumber.Text.Trim(),
                     Email = txtEmail.Text.Trim(),
                     ECname = txtEmergencyName.Text.Trim(),
-                    // Keep the leading zero by storing as string - trim but preserve the zero
                     ECnumber = string.IsNullOrWhiteSpace(txtEmergencyNumber.Text) ? null : txtEmergencyNumber.Text.Trim(),
                     DateHired = dateHiredPicker.SelectedDate,
                     Estatus = GetSelectedComboBoxValue(cmbEmploymentStatus),
@@ -655,7 +684,6 @@ namespace Capstone
                     newEmployee.BarberExpertise = GetSelectedComboBoxValue(cmbBarberExpertise);
                     newEmployee.Epassword = null;
                 }
-
 
                 // Validate required fields first
                 bool isRequiredValid = ValidateAllRequiredFieldsInline(newEmployee);
@@ -677,6 +705,7 @@ namespace Capstone
                 System.Diagnostics.Debug.WriteLine($"Emergency Number being saved: '{newEmployee.ECnumber}'");
                 System.Diagnostics.Debug.WriteLine($"Contact Number Length: {newEmployee.Cnumber?.Length}");
                 System.Diagnostics.Debug.WriteLine($"Emergency Number Length: {newEmployee.ECnumber?.Length}");
+                System.Diagnostics.Debug.WriteLine($"Photo URL: {newEmployee.Photo}");
 
                 // Save to Supabase database
                 var result = await supabase.From<BarbershopManagementSystem>().Insert(newEmployee);
@@ -725,7 +754,6 @@ namespace Capstone
             }
         }
 
-
         private string GetSelectedComboBoxValue(ComboBox comboBox)
         {
             if (comboBox.SelectedItem is ComboBoxItem selectedItem && selectedItem.IsEnabled)
@@ -734,8 +762,6 @@ namespace Capstone
             }
             return null;
         }
-
-
 
         private string GetSelectedWorkSchedule()
         {
@@ -781,9 +807,7 @@ namespace Capstone
             // ===== Image =====
             PhotoPreview.Source = new BitmapImage(new Uri("/Icon/profile.png", UriKind.Relative));
             selectedPhotoPath = string.Empty;
-            photoBase64 = string.Empty;
-
-
+            photoPublicUrl = string.Empty;
 
             // ===== Work schedule =====
             foreach (var child in workSchedulePanel.Children)
@@ -887,7 +911,7 @@ namespace Capstone
             public string Wsched { get; set; }
 
             [Column("Photo")]
-            public string Photo { get; set; } // Base64 string
+            public string Photo { get; set; } // Now stores the public URL instead of Base64
 
             [Column("dayOff")]
             public string dayoff { get; set; }
