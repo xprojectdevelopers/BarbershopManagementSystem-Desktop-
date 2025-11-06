@@ -101,7 +101,7 @@
             <Border x:Name="LogOutBorder" 
                     Style="{StaticResource SettingItem}"
                     MouseLeftButtonDown="LogOut_Click">
-                <StackPanel Orientation="Horizontal">
+                <StackPanel Orientation="Horizontal"> 
                     <Image Source="/sign-out.png" 
                            Width="25" 
                            Height="25" 
