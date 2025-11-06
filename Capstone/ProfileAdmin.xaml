@@ -135,7 +135,7 @@
         </Border>
 
         <!-- Form Fields (Lowered slightly) -->
-        <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center" Margin="0,160,0,0" Width="450">
+        <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center" Margin="0,140,0,0" Width="450">
             <!-- Name Field -->
             <Grid Margin="0,100,0,0">
                 <Grid.RowDefinitions>
@@ -204,7 +204,7 @@
 
             <!-- Update Button -->
             <Button Content="Update" Cursor="Hand" Click="UpdateButton_Click"
-            Width="205" Height="40" Margin="0,10,0,0"
+            Width="205" Height="40" Margin="0,25,0,0"
             Foreground="white">
                 <Button.Template>
                     <ControlTemplate TargetType="Button">

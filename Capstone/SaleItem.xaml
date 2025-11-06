@@ -210,7 +210,7 @@
 
                     <!-- Category -->
                     <Label Content="Product ID" FontSize="20" Grid.Row="0" Grid.Column="2" VerticalAlignment="Bottom" Margin="0,0,0,5"/>
-                    <ComboBox x:Name="cmbItemID" SelectionChanged="cmbItemID_SelectionChanged" Grid.Row="1" Grid.Column="2" Height="47" FontSize="16" 
+                    <ComboBox x:Name="cmbItemID" SelectionChanged="cmbItemID_SelectionChanged" Grid.Row="1" Grid.Column="2" Height="47" FontSize="20" 
                         SelectedIndex="-1" Style="{StaticResource TextBoxStyleComboBox}" HorizontalAlignment="Left" Margin="0,0,0,30" Grid.RowSpan="2" Width="205">
                         <ComboBoxItem IsEnabled="False" IsSelected="True" Foreground="Gray">Select Item ID</ComboBoxItem>
                     </ComboBox>
@@ -251,7 +251,7 @@
 
                     <!-- Date -->
                     <Label Content="Date" FontSize="20" Grid.Row="0" Grid.Column="4" VerticalAlignment="Bottom" Margin="0,0,0,5"/>
-                    <DatePicker Style="{StaticResource TextBoxStyleDatePicker}" x:Name="ItemDate"
+                    <DatePicker FontSize="20" Style="{StaticResource TextBoxStyleDatePicker}" x:Name="ItemDate"
                  Tag="Select Date" Grid.Row="1" Grid.Column="4" Width="205"/>
                     <TextBlock x:Name="txtDateError" Foreground="Red" FontSize="12" 
                 Grid.Row="2" Grid.Column="4" Margin="0,2,0,0"

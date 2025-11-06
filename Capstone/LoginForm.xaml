@@ -75,6 +75,10 @@
     <!-- Main Container with responsive layout -->
     <Border Background="White" CornerRadius="10" BorderBrush="white" BorderThickness="1" Height="400" VerticalAlignment="Center">
         <Grid Margin="20">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="449*"/>
+                <ColumnDefinition Width="10*"/>
+            </Grid.ColumnDefinitions>
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto"/>
                 <RowDefinition Height="*"/>
@@ -82,28 +86,28 @@
             </Grid.RowDefinitions>
 
             <!-- Header Section -->
-            <StackPanel Grid.Row="0" Margin="4,39,-4,21">
-                <TextBlock Text="MOLAVE STREET'S BARBERS" 
-                           FontSize="20"
-                           Foreground="Black"
-                           Style="{StaticResource TitleStyle}"/>
+            <StackPanel Grid.Row="0" Margin="4,20,-4,21" Grid.ColumnSpan="2">
+                <Image Source="/Logo.png" 
+                       Height="80"
+                       HorizontalAlignment="Center"
+                       Stretch="Uniform"/>
 
             </StackPanel>
 
             <!-- Login Form Section -->
-            <StackPanel Grid.Row="1" MaxWidth="350" HorizontalAlignment="Center">
+            <StackPanel Grid.Row="1" MaxWidth="350" HorizontalAlignment="Left" Margin="90,-20,0,0">
 
                 <!-- Employee ID Section -->
                 <Label Content="Employee ID" Margin="-5,0,0,0" Style="{StaticResource LabelStyle}"/>
-                <TextBox x:Name="txtEmployeeId" 
+                <TextBox x:Name="txtEmployeeId" VerticalContentAlignment="Center" 
                          Style="{StaticResource InputStyle}"
                          Margin="0,0,0,20"
-                         FontSize="23"/>
+                         FontSize="20"/>
 
                 <!-- Password Section with Toggle -->
                 <Label Content="Password" Margin="-5,0,0,0" Style="{StaticResource LabelStyle}"/>
                 <Grid Width="278" Margin="0,0,0,30">
-                    <PasswordBox x:Name="txtPassword" 
+                    <PasswordBox x:Name="txtPassword" VerticalContentAlignment="Center"
                                  Height="35"
                                  FontSize="20"
                                  Background="#E8E9EB"

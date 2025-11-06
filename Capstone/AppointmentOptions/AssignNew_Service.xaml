@@ -203,7 +203,7 @@
 
                     <!-- Employee ID Column -->
                     <Label Content="Employee ID" FontSize="20" Grid.Row="0" Grid.Column="0" VerticalAlignment="Bottom" Margin="0,0,0,5"/>
-                    <ComboBox x:Name="cmbItemID" Grid.Row="1" Grid.Column="0" Height="47" FontSize="16" 
+                    <ComboBox x:Name="cmbItemID" Grid.Row="1" Grid.Column="0" Height="47" FontSize="20" 
                               SelectedIndex="-1" Style="{StaticResource TextBoxStyleComboBox}"
                               SelectionChanged="cmbItemID_SelectionChanged">
                         <ComboBoxItem IsEnabled="False" IsSelected="True" Foreground="Gray">Select Employee ID</ComboBoxItem>
@@ -214,7 +214,7 @@
 
                     <!-- Barber Nickname Column -->
                     <Label Content="Barber Nickname" FontSize="20" Grid.Row="0" Grid.Column="2" VerticalAlignment="Bottom" Margin="0,0,0,5"/>
-                    <TextBox x:Name="txtBarberNickname" FontSize="30" Grid.Row="1" Grid.Column="2" Height="47" IsReadOnly="True"/>
+                    <TextBox x:Name="txtBarberNickname" VerticalContentAlignment="Center" FontSize="20" Grid.Row="1" Grid.Column="2" Height="47" IsReadOnly="True"/>
                     <TextBlock x:Name="txtBarberNicknameError" Foreground="Red" FontSize="12" 
                                Grid.Row="2" Grid.Column="2" Margin="0,2,0,0"
                                VerticalAlignment="Top" Visibility="Collapsed"/>
@@ -238,7 +238,7 @@
 
                     <!-- Service Column -->
                     <Label Content="Service" FontSize="20" Grid.Row="0" Grid.Column="0" VerticalAlignment="Bottom" Margin="0,0,0,5"/>
-                    <ComboBox x:Name="cmbService" Grid.Row="1" Grid.Column="0" Height="47" FontSize="16" 
+                    <ComboBox x:Name="cmbService" Grid.Row="1" Grid.Column="0" Height="47" FontSize="20" 
                     SelectedIndex="-1" Style="{StaticResource TextBoxStyleComboBox}">
                         <ComboBoxItem>Haircut</ComboBoxItem>
                         <ComboBoxItem>Haircut (Reservation)</ComboBoxItem>
@@ -264,14 +264,14 @@
                     <Label Content="Price" FontSize="20" Grid.Row="0" Grid.Column="2" VerticalAlignment="Bottom" Margin="0,0,0,5"/>
                     <Grid Grid.Row="1" Grid.Column="2">
                         <TextBox x:Name="txtPrice"
-                            FontSize="30" 
+                            FontSize="20" 
                             Height="47"
-                            Padding="30,0,10,0"
+                            Padding="25,0,10,0"
                             VerticalContentAlignment="Center"
                             BorderBrush="Gray"
                             BorderThickness="1"/>
                         <TextBlock Text="₱" 
-                            FontSize="30"
+                            FontSize="20"
                             Foreground="Black"
                             VerticalAlignment="Center"
                             Margin="10,0,0,0"

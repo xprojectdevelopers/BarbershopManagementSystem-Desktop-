@@ -201,11 +201,10 @@
 
                     <Label Content="Product ID" FontSize="20" Grid.Row="0" Grid.Column="0" VerticalAlignment="Bottom" Margin="0,0,0,5"/>
                     <StackPanel Orientation="Horizontal" Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" Margin="00,0,0,0">
-                        <ComboBox x:Name="cmbProductItem" Width="150"
-          HorizontalAlignment="Left"
+                        <ComboBox x:Name="cmbProductItem" Width="213"
           VerticalAlignment="Center"
           Margin="0,0,10,0"
-          FontSize="14"
+          FontSize="20"
           Height="47"
           IsEditable="False"
           MinWidth="160"
@@ -267,7 +266,7 @@ Click="Search_Click">
 
                     <!-- Item Name -->
                     <Label Content="Product Name" FontSize="20" Grid.Row="0" Grid.Column="0" VerticalAlignment="Bottom" Margin="0,0,0,5"/>
-                    <TextBox x:Name="txtItemName" FontSize="30" Grid.Row="1" Grid.Column="0" Height="47"/>
+                    <TextBox VerticalContentAlignment="Center" x:Name="txtItemName" FontSize="20" Grid.Row="1" Grid.Column="0" Height="47"/>
                     <TextBlock x:Name="txtItemNameError" Foreground="Red" FontSize="12" 
                Grid.Row="2" Grid.Column="0" Margin="0,2,0,0"
                VerticalAlignment="Top" Visibility="Collapsed"/>
@@ -277,7 +276,7 @@ Click="Search_Click">
 
                     <!-- Category -->
                     <Label Content="Category" FontSize="20" Grid.Row="0" Grid.Column="2" VerticalAlignment="Bottom" Margin="0,0,0,5"/>
-                    <ComboBox x:Name="Category" Grid.Row="1" Grid.Column="2" Height="47" FontSize="16" 
+                    <ComboBox x:Name="Category" Grid.Row="1" Grid.Column="2" Height="47" FontSize="20" 
               SelectedIndex="-1" Style="{StaticResource TextBoxStyleComboBox}">
                         <ComboBoxItem IsEnabled="False" IsSelected="True" Foreground="Gray">Select Category</ComboBoxItem>
                         <ComboBoxItem>Aftershaves</ComboBoxItem>
@@ -307,14 +306,14 @@ Click="Search_Click">
                     <Label Content="Price" FontSize="20" Grid.Row="0" Grid.Column="4" VerticalAlignment="Bottom" Margin="0,0,0,5"/>
                     <Grid Grid.Row="1" Grid.Column="4">
                         <TextBox x:Name="txtPrice" 
-                                         FontSize="30" 
+                                         FontSize="20" 
                                          Height="47"
-                                         Padding="30,0,10,0"
+                                         Padding="25,0,10,0"
                                          VerticalContentAlignment="Center"
                                          BorderBrush="Gray"
                                          BorderThickness="1"/>
                         <TextBlock Text="₱" 
-                                           FontSize="30"
+                                           FontSize="20"
                                            Foreground="Black"
                                            VerticalAlignment="Center"
                                            Margin="10,0,0,0"
@@ -343,21 +342,21 @@ Click="Search_Click">
 
                     <!-- Supplier Name -->
                     <Label Content="Supplier Name" FontSize="20" Grid.Row="0" Grid.Column="0" VerticalAlignment="Bottom" Margin="0,0,0,5"/>
-                    <TextBox x:Name="txtSupplierName" FontSize="30" Grid.Row="1" Grid.Column="0" Height="47"/>
+                    <TextBox VerticalContentAlignment="Center" x:Name="txtSupplierName" FontSize="20" Grid.Row="1" Grid.Column="0" Height="47"/>
                     <TextBlock x:Name="txtSupplierNameError" Foreground="Red" FontSize="12" 
                Grid.Row="2" Grid.Column="0" Margin="0,2,0,0"
                VerticalAlignment="Top" Visibility="Collapsed"/>
 
                     <!-- Supplier Contact Number -->
                     <Label Content="Supplier Contact Number" FontSize="17" Grid.Row="0" Grid.Column="2" VerticalAlignment="Bottom" Margin="0,0,0,5"/>
-                    <TextBox x:Name="txtSCNumber" FontSize="30" Grid.Row="1" Grid.Column="2" Height="47"/>
+                    <TextBox VerticalContentAlignment="Center" x:Name="txtSCNumber" FontSize="20" Grid.Row="1" Grid.Column="2" Height="47"/>
                     <TextBlock x:Name="txtSCNumberError" Foreground="Red" FontSize="12" 
                Grid.Row="2" Grid.Column="2" Margin="0,2,0,0"
                VerticalAlignment="Top" Visibility="Collapsed"/>
 
                     <!-- Date -->
                     <Label Content="Date" FontSize="20" Grid.Row="0" Grid.Column="4" VerticalAlignment="Bottom" Margin="0,0,0,5"/>
-                    <DatePicker Style="{StaticResource TextBoxStyleDatePicker}" x:Name="ItemDate"
+                    <DatePicker FontSize="20" Style="{StaticResource TextBoxStyleDatePicker}" x:Name="ItemDate"
                 Tag="Select Start Date" Grid.Row="1" Grid.Column="4" Width="205"/>
                     <TextBlock x:Name="txtDateError" Foreground="Red" FontSize="12" 
                Grid.Row="2" Grid.Column="4" Margin="0,2,0,0"

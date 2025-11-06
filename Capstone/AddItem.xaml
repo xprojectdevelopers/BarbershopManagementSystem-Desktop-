@@ -199,9 +199,9 @@
 
                     <Label Content="Product ID" FontSize="20" Grid.Row="0" Grid.Column="0" VerticalAlignment="Bottom" Margin="0,0,0,5"/>
                     <StackPanel Orientation="Horizontal" Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" Margin="00,0,0,0">
-                        <TextBox x:Name="txtItemID" FontSize="30" Width="205" Height="47" VerticalAlignment="Top"/>
+                        <TextBox x:Name="txtItemID" VerticalContentAlignment="Center" FontSize="20" Width="205" Height="47" VerticalAlignment="Top"/>
                         <Button Content="Generate ID" Click="btnGenerateID_Click"
-                                Width="160" Height="40" Margin="20,0,0,0" Cursor="Hand"
+                                Width="160" Height="47" Margin="20,0,0,0" Cursor="Hand"
                                 Foreground="blue" VerticalAlignment="Top">
                             <Button.Template>
                                 <ControlTemplate TargetType="Button">
@@ -241,7 +241,7 @@
 
                     <!-- Item Name -->
                     <Label Content="Product Name" FontSize="20" Grid.Row="0" Grid.Column="0" VerticalAlignment="Bottom" Margin="0,0,0,5"/>
-                    <TextBox x:Name="txtItemName" FontSize="30" Grid.Row="1" Grid.Column="0" Height="47"/>
+                    <TextBox x:Name="txtItemName" VerticalContentAlignment="Center" FontSize="20" Grid.Row="1" Grid.Column="0" Height="47"/>
                     <TextBlock x:Name="txtItemNameError" Foreground="Red" FontSize="12" 
                                Grid.Row="2" Grid.Column="0" Margin="0,2,0,0"
                                VerticalAlignment="Top" Visibility="Collapsed"/>
@@ -251,7 +251,7 @@
 
                     <!-- Category -->
                     <Label Content="Category" FontSize="20" Grid.Row="0" Grid.Column="2" VerticalAlignment="Bottom" Margin="0,0,0,5"/>
-                    <ComboBox x:Name="Category" Grid.Row="1" Grid.Column="2" Height="47" FontSize="16" 
+                    <ComboBox x:Name="Category" Grid.Row="1" Grid.Column="2" Height="47" FontSize="20" 
                               SelectedIndex="-1" Style="{StaticResource TextBoxStyleComboBox}">
                         <ComboBoxItem IsEnabled="False" IsSelected="True" Foreground="Gray">Select Category</ComboBoxItem>
                         <ComboBoxItem>Aftershaves</ComboBoxItem>
@@ -281,14 +281,14 @@
                     <Label Content="Price" FontSize="20" Grid.Row="0" Grid.Column="4" VerticalAlignment="Bottom" Margin="0,0,0,5"/>
                     <Grid Grid.Row="1" Grid.Column="4">
                         <TextBox x:Name="txtPrice" 
-                                 FontSize="30" 
+                                 FontSize="20" 
                                  Height="47"
-                                 Padding="30,0,10,0"
+                                 Padding="25,0,10,0"
                                  VerticalContentAlignment="Center"
                                  BorderBrush="Gray"
                                  BorderThickness="1"/>
                         <TextBlock Text="₱" 
-                                   FontSize="30"
+                                   FontSize="20"
                                    Foreground="Black"
                                    VerticalAlignment="Center"
                                    Margin="10,0,0,0"
@@ -317,7 +317,7 @@
 
                     <!-- Supplier Name -->
                     <Label Content="Supplier Name" FontSize="20" Grid.Row="0" Grid.Column="0" VerticalAlignment="Bottom" Margin="0,0,0,5"/>
-                    <TextBox x:Name="txtSupplierName" FontSize="30" Grid.Row="1" Grid.Column="0" Height="47"/>
+                    <TextBox x:Name="txtSupplierName" VerticalContentAlignment="Center" FontSize="20" Grid.Row="1" Grid.Column="0" Height="47"/>
                     <TextBlock x:Name="txtSupplierNameError" Foreground="Red" FontSize="12" 
                                Grid.Row="2" Grid.Column="0" Margin="0,2,0,0"
                                VerticalAlignment="Top" Visibility="Collapsed"/>
@@ -327,7 +327,7 @@
 
                     <!-- Supplier Contact Number -->
                     <Label Content="Supplier Contact Number" FontSize="17" Grid.Row="0" Grid.Column="2" VerticalAlignment="Bottom" Margin="0,0,0,5"/>
-                    <TextBox x:Name="txtSCNumber" FontSize="30" Grid.Row="1" Grid.Column="2" Height="47"/>
+                    <TextBox x:Name="txtSCNumber" VerticalContentAlignment="Center" FontSize="20" Grid.Row="1" Grid.Column="2" Height="47"/>
                     <TextBlock x:Name="txtSCNumberError" Foreground="Red" FontSize="12" 
                                Grid.Row="2" Grid.Column="2" Margin="0,2,0,0"
                                VerticalAlignment="Top" Visibility="Collapsed"/>
@@ -335,7 +335,7 @@
                     <!-- Date -->
                     <Label Content="Date" FontSize="20" Grid.Row="0" Grid.Column="4" VerticalAlignment="Bottom" Margin="0,0,0,5"/>
                     <DatePicker Style="{StaticResource TextBoxStyleDatePicker}" x:Name="ItemDate"
-                                Tag="Select Start Date" Grid.Row="1" Grid.Column="4" Width="205"/>
+                                Tag="Select Start Date" FontSize="20" Grid.Column="4" Width="205" Margin="0,0,0,30" Grid.RowSpan="2" Grid.Row="1"/>
                     <TextBlock x:Name="txtDateError" Foreground="Red" FontSize="12" 
                                Grid.Row="2" Grid.Column="4" Margin="0,2,0,0"
                                VerticalAlignment="Top" Visibility="Collapsed"/>

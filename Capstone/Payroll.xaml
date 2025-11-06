@@ -280,7 +280,7 @@
                         <!-- Search Section -->
                         <Grid Margin="40,70,40,20" Height="120">
                             <Label Content="Employee ID" FontSize="20" HorizontalAlignment="Left" Margin="20,0,0,0" VerticalAlignment="Top"/>
-                            <ComboBox x:Name="cmbItemID" SelectionChanged="cmbItemID_SelectionChanged" Height="47" FontSize="16" 
+                            <ComboBox x:Name="cmbItemID" SelectionChanged="cmbItemID_SelectionChanged" Height="47" FontSize="20" 
               Style="{StaticResource TextBoxStyleComboBox}" HorizontalAlignment="Left" Margin="20,36,0,36" Width="205">
                             </ComboBox>
                             <TextBlock x:Name="txtEmployeeIDError" Foreground="Red" FontSize="12" 
@@ -353,7 +353,7 @@
                                 <Grid Grid.Column="2">
                                     <Label Content="Start Date" FontSize="20" Margin="0,0,0,0" VerticalAlignment="Top"/>
                                     <DatePicker x:Name="dpStartDate" Style="{StaticResource TextBoxStyleDatePicker}" 
-                                                Tag="Select Start Date"
+                                                Tag="Select Start Date" FontSize="20"
                                                 Width="205" Height="40" HorizontalAlignment="Left" 
                                                 Margin="0,37,0,0" VerticalAlignment="Top"/>
                                     <TextBlock x:Name="txtStartDateError" Foreground="Red" FontSize="12" 
@@ -363,7 +363,7 @@
                                 <Grid Grid.Column="3">
                                     <Label Content="End Date" FontSize="20" Margin="0,0,0,0" VerticalAlignment="Top"/>
                                     <DatePicker x:Name="dpEndDate" Style="{StaticResource TextBoxStyleDatePicker}" 
-                                                Tag="Select End Date"
+                                                Tag="Select End Date" FontSize="20"
                                                 Width="205" Height="40" HorizontalAlignment="Left" 
                                                 Margin="0,37,0,0" VerticalAlignment="Top"/>
                                     <TextBlock x:Name="txtEndDateError" Foreground="Red" FontSize="12" 

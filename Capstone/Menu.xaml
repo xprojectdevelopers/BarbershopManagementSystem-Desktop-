@@ -213,7 +213,7 @@
                                 <ColumnDefinition Width="*"/>
                             </Grid.ColumnDefinitions>
 
-                            <Image Grid.Row="0" Grid.Column="0" Source="/Icon/bell-ringing.png" 
+                            <Image Grid.Row="0" Grid.Column="0" Source="/scissors.png" 
                                    Style="{StaticResource MenuIcon}" Margin="0,0,15,0"/>
                             <StackPanel Grid.Row="0" Grid.Column="1" Grid.RowSpan="2" VerticalAlignment="Center">
                                 <TextBlock Text="Appointments" Style="{StaticResource MenuTitle}"/>
@@ -235,7 +235,7 @@
                                 <ColumnDefinition Width="*"/>
                             </Grid.ColumnDefinitions>
 
-                            <Image Grid.Row="0" Grid.Column="0" Source="/Icon/headset.png" 
+                            <Image Grid.Row="0" Grid.Column="0" Source="/headset.png" 
                                    Style="{StaticResource MenuIcon}" Margin="0,0,15,0"/>
                             <StackPanel Grid.Row="0" Grid.Column="1" Grid.RowSpan="2" VerticalAlignment="Center">
                                 <TextBlock Text="Customers" Style="{StaticResource MenuTitle}"/>
@@ -257,7 +257,7 @@
                                 <ColumnDefinition Width="*"/>
                             </Grid.ColumnDefinitions>
 
-                            <Image Grid.Row="0" Grid.Column="0" Source="/Icon/folder-user.png" 
+                            <Image Grid.Row="0" Grid.Column="0" Source="/folder-user.png" 
                                    Style="{StaticResource MenuIcon}" Margin="0,0,15,0"/>
                             <StackPanel Grid.Row="0" Grid.Column="1" Grid.RowSpan="2" VerticalAlignment="Center">
                                 <TextBlock Text="Employees" Style="{StaticResource MenuTitle}"/>
@@ -279,7 +279,7 @@
                                 <ColumnDefinition Width="*"/>
                             </Grid.ColumnDefinitions>
 
-                            <Image Grid.Row="0" Grid.Column="0" Source="/Icon/wallet.png" 
+                            <Image Grid.Row="0" Grid.Column="0" Source="/wallet.png" 
                                    Style="{StaticResource MenuIcon}" Margin="0,0,15,0"/>
                             <StackPanel Grid.Row="0" Grid.Column="1" Grid.RowSpan="2" VerticalAlignment="Center">
                                 <TextBlock Text="Payroll" Style="{StaticResource MenuTitle}"/>
@@ -301,7 +301,7 @@
                                 <ColumnDefinition Width="*"/>
                             </Grid.ColumnDefinitions>
 
-                            <Image Grid.Row="0" Grid.Column="0" Source="/Icon/bell-ringing.png" 
+                            <Image Grid.Row="0" Grid.Column="0" Source="/package.png" 
                                    Style="{StaticResource MenuIcon}" Margin="0,0,15,0"/>
                             <StackPanel Grid.Row="0" Grid.Column="1" Grid.RowSpan="2" VerticalAlignment="Center">
                                 <TextBlock Text="Inventory" Style="{StaticResource MenuTitle}"/>

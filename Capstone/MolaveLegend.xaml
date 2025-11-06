@@ -186,7 +186,7 @@ MouseLeftButtonUp="Home_Click" Cursor="Hand" Margin="0,0,15,0">
                 </Grid.RowDefinitions>
 
                 <!-- Title -->
-                <TextBlock Text="Molave Streets Barbers Subcribes"
+                <TextBlock Text="Molave Streets Legend"
                            FontSize="20"
                            FontWeight="Bold"
                            HorizontalAlignment="Center"
@@ -206,7 +206,7 @@ MouseLeftButtonUp="Home_Click" Cursor="Hand" Margin="0,0,15,0">
                     </Grid.ColumnDefinitions>
 
                     <Label Content="Badge" FontSize="18" Grid.Row="1" Grid.Column="2" VerticalAlignment="Bottom" Margin="0,10,30,85" Grid.ColumnSpan="2"/>
-                    <ComboBox x:Name="cmbItemID" Grid.Row="1" Grid.Column="2" Height="37" FontSize="18" 
+                    <ComboBox x:Name="cmbItemID" Grid.Row="1" Grid.Column="2" Height="37" FontSize="20" 
                     SelectedIndex="-1" Style="{StaticResource TextBoxStyleComboBox}" HorizontalAlignment="Center" Grid.RowSpan="1" Width="205">
                         <ComboBoxItem IsEnabled="False" IsSelected="True" Foreground="Gray">Molave Street Legend</ComboBoxItem>
                         <ComboBoxItem>Loyal Customer</ComboBoxItem>

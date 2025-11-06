@@ -342,7 +342,7 @@
 
                             <!-- Assigned Barber -->
                             <Label Content="Assigned Barber" FontSize="20" Grid.Row="0" Grid.Column="4" VerticalAlignment="Bottom" Margin="0,0,0,5"/>
-                            <ComboBox x:Name="cmbAssignedBarber" Grid.Row="1" Grid.Column="4" Height="47" FontSize="16" 
+                            <ComboBox x:Name="cmbAssignedBarber" Grid.Row="1" Grid.Column="4" Height="47" FontSize="20" 
                                       SelectedIndex="-1" Style="{StaticResource TextBoxStyleComboBox}">
                                 <ComboBoxItem IsEnabled="False" IsSelected="True" Foreground="Gray">Select Assigned Barber</ComboBoxItem>
                             </ComboBox>
@@ -369,7 +369,7 @@
 
                             <!-- Service -->
                             <Label Content="Service" FontSize="20" Grid.Row="0" Grid.Column="0" VerticalAlignment="Bottom" Margin="0,0,0,5"/>
-                            <ComboBox x:Name="cmbService" Grid.Row="1" Grid.Column="0" Height="47" FontSize="16" 
+                            <ComboBox x:Name="cmbService" Grid.Row="1" Grid.Column="0" Height="47" FontSize="20" 
                                       SelectedIndex="-1" Style="{StaticResource TextBoxStyleComboBox}" IsEnabled="False">
                                 <ComboBoxItem IsEnabled="False" IsSelected="True" Foreground="Gray">Select Service</ComboBoxItem>
                             </ComboBox>
@@ -379,7 +379,7 @@
 
                             <!-- Date -->
                             <Label Content="Date" FontSize="20" Grid.Row="0" Grid.Column="2" VerticalAlignment="Bottom" Margin="0,0,0,5"/>
-                            <DatePicker x:Name="date" Style="{StaticResource TextBoxStyleDatePicker}" 
+                            <DatePicker FontSize="20" x:Name="date" Style="{StaticResource TextBoxStyleDatePicker}" 
                                         Tag="Select Date" Grid.Row="1" Grid.Column="2" Width="205"/>
                             <TextBlock x:Name="dateErorr" Foreground="Red" FontSize="12" 
                                        Grid.Row="2" Grid.Column="2" Margin="0,2,0,0"
@@ -390,7 +390,7 @@
 
                             <!-- Time -->
                             <Label Content="Time" FontSize="20" Grid.Row="0" Grid.Column="4" VerticalAlignment="Bottom" Margin="0,0,0,5"/>
-                            <ComboBox x:Name="cmbTime" Grid.Row="1" Grid.Column="4" Height="47" FontSize="16" 
+                            <ComboBox x:Name="cmbTime" Grid.Row="1" Grid.Column="4" Height="47" FontSize="20" 
                                       SelectedIndex="-1" Style="{StaticResource TextBoxStyleComboBox}">
                                 <ComboBoxItem IsEnabled="False" IsSelected="True" Foreground="Gray">Select Time</ComboBoxItem>
                                 <ComboBoxItem>10:00 am</ComboBoxItem>
@@ -454,7 +454,7 @@
 
                             <!-- Payment Method -->
                             <Label Content="Payment Method" FontSize="20" Grid.Row="0" Grid.Column="2" VerticalAlignment="Bottom" Margin="0,0,0,5"/>
-                            <ComboBox x:Name="cmbPMethod" Grid.Row="1" Grid.Column="2" Height="47" FontSize="16" 
+                            <ComboBox x:Name="cmbPMethod" Grid.Row="1" Grid.Column="2" Height="47" FontSize="20" 
                                       SelectedIndex="-1" Style="{StaticResource TextBoxStyleComboBox}">
                                 <ComboBoxItem IsEnabled="False" IsSelected="True" Foreground="Gray">Select Payment Method</ComboBoxItem>
                                 <ComboBoxItem>Pay with Gcash</ComboBoxItem>
@@ -467,7 +467,7 @@
 
                             <!-- Payment Status -->
                             <Label Content="Payment Status" FontSize="20" Grid.Row="0" Grid.Column="4" VerticalAlignment="Bottom" Margin="0,0,0,5"/>
-                            <ComboBox x:Name="cmbPStatus" Grid.Row="1" Grid.Column="4" Height="47" FontSize="16" 
+                            <ComboBox x:Name="cmbPStatus" Grid.Row="1" Grid.Column="4" Height="47" FontSize="20" 
                                       SelectedIndex="-1" Style="{StaticResource TextBoxStyleComboBox}">
                                 <ComboBoxItem IsEnabled="False" IsSelected="True" Foreground="Gray">Select Payment Status</ComboBoxItem>
                                 <ComboBoxItem>Paid</ComboBoxItem>

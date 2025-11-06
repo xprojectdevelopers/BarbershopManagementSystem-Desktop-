@@ -277,19 +277,40 @@ ToolTip="Settings" Grid.ColumnSpan="3" HorizontalAlignment="Left" Click="Setting
 
             <!-- Full Name -->
             <Label Content="Full name *" FontSize="20" HorizontalAlignment="Left" Margin="255,370,0,0" Grid.Row="1" VerticalAlignment="Top"/>
-            <TextBox x:Name="txtFullName" HorizontalAlignment="Left" FontSize="30" Margin="255,407,0,0" Grid.Row="1" TextWrapping="Wrap" VerticalAlignment="Top" Width="465"/>
+            <TextBox x:Name="txtFullName" VerticalContentAlignment="Center" HorizontalAlignment="Left" FontSize="20" Margin="255,407,0,0" Grid.Row="1" TextWrapping="Wrap" VerticalAlignment="Top" Width="465" Height="38"/>
             <TextBlock x:Name="txtFullNameError" Foreground="Red" FontSize="14" Margin="255,450,0,0" Grid.Row="1" HorizontalAlignment="Left" VerticalAlignment="Top" Visibility="Collapsed"/>
             <TextBlock x:Name="txtFullNameTaken" Foreground="Red" FontSize="14" Margin="255,450,0,0" Grid.Row="1" HorizontalAlignment="Left" VerticalAlignment="Top" Visibility="Collapsed"/>
 
             <!-- Profile Image + Upload Button -->
             <StackPanel Grid.Row="1" Orientation="Vertical" HorizontalAlignment="Left" Margin="760,301,0,-7">
-                <Image x:Name="PhotoPreview" Height="195" Width="195" Source="/Icon/profile.png" 
-           Stretch="UniformToFill" Margin="0,0,0,10"/>
-                <Button Content="Upload Photo" Cursor="Hand" Background="white" Padding="15,8" Click="UploadPhoto_Click" Width="295" Height="50"/>
-                <TextBlock x:Name="txtPhotoError" Foreground="Red" FontSize="14" 
-Margin="760,465,0,0" Grid.Row="1" 
-HorizontalAlignment="Left" VerticalAlignment="Top" 
-Visibility="Collapsed"/>
+                <!-- Circular Image Container -->
+                <Border Width="195" Height="195" 
+                        CornerRadius="100" 
+                        BorderBrush="LightGray" 
+                        BorderThickness="2"
+                        Margin="0,0,0,10">
+                    <Border.Clip>
+                        <EllipseGeometry Center="97.5,97.5" RadiusX="97.5" RadiusY="97.5"/>
+                    </Border.Clip>
+                    <Image x:Name="PhotoPreview" 
+                           Source="/Icon/profile.png" 
+                           Stretch="UniformToFill"/>
+                </Border>
+                
+                <Button Content="Upload Photo" 
+                        Cursor="Hand" 
+                        Background="white" 
+                        Padding="15,8" 
+                        Click="UploadPhoto_Click" 
+                        Width="295" 
+                        Height="50"/>
+                <TextBlock x:Name="txtPhotoError" 
+                           Foreground="Red" 
+                           FontSize="14" 
+                           Margin="0,10,0,0" 
+                           HorizontalAlignment="Left" 
+                           VerticalAlignment="Top" 
+                           Visibility="Collapsed"/>
             </StackPanel>
 
             <!-- Birthdate -->
@@ -318,30 +339,30 @@ Visibility="Collapsed"/>
             <TextBlock x:Name="txtGenderError" Foreground="Red" FontSize="14" Margin="525,555,0,0" Grid.Row="1" HorizontalAlignment="Left" VerticalAlignment="Top" Visibility="Collapsed"/>
 
             <Label Content="Address *" FontSize="20" HorizontalAlignment="Left" Margin="255,590,0,0" Grid.Row="1" VerticalAlignment="Top"/>
-            <TextBox x:Name="txtAddress" HorizontalAlignment="Left" FontSize="30" Margin="255,627,0,0" Grid.Row="1" TextWrapping="Wrap" VerticalAlignment="Top" Width="805"/>
+            <TextBox x:Name="txtAddress" VerticalContentAlignment="Center" HorizontalAlignment="Left" FontSize="20" Margin="255,627,0,0" Grid.Row="1" TextWrapping="Wrap" VerticalAlignment="Top" Width="805" Height="41"/>
             <TextBlock x:Name="txtAddressError" Foreground="Red" FontSize="14" Margin="255,670,0,0" Grid.Row="1" HorizontalAlignment="Left" VerticalAlignment="Top" Visibility="Collapsed"/>
 
             <Label Content="Contact Number *" FontSize="20" HorizontalAlignment="Left" Margin="255,697,0,0" Grid.Row="1" VerticalAlignment="Top"/>
-            <TextBox x:Name="txtContactNumber" HorizontalAlignment="Left" FontSize="30" Margin="255,735,0,0" Grid.Row="1" TextWrapping="Wrap" VerticalAlignment="Top" Width="805"/>
+            <TextBox x:Name="txtContactNumber" VerticalContentAlignment="Center" HorizontalAlignment="Left" FontSize="20" Margin="255,735,0,0" Grid.Row="1" TextWrapping="Wrap" VerticalAlignment="Top" Width="805" Height="40"/>
             <TextBlock x:Name="txtContactNumberError" Foreground="Red" FontSize="14" Margin="255,778,0,0" Grid.Row="1" HorizontalAlignment="Left" VerticalAlignment="Top" Visibility="Collapsed"/>
 
             <Label Content="Email Address *" FontSize="20" HorizontalAlignment="Left" Margin="255,805,0,0" Grid.Row="1" VerticalAlignment="Top"/>
-            <TextBox x:Name="txtEmail" HorizontalAlignment="Left" FontSize="30" Margin="255,842,0,0" Grid.Row="1" TextWrapping="Wrap" VerticalAlignment="Top" Width="805"/>
+            <TextBox x:Name="txtEmail" VerticalContentAlignment="Center" HorizontalAlignment="Left" FontSize="20" Margin="255,842,0,0" Grid.Row="1" TextWrapping="Wrap" VerticalAlignment="Top" Width="805" Height="40"/>
             <TextBlock x:Name="txtEmailError" Foreground="Red" FontSize="14" Margin="255,885,0,0" Grid.Row="1" HorizontalAlignment="Left" VerticalAlignment="Top" Visibility="Collapsed"/>
 
             <Label Content="Emergency contact name *" FontSize="20" HorizontalAlignment="Left" Margin="255,905,0,0" Grid.Row="1" VerticalAlignment="Top"/>
-            <TextBox x:Name="txtEmergencyName" HorizontalAlignment="Left" FontSize="30" Margin="255,945,0,0" Grid.Row="1" TextWrapping="Wrap" VerticalAlignment="Top" Width="320"/>
+            <TextBox x:Name="txtEmergencyName" VerticalContentAlignment="Center" HorizontalAlignment="Left" FontSize="20" Margin="255,945,0,0" Grid.Row="1" TextWrapping="Wrap" VerticalAlignment="Top" Width="320" Height="36"/>
             <TextBlock x:Name="txtEmergencyNameError" Foreground="Red" FontSize="14" Margin="255,988,0,0" Grid.Row="1" HorizontalAlignment="Left" VerticalAlignment="Top" Visibility="Collapsed"/>
 
             <Label Content="Emergency contact number *" FontSize="20" HorizontalAlignment="Left" Margin="615,905,0,0" Grid.Row="1" VerticalAlignment="Top"/>
-            <TextBox x:Name="txtEmergencyNumber" HorizontalAlignment="Left" FontSize="30" Margin="620,945,0,0" Grid.Row="1" TextWrapping="Wrap" VerticalAlignment="Top" Width="445"/>
+            <TextBox x:Name="txtEmergencyNumber" VerticalContentAlignment="Center" HorizontalAlignment="Left" FontSize="20" Margin="620,945,0,0" Grid.Row="1" TextWrapping="Wrap" VerticalAlignment="Top" Width="445" Height="36"/>
             <TextBlock x:Name="txtEmergencyNumberError" Foreground="Red" FontSize="14" Margin="620,988,0,0" Grid.Row="1" HorizontalAlignment="Left" VerticalAlignment="Top" Visibility="Collapsed"/>
 
             <Label Content="Employment Informations" FontSize="40" HorizontalAlignment="Left" VerticalAlignment="Top" RenderTransformOrigin="2.096,5.165" Margin="255,1023,0,0" Grid.Row="1" FontWeight="Bold"/>
 
             <Label Content="Employee ID *" FontSize="20" HorizontalAlignment="Left" Margin="465,131,0,0" Grid.Row="1" VerticalAlignment="Top"/>
             <ComboBox x:Name="cmbEmployeeID" HorizontalAlignment="Left" Margin="465,168,0,0" Grid.Row="1" VerticalAlignment="Top" 
-Width="250" FontSize="16" SelectedIndex="-1"
+Width="250" FontSize="20" SelectedIndex="-1"
 Style="{StaticResource TextBoxStyleComboBox}" Height="38">
                 <ComboBoxItem IsEnabled="False" IsSelected="True" Foreground="Gray">Select Employee ID</ComboBoxItem>
             </ComboBox>
@@ -389,7 +410,7 @@ Grid.Row="1" VerticalAlignment="Top"/>
             <TextBlock x:Name="txtRoleError" Foreground="Red" FontSize="14" Margin="255,1198,0,0" Grid.Row="1" HorizontalAlignment="Left" VerticalAlignment="Top" Visibility="Collapsed"/>
 
             <Label Content="Employee Password *" FontSize="20" HorizontalAlignment="Left" Margin="535,1114,0,0" Grid.Row="1" VerticalAlignment="Top"/>
-            <TextBox x:Name="txtEmployeePassword" HorizontalAlignment="Left" FontSize="30" Margin="540,1152,0,0" Grid.Row="1" TextWrapping="Wrap" VerticalAlignment="Top" Width="280"/>
+            <TextBox x:Name="txtEmployeePassword" VerticalContentAlignment="Center" HorizontalAlignment="Left" FontSize="20" Margin="540,1152,0,0" Grid.Row="1" TextWrapping="Wrap" VerticalAlignment="Top" Width="280" Height="44"/>
             <TextBlock x:Name="txtPasswordError" Foreground="Red" FontSize="14" Margin="540,1198,0,0" Grid.Row="1" HorizontalAlignment="Left" VerticalAlignment="Top" Visibility="Collapsed"/>
             <TextBlock x:Name="txtPasswordSame" Foreground="Red" FontSize="14" Margin="540,1200,0,0" Grid.Row="1" HorizontalAlignment="Left" VerticalAlignment="Top" Visibility="Collapsed"/>
             <Button Content="Generate Password" x:Name="btnGeneratePassword"
@@ -416,7 +437,7 @@ Click="btnGeneratePassword_Click" Cursor="Hand">
             </Button>
 
             <Label Content="Employee nickname *" FontSize="20" HorizontalAlignment="Left" Margin="255,1230,0,0" Grid.Row="1" VerticalAlignment="Top"/>
-            <TextBox x:Name="txtNickname" HorizontalAlignment="Left" FontSize="30" Margin="255,1267,0,0" Grid.Row="1" TextWrapping="Wrap" VerticalAlignment="Top" Width="420"/>
+            <TextBox x:Name="txtNickname" VerticalContentAlignment="Center" HorizontalAlignment="Left" FontSize="20" Margin="255,1267,0,0" Grid.Row="1" TextWrapping="Wrap" VerticalAlignment="Top" Width="420" Height="44"/>
             <TextBlock x:Name="txtNicknameError" Foreground="Red" FontSize="14" Margin="255,1310,0,0" Grid.Row="1" HorizontalAlignment="Left" VerticalAlignment="Top" Visibility="Collapsed"/>
             <TextBlock x:Name="txtNicknameTaken" Foreground="Red" FontSize="14" Margin="255,1308,0,0" Grid.Row="1" HorizontalAlignment="Left" VerticalAlignment="Top" Visibility="Collapsed"/>
 

@@ -6,6 +6,7 @@
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
     <UseWPF>true</UseWPF>
+    <ApplicationIcon>Favicon.ico</ApplicationIcon>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
@@ -22,25 +23,38 @@
     <None Remove="Appointment_Records.png" />
     <None Remove="Being-Productive-4--Streamline-Milano.png" />
     <None Remove="Book_Appointment.png" />
+    <None Remove="device-mobile.png" />
     <None Remove="Diverse-Team-1--Streamline-Milano %281%29.png" />
     <None Remove="Dropshipping-1--Streamline-Milano.png" />
     <None Remove="emptystates-empty-cart.png" />
     <None Remove="export %281%29.png" />
+    <None Remove="folder-user.png" />
+    <None Remove="headset.png" />
     <None Remove="Icon\camera-plus.png" />
     <None Remove="Icon\CheckCircle.png" />
     <None Remove="Icon\pencil-circle.png" />
     <None Remove="Icon\user-circle-minus %281%29.png" />
+    <None Remove="Logo.png" />
     <None Remove="magnifying-glass.png" />
     <None Remove="Manage_Service.png" />
+    <None Remove="monitor.png" />
     <None Remove="package.png" />
     <None Remove="Paying-Taxes-1--Streamline-Milano.png" />
     <None Remove="Profile-2--Streamline-Milano-1.png" />
     <None Remove="quotes-fill.png" />
+    <None Remove="scissors.png" />
     <None Remove="Security-Vault--Streamline-Milano.png" />
+    <None Remove="sign-out.png" />
     <None Remove="Sorting-Center--Streamline-Milano.png" />
     <None Remove="stack-of-money.png" />
     <None Remove="Swarm_bee_user.png" />
+    <None Remove="user-circle.png" />
     <None Remove="w.png" />
+    <None Remove="wallet.png" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="Favicon.ico" />
   </ItemGroup>
 
   <ItemGroup>
@@ -54,6 +68,9 @@
   <ItemGroup>
     <Resource Include="AppointmentOptions\asking-question.png" />
     <Resource Include="AppointmentOptions\Robot_On_Laptop_Computer.png" />
+    <Resource Include="device-mobile.png" />
+    <Resource Include="folder-user.png" />
+    <Resource Include="headset.png" />
     <Resource Include="Icon\Appointment_Records.png" />
     <Resource Include="Icon\Book_Appointment.png" />
     <Resource Include="Icon\camera-plus.png" />
@@ -83,6 +100,8 @@
     <Resource Include="Icon\user-circle-minus (1).png">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </Resource>
+    <Resource Include="Logo.png" />
+    <Resource Include="monitor.png" />
     <Resource Include="package.png" />
     <Resource Include="Pop out image\marketing-target.png" />
     <Resource Include="Pop out image\Phone-Hotspot-1--Streamline-Milano.png" />
@@ -96,6 +115,10 @@
     <Resource Include="quotes-fill.png" />
     <Resource Include="Icon\Sorting-Center--Streamline-Milano.png" />
     <Resource Include="Icon\w.png" />
+    <Resource Include="scissors.png" />
+    <Resource Include="sign-out.png" />
+    <Resource Include="user-circle.png" />
+    <Resource Include="wallet.png" />
   </ItemGroup>
 
 </Project>

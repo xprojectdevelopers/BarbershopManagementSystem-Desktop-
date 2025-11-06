@@ -334,7 +334,7 @@
                             <!-- Category Filter -->
                             <StackPanel Grid.Column="0" Margin="0,0,20,0">
                                 <Label Content="Category" FontSize="20" Margin="0,0,0,5"/>
-                                <ComboBox x:Name="Gender" Width="190" Height="47" FontSize="16" SelectedIndex="-1"
+                                <ComboBox x:Name="Gender" Width="190" Height="47" FontSize="20" SelectedIndex="-1"
                   Style="{StaticResource TextBoxStyleComboBox}">
                                     <ComboBoxItem IsEnabled="False" IsSelected="True" Foreground="Gray">All Items</ComboBoxItem>
                                     <ComboBoxItem>Aftershaves</ComboBoxItem>

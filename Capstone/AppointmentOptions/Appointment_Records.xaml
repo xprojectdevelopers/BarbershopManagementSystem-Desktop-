@@ -360,7 +360,7 @@ Margin="10,0,0,0"/>
                                       Grid.Row="1" 
                                       Grid.Column="0" 
                                       Height="47" 
-                                      FontSize="16" 
+                                      FontSize="20" 
                                       SelectedIndex="0" 
                                       Style="{StaticResource TextBoxStyleComboBox}">
                                     <ComboBoxItem IsEnabled="False" IsSelected="True" Foreground="Gray">All Status</ComboBoxItem>
@@ -387,7 +387,7 @@ Margin="10,0,0,0"/>
                                           Grid.Row="1" 
                                           Grid.Column="2" 
                                           Height="47" 
-                                          FontSize="16" 
+                                          FontSize="20" 
                                           SelectedIndex="0" 
                                           Style="{StaticResource TextBoxStyleComboBox}">
                                     <ComboBoxItem IsEnabled="False" IsSelected="True" Foreground="Gray">All Barber</ComboBoxItem>
