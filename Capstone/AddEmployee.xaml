@@ -16,7 +16,7 @@
         <Style x:Key="TextBoxStyleDatePicker" TargetType="DatePicker">
             <Setter Property="Background" Value="White"/> 
             <Setter Property="BorderBrush" Value="Gray"/>
-            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="BorderThickness" Value="1"/> 
             <Setter Property="FontSize" Value="20"/>
             <Setter Property="Height" Value="40"/>
             <Setter Property="Padding" Value="10,5"/>
