@@ -6,7 +6,7 @@
         xmlns:local="clr-namespace:Capstone"
         mc:Ignorable="d"
         Title="Add Employee" 
-        Width="1424" 
+        Width="1424"  
         WindowState="Maximized"
         ResizeMode="CanResize" Height="2280">
 
