@@ -14,7 +14,7 @@
 
 
         <Border BorderBrush="Black" BorderThickness="1" Padding="20" CornerRadius="8" Margin="20,29,20,25">
-            <Label Content="New item has been" FontSize="20" Margin="114,209,-21,61" FontWeight="Bold"/>
+            <Label Content="New product has been" FontSize="20" Margin="100,209,-21,61" FontWeight="Bold"/>
 
         </Border>
         <Image HorizontalAlignment="Left" Height="170" Margin="160,79,0,0" VerticalAlignment="Top" Width="200" Source="/Pop out image/slang-to-the-moon.png"/>

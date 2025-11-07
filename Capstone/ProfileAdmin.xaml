@@ -65,6 +65,9 @@
                                CornerRadius="60"
                                Background="LightGray" 
                                ClipToBounds="True">
+                            <Border.Clip>
+                                <EllipseGeometry Center="60,60" RadiusX="60" RadiusY="60"/>
+                            </Border.Clip>
                             <Image Source="/Icon/profile.png" 
                                    Stretch="UniformToFill"
                                    VerticalAlignment="Center"
@@ -219,7 +222,7 @@
                 </Button.Template>
             </Button>
         </StackPanel>
-        
+
         <!-- Gray Overlay for Modal Effect - MOVED OUTSIDE ScrollViewer -->
         <Border x:Name="ModalOverlay"
             Background="#80000000"

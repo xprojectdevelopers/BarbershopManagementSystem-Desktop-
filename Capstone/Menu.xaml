@@ -149,7 +149,7 @@
                             <ColumnDefinition Width="Auto"/>
                         </Grid.ColumnDefinitions>
 
-                        
+
 
                         <Button Margin="1045,0,0,0" 
                                 Style="{StaticResource ResponsiveButton}"
@@ -171,6 +171,9 @@
                                     HorizontalAlignment="Center"
                                     Margin="0,0,0,15"
                                     ClipToBounds="True">
+                                <Border.Clip>
+                                    <EllipseGeometry Center="60,60" RadiusX="60" RadiusY="60"/>
+                                </Border.Clip>
                                 <Image Source="/Icon/profile.png" 
                                        Stretch="UniformToFill"
                                        VerticalAlignment="Center"

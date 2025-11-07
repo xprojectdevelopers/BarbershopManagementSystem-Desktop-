@@ -14,11 +14,11 @@
 
 
         <Border BorderBrush="Black" BorderThickness="1" Padding="20" CornerRadius="8" Margin="20,29,20,25">
-            <Label Content="Item data has been" FontSize="20" Margin="122,209,-21,61" FontWeight="Bold"/>
+            <Label Content="Appointment record has" FontSize="20" Margin="100,209,-21,61" FontWeight="Bold"/>
 
         </Border>
         <Image HorizontalAlignment="Left" Height="170" Margin="160,79,0,0" VerticalAlignment="Top" Width="200" Source="/Pop out image/slang-to-the-moon.png"/>
-        <TextBlock HorizontalAlignment="Left" FontSize="20" Margin="161,292,0,0" TextWrapping="Wrap" Text="successfully deleted." VerticalAlignment="Top" FontWeight="Bold"/>
+        <TextBlock HorizontalAlignment="Left" FontSize="20" Margin="140,292,0,0" TextWrapping="Wrap" Text="been successfully deleted." VerticalAlignment="Top" FontWeight="Bold"/>
 
         <Button Content="Continue"
 Width="170"

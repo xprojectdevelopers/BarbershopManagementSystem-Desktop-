@@ -12,14 +12,14 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
 
-namespace Capstone.AppointmentOptions
+namespace Capstone
 {
     /// <summary>
-    /// Interaction logic for BookAppointmentSuccessful.xaml
+    /// Interaction logic for PayrollSuccessful.xaml
     /// </summary>
-    public partial class BookAppointmentSuccessful : Window
+    public partial class PayrollSuccessful : Window
     {
-        public BookAppointmentSuccessful()
+        public PayrollSuccessful()
         {
             InitializeComponent();
         }

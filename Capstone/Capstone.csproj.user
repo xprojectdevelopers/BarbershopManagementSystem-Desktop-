@@ -61,6 +61,9 @@
     <Compile Update="MolaveLegend.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Update="PayrollSuccessful.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Update="ProductDescription.xaml.cs">
       <SubType>Code</SubType>
     </Compile>

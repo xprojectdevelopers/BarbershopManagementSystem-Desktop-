@@ -625,7 +625,7 @@ namespace Capstone
                 if (result != null && result.Models.Count > 0)
                 {
                     ModalOverlay.Visibility = Visibility.Visible;
-                    currentModalWindow = new ItemSuccessful();
+                    currentModalWindow = new PayrollSuccessful();
                     currentModalWindow.Owner = this;
                     currentModalWindow.WindowStartupLocation = WindowStartupLocation.CenterOwner;
                     currentModalWindow.Closed += ModalWindow_Closed;

@@ -85,21 +85,21 @@ namespace Capstone
 
             if (isCashier)
             {
-                AppointmentsCard.IsEnabled = false;
-                AppointmentsCard.Opacity = 0.4;
-                AppointmentsCard.Cursor = Cursors.No;
+                AppointmentsCard.IsEnabled = true;
+                AppointmentsCard.Opacity = 1.0;
+                AppointmentsCard.Cursor = Cursors.Hand;
 
-                CustomersCard.IsEnabled = false;
-                CustomersCard.Opacity = 0.4;
-                CustomersCard.Cursor = Cursors.No;
+                CustomersCard.IsEnabled = true;
+                CustomersCard.Opacity = 1.0;
+                CustomersCard.Cursor = Cursors.Hand;
 
-                EmployeesCard.IsEnabled = true;
-                EmployeesCard.Opacity = 1.0;
-                EmployeesCard.Cursor = Cursors.Hand;
+                EmployeesCard.IsEnabled = false;
+                EmployeesCard.Opacity = 0.4;
+                EmployeesCard.Cursor = Cursors.No;
 
-                PayrollCard.IsEnabled = true;
-                PayrollCard.Opacity = 1.0;
-                PayrollCard.Cursor = Cursors.Hand;
+                PayrollCard.IsEnabled = false;
+                PayrollCard.Opacity = 0.4;
+                PayrollCard.Cursor = Cursors.No;
 
                 InventoryCard.IsEnabled = true;
                 InventoryCard.Opacity = 1.0;
