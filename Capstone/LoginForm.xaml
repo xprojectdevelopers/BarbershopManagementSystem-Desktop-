@@ -124,7 +124,7 @@
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto"/>
                 <RowDefinition Height="*"/>
-                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/> 
             </Grid.RowDefinitions>
 
             <Border Grid.Row="0" Height="60" VerticalAlignment="Top" Grid.ColumnSpan="2">
