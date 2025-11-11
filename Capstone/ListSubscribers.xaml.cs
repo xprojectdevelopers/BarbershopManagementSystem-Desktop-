@@ -12,7 +12,6 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
-using Microsoft.Win32;
 using System.IO;
 
 namespace Capstone
@@ -20,9 +19,7 @@ namespace Capstone
     public partial class ListSubscribers : Window
     {
         private Supabase.Client? supabase;
-
         private ObservableCollection<SubscriberGridItem> subscribersList = new ObservableCollection<SubscriberGridItem>();
-
         private int CurrentPage = 1;
         private int PageSize = 5;
         private int TotalPages = 1;
@@ -61,36 +58,25 @@ namespace Capstone
             await supabase.InitializeAsync();
         }
 
-        // 🔹 Load subscribers with emails + contact numbers
+        // 🔹 Load email subscribers
         private async Task LoadSubscribers()
         {
             if (supabase == null) return;
 
             try
             {
-                // Fetch email subscribers (website)
+                // Fetch email subscribers only
                 var emailResult = await supabase.From<SubscriberEmail>().Get();
                 var emails = emailResult.Models.ToList();
 
-                // Fetch mobile subscribers (mobile)
-                var mobileResult = await supabase.From<SubscriberMobile>().Get();
-                var mobiles = mobileResult.Models.ToList();
-
                 subscribersList.Clear();
 
-                int maxCount = Math.Max(emails.Count, mobiles.Count);
-
-                // Combine them row by row
-                for (int i = 0; i < maxCount; i++)
+                // Add email subscribers to the list
+                foreach (var email in emails)
                 {
-                    string email = i < emails.Count ? emails[i].Email : "";
-                    string contact = i < mobiles.Count ? mobiles[i].ContactNumber : "";
-
-                    // Add combined row
                     subscribersList.Add(new SubscriberGridItem
                     {
-                        Email = email,
-                        ContactNumber = contact
+                        Email = email.Email
                     });
                 }
 
@@ -174,39 +160,21 @@ namespace Capstone
             e.Handled = true;
         }
 
-        // 🔹 Models
+        // 🔹 Model for email subscribers
         [Table("subscribers")]
         public class SubscriberEmail : BaseModel
         {
             [PrimaryKey("id", false)]
-            public long Id { get; set; } // long matches bigint in Supabase
+            public string Id { get; set; } = string.Empty;
 
             [Column("email")]
             public string Email { get; set; } = string.Empty;
-        }
-
-        [Table("subscribers_mobile")]
-        public class SubscriberMobile : BaseModel
-        {
-            [PrimaryKey("id", false)]
-            [Column("id")]
-            public Guid Id { get; set; } // UUID -> use Guid
-
-            [Column("user_id")]
-            public Guid UserId { get; set; }
-
-            [Column("contact_number")]
-            public string ContactNumber { get; set; } = string.Empty;
-
-            [Column("created_at")]
-            public DateTime? CreatedAt { get; set; }
         }
 
         // 🔹 Grid item for DataGrid
         public class SubscriberGridItem
         {
             public string Email { get; set; } = string.Empty;
-            public string ContactNumber { get; set; } = string.Empty;
         }
 
         private void Home_Click(object sender, MouseButtonEventArgs e)
@@ -218,7 +186,12 @@ namespace Capstone
 
         private void ExportButton_Click(object sender, RoutedEventArgs e)
         {
-            // Ask where to save the CSV file
+            if (subscribersList.Count == 0)
+            {
+                MessageBox.Show("No subscribers to export.", "Export", MessageBoxButton.OK, MessageBoxImage.Information);
+                return;
+            }
+
             SaveFileDialog saveFileDialog = new SaveFileDialog
             {
                 Filter = "CSV files (*.csv)|*.csv",
@@ -230,15 +203,12 @@ namespace Capstone
                 try
                 {
                     StringBuilder csvContent = new StringBuilder();
-                    csvContent.AppendLine("Email,Contact Number");
+                    csvContent.AppendLine("Email");
 
-                    // Loop through DataGrid items
-                    foreach (var item in SubscribersGrid.Items)
+                    // Loop through all subscribers (not just current page)
+                    foreach (var item in subscribersList)
                     {
-                        dynamic row = item;
-                        string email = row.Email != null ? row.Email.ToString() : "";
-                        string contact = row.ContactNumber != null ? row.ContactNumber.ToString() : "";
-                        csvContent.AppendLine($"{email},{contact}");
+                        csvContent.AppendLine($"{item.Email}");
                     }
 
                     // Save to file
@@ -254,4 +224,3 @@ namespace Capstone
         }
     }
 }
-

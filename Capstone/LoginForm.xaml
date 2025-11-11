@@ -70,13 +70,55 @@
                 </Setter.Value>
             </Setter>
         </Style>
+
+        <Style x:Key="ResponsiveProfileName" TargetType="TextBlock">
+            <Setter Property="FontSize" Value="28"/>
+            <Setter Property="FontWeight" Value="Bold"/>
+            <Setter Property="HorizontalAlignment" Value="Center"/>
+            <Setter Property="Margin" Value="0,15,0,5"/>
+            <Setter Property="Foreground" Value="#333333"/>
+            <Setter Property="TextWrapping" Value="Wrap"/>
+        </Style>
+
+        <Style x:Key="ResponsiveProfileRole" TargetType="TextBlock">
+            <Setter Property="FontSize" Value="16"/>
+            <Setter Property="HorizontalAlignment" Value="Center"/>
+            <Setter Property="Foreground" Value="#757575"/>
+            <Setter Property="Margin" Value="0,0,0,5"/>
+        </Style>
+
+        <Style x:Key="ResponsiveButton" TargetType="Button">
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Padding" Value="12"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="HorizontalAlignment" Value="Center"/>
+            <Setter Property="VerticalAlignment" Value="Center"/>
+            <Setter Property="MinWidth" Value="40"/>
+            <Setter Property="MinHeight" Value="40"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <ContentPresenter HorizontalAlignment="Center"
+                          VerticalAlignment="Center"/>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+
+        <Style x:Key="TopBarIcon" TargetType="Image">
+            <Setter Property="Width" Value="24"/>
+            <Setter Property="Height" Value="24"/>
+        </Style>
     </Window.Resources>
 
     <!-- Main Container with responsive layout -->
     <Border Background="White" CornerRadius="10" BorderBrush="white" BorderThickness="1" Height="400" VerticalAlignment="Center">
         <Grid Margin="20">
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="449*"/>
+                <ColumnDefinition Width="446*"/>
+                <ColumnDefinition Width="3*"/>
                 <ColumnDefinition Width="10*"/>
             </Grid.ColumnDefinitions>
             <Grid.RowDefinitions>
@@ -85,8 +127,19 @@
                 <RowDefinition Height="Auto"/>
             </Grid.RowDefinitions>
 
+            <Border Grid.Row="0" Height="60" VerticalAlignment="Top" Grid.ColumnSpan="2">
+                <Grid Margin="0,-23,-40,43">
+
+                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,20,20,0">
+                        <Button Click="BackButton_Click" Cursor="Hand" Style="{StaticResource ResponsiveButton}">
+                            <Image Source="/x-square.png" Style="{StaticResource TopBarIcon}"/>
+                        </Button>
+                    </StackPanel>
+                </Grid>
+            </Border>
+
             <!-- Header Section -->
-            <StackPanel Grid.Row="0" Margin="4,20,-4,21" Grid.ColumnSpan="2">
+            <StackPanel Grid.Row="0" Margin="4,20,-4,21" Grid.ColumnSpan="3">
                 <Image Source="/Logo.png" 
                        Height="80"
                        HorizontalAlignment="Center"
@@ -95,7 +148,7 @@
             </StackPanel>
 
             <!-- Login Form Section -->
-            <StackPanel Grid.Row="1" MaxWidth="350" HorizontalAlignment="Left" Margin="90,-20,0,0">
+            <StackPanel MaxWidth="350" HorizontalAlignment="Left" Margin="90,101,0,0" Grid.RowSpan="2">
 
                 <!-- Employee ID Section -->
                 <Label Content="Employee ID" Margin="-5,0,0,0" Style="{StaticResource LabelStyle}"/>

@@ -23,7 +23,7 @@ namespace Capstone.AppointmentOptions
         private Client? supabase;
         private readonly ObservableCollection<AppointmentModel> appointments = new();
         private int CurrentPage = 1;
-        private int PageSize = 10;
+        private int PageSize = 5;
         private int TotalPages = 1;
         private Window? currentModalWindow;
         private NotificationService? _notificationService;

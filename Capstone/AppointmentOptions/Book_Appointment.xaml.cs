@@ -422,30 +422,16 @@ namespace Capstone.AppointmentOptions
                     return;
                 }
 
-                // Additional validation: Check for duplicate date, time, and barber combination
+                // Get the selected barber nickname
                 string selectedBarberNickname = (cmbAssignedBarber.SelectedItem as ComboBoxItem)?.Content.ToString();
                 string timeString = (cmbTime.SelectedItem as ComboBoxItem)?.Content.ToString();
                 TimeSpan scheduledTime = ParseTimeString(timeString);
                 string selectedDateString = date.SelectedDate.Value.ToString("yyyy-MM-dd");
 
-                // Get employee info for barber ID
-                var employeeResult = await supabase.From<AddEmployee>()
-                    .Get();
-
-                var employee = employeeResult.Models.FirstOrDefault(x => x.EmployeeNickname == selectedBarberNickname);
-
-                if (employee == null)
-                {
-                    MessageBox.Show("Barber not found in employee database.", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
-                    return;
-                }
-
-                string barberId = $"{employee.FullName} - {employee.EmployeeRole}";
-
-                // Check for conflicting appointments from already loaded employees collection
+                // Check for conflicting appointments using the nickname directly
                 var conflictingAppointment = employees.FirstOrDefault(x =>
                     x.Date == selectedDateString &&
-                    x.Barber == barberId &&
+                    x.Barber == selectedBarberNickname &&
                     x.Time == scheduledTime);
 
                 if (conflictingAppointment != null)
@@ -478,13 +464,14 @@ namespace Capstone.AppointmentOptions
                 string appointmentFee = appointmentFeeVal.ToString("0");
                 string total = totalVal.ToString("0");
 
+                // CHANGED: Store only the nickname instead of full name + role
                 var newAppointment = new BarbershopManagementSystem
                 {
                     CustomerBadge = null,
                     CustomerName = txtCustomerName.Text.Trim(),
                     ContactNumber = txtConatct.Text.Trim(),
                     Service = selectedService,
-                    Barber = barberId,
+                    Barber = selectedBarberNickname,  // Changed: Now stores only the nickname
                     Date = selectedDateString,
                     Time = scheduledTime,
                     Subtotal = subtotal,
@@ -507,7 +494,11 @@ namespace Capstone.AppointmentOptions
                 currentModalWindow.WindowStartupLocation = WindowStartupLocation.CenterOwner;
 
                 // Subscribe to Closed event
-                currentModalWindow.Closed += ModalWindow_Closed;
+                currentModalWindow.Closed += (s, args) =>
+                {
+                    ModalWindow_Closed(s, args);
+                    ClearAllFields(); // Clear fields after modal closes
+                };
 
                 // Show as regular window
                 currentModalWindow.Show();
@@ -517,6 +508,41 @@ namespace Capstone.AppointmentOptions
             {
                 MessageBox.Show($"Error booking appointment: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
             }
+        }
+
+        private void ClearAllFields()
+        {
+            // Clear text boxes
+            txtItemID.Text = string.Empty;
+            txtCustomerName.Text = string.Empty;
+            txtConatct.Text = string.Empty;
+            txtTotal.Text = string.Empty;
+
+            // Reset combo boxes to default
+            cmbAssignedBarber.SelectedIndex = 0;
+            cmbService.SelectedIndex = 0;
+            cmbService.IsEnabled = false;
+            cmbTime.SelectedIndex = 0;
+            cmbPMethod.SelectedIndex = 0;
+            cmbPStatus.SelectedIndex = 0;
+
+            // Clear date picker
+            date.SelectedDate = null;
+
+            // Hide all error messages
+            txtAppNumberError.Visibility = Visibility.Collapsed;
+            txtAppNumberSame.Visibility = Visibility.Collapsed;
+            txtCustomerError.Visibility = Visibility.Collapsed;
+            txtContactError.Visibility = Visibility.Collapsed;
+            cmbAssignedBarberError.Visibility = Visibility.Collapsed;
+            cmbServiceError.Visibility = Visibility.Collapsed;
+            dateErorr.Visibility = Visibility.Collapsed;
+            dateSame.Visibility = Visibility.Collapsed;
+            cmbTimeErorr.Visibility = Visibility.Collapsed;
+            cmbTimeSame.Visibility = Visibility.Collapsed;
+            txtTotalErorr.Visibility = Visibility.Collapsed;
+            cmbPMethodError.Visibility = Visibility.Collapsed;
+            cmbPStatusErorr.Visibility = Visibility.Collapsed;
         }
 
         private TimeSpan ParseTimeString(string timeString)

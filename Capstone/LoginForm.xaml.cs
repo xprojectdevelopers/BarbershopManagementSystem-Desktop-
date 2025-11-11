@@ -211,5 +211,10 @@ namespace Capstone
             httpClient?.Dispose();
             base.OnClosed(e);
         }
+
+        private void BackButton_Click(object sender, RoutedEventArgs e)
+        {
+            this.Close();
+        }
     }
 }

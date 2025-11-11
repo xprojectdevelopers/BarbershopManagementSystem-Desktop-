@@ -250,39 +250,25 @@ namespace Capstone
 
             try
             {
-                // Fetch subscriber IDs (emails)
-                var resultSubscribers = await supabase
+                // Simple query without SELECT - let it fetch all columns
+                var result = await supabase
                     .From<Subscriber>()
-                    .Select("id")
                     .Get();
 
-                // Fetch subscriber_mobile user_ids (contacts)
-                var resultMobile = await supabase
-                    .From<SubscriberMobile>()
-                    .Select("user_id")
-                    .Get();
-
-                // Combine unique IDs as strings to handle both long and Guid
-                var uniqueIds = new HashSet<string>();
-
-                // Add email subscriber IDs (long -> string)
-                foreach (var s in resultSubscribers.Models)
+                if (result?.Models != null)
                 {
-                    uniqueIds.Add(s.Id.ToString());
+                    int totalCount = result.Models.Count;
+                    TotalSubscribersText.Text = totalCount.ToString();
                 }
-
-                // Add mobile user_ids (Guid -> string)
-                foreach (var m in resultMobile.Models)
+                else
                 {
-                    uniqueIds.Add(m.UserId.ToString());
+                    TotalSubscribersText.Text = "0";
                 }
-
-                // Total unique subscribers
-                TotalSubscribersText.Text = uniqueIds.Count.ToString();
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Error loading subscriber count: {ex.Message}");
+                MessageBox.Show($"Error loading subscribers count: {ex.Message}");
+                TotalSubscribersText.Text = "0";
             }
         }
 
@@ -324,18 +310,20 @@ namespace Capstone
 
             try
             {
-                // 🔹 Fetch only the IDs of customer profiles
+                // 🔹 Fetch only records where customer_badge is "Molave Street Legend"
                 var result = await supabase
                     .From<Legend>()
-                    .Select("id") // Only select the id column
+                    .Select("id")
+                    .Where(x => x.BadgeName == "Molave Street Legend") // Filter by badge name
                     .Get();
 
-                int totalCount = result.Models.Count; // Count locally
+                int totalCount = result.Models.Count;
                 txtLegend.Text = totalCount.ToString();
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Error loading customer count: {ex.Message}");
+                MessageBox.Show($"Error loading legend count: {ex.Message}");
+                txtLegend.Text = "0";
             }
         }
 
@@ -401,7 +389,13 @@ namespace Capstone
         public class Subscriber : BaseModel
         {
             [PrimaryKey("id", false)]
-            public long Id { get; set; } // Changed from Guid to long
+            public Guid Id { get; set; }  // ✅ Changed from long to Guid (uuid)
+
+            [Column("email")]
+            public string Email { get; set; } = string.Empty;
+
+            [Column("created_at")]
+            public DateTime CreatedAt { get; set; }
         }
 
         [Table("subscribers_mobile")]
@@ -417,23 +411,15 @@ namespace Capstone
             public string ContactNumber { get; set; } = string.Empty;
         }
 
-        [Table("badge_tracker")]
+        [Table("appointment_sched")]
         public class Legend : BaseModel
         {
             [PrimaryKey("id", false)]
             public Guid Id { get; set; }
 
-            [Column("customer_id")]
-            public Guid CustomerId { get; set; }
-
-            [Column("completed_count")]
-            public string CompletedCount { get; set; } = string.Empty;
-
-            [Column("badge_name")]
+            [Column("customer_badge")]
             public string BadgeName { get; set; } = string.Empty;
 
-            [Column("updated_at")]
-            public string Updatedat { get; set; } = string.Empty;
         }
 
     }

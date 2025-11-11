@@ -47,7 +47,7 @@ namespace Capstone.AppointmentOptions
                 await client.InitializeAsync();
 
                 await LoadAppointments();
-                PopulateBarberDropdown();
+                await PopulateBarberDropdown(); // Changed to async
                 await UpdateStatistics();
                 GeneratePaginationButtons();
             }
@@ -166,54 +166,49 @@ namespace Capstone.AppointmentOptions
             }
         }
 
-        private void PopulateBarberDropdown()
+        private async Task PopulateBarberDropdown()
         {
             var barberComboBox = FindName("BarberComboBox") as ComboBox;
 
             if (barberComboBox != null)
             {
-                var staticBarbers = new List<string>
+                try
                 {
-                    "Barber - Zer",
-                    "Barber - Aurbey",
-                    "Barber - Klein Eagle",
-                    "Barber - Aljames",
-                    "Barber - Arel",
-                    "Barber - Jay R",
-                    "Barber - Cube",
-                    "Barber - Andrei"
-                };
+                    // Fetch employees with role "Barber" from Add_Employee table
+                    var response = await client.From<EmployeeModel>()
+                        .Where(x => x.EmployeeRole == "Barber")
+                        .Get();
 
-                var uniqueBarbers = originalAppointments
-                    .Where(a => !string.IsNullOrEmpty(a.BarberAssigned))
-                    .Select(a => a.BarberAssigned)
-                    .Distinct()
-                    .OrderBy(b => b)
-                    .ToList();
+                    var barbers = response.Models
+                        .Where(e => !string.IsNullOrEmpty(e.EmployeeNickname))
+                        .Select(e => $"Barber - {e.EmployeeNickname}")
+                        .OrderBy(b => b)
+                        .ToList();
 
-                var allBarbers = staticBarbers
-                    .Union(uniqueBarbers)
-                    .Distinct()
-                    .OrderBy(b => b)
-                    .ToList();
+                    barberComboBox.Items.Clear();
 
-                barberComboBox.Items.Clear();
+                    // Add default "All Barbers" option
+                    var defaultItem = new ComboBoxItem
+                    {
+                        Content = "All Barbers",
+                        IsEnabled = false,
+                        IsSelected = true,
+                        Foreground = System.Windows.Media.Brushes.Gray
+                    };
+                    barberComboBox.Items.Add(defaultItem);
 
-                var defaultItem = new ComboBoxItem
-                {
-                    Content = "All Barbers",
-                    IsEnabled = false,
-                    IsSelected = true,
-                    Foreground = System.Windows.Media.Brushes.Gray
-                };
-                barberComboBox.Items.Add(defaultItem);
+                    // Add each barber to the dropdown
+                    foreach (var barber in barbers)
+                    {
+                        barberComboBox.Items.Add(new ComboBoxItem { Content = barber });
+                    }
 
-                foreach (var barber in allBarbers)
-                {
-                    barberComboBox.Items.Add(new ComboBoxItem { Content = barber });
+                    barberComboBox.SelectedIndex = 0;
                 }
-
-                barberComboBox.SelectedIndex = 0;
+                catch (Exception ex)
+                {
+                    MessageBox.Show($"Error loading barbers: {ex.Message}");
+                }
             }
         }
 
@@ -224,6 +219,7 @@ namespace Capstone.AppointmentOptions
 
             var filtered = originalAppointments.AsEnumerable();
 
+            // Filter by Status
             if (statusComboBox != null && statusComboBox.SelectedIndex > 0)
             {
                 var selectedItem = statusComboBox.SelectedItem as ComboBoxItem;
@@ -237,6 +233,7 @@ namespace Capstone.AppointmentOptions
                 }
             }
 
+            // Filter by Barber
             if (barberComboBox != null && barberComboBox.SelectedIndex > 0)
             {
                 var selectedItem = barberComboBox.SelectedItem as ComboBoxItem;
@@ -245,7 +242,15 @@ namespace Capstone.AppointmentOptions
                     string selectedBarber = selectedItem.Content?.ToString();
                     if (!string.IsNullOrEmpty(selectedBarber))
                     {
-                        filtered = filtered.Where(a => a.BarberAssigned == selectedBarber);
+                        // Extract nickname only (remove "Barber - " prefix)
+                        // Example: "Barber - Meru" becomes "Meru"
+                        string nicknameOnly = selectedBarber.Replace("Barber - ", "");
+
+                        // Filter appointments where BarberAssigned contains the nickname
+                        filtered = filtered.Where(a =>
+                            !string.IsNullOrEmpty(a.BarberAssigned) &&
+                            a.BarberAssigned.Contains(nicknameOnly)
+                        );
                     }
                 }
             }
@@ -268,8 +273,49 @@ namespace Capstone.AppointmentOptions
 
         private async void RefreshButton_Click(object sender, RoutedEventArgs e)
         {
-            await LoadAppointments();
-            await UpdateStatistics();
+            try
+            {
+                // Disable the button to prevent multiple clicks
+                var refreshButton = sender as Button;
+                if (refreshButton != null)
+                {
+                    refreshButton.IsEnabled = false;
+                    refreshButton.Content = "Refreshing...";
+                }
+
+                // Clear current data first
+                appointments.Clear();
+                allAppointments.Clear();
+                originalAppointments.Clear();
+
+                // Reload table data from database
+                await LoadAppointments();
+                await UpdateStatistics();
+
+                // Reapply current filters if any are selected
+                var statusComboBox = FindName("StatusComboBox") as ComboBox;
+                var barberComboBox = FindName("BarberComboBox") as ComboBox;
+
+                if ((statusComboBox != null && statusComboBox.SelectedIndex > 0) ||
+                    (barberComboBox != null && barberComboBox.SelectedIndex > 0))
+                {
+                    ApplyFilters();
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Error refreshing data: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+            finally
+            {
+                // Re-enable the button
+                var refreshButton = sender as Button;
+                if (refreshButton != null)
+                {
+                    refreshButton.IsEnabled = true;
+                    refreshButton.Content = "Refresh";
+                }
+            }
         }
 
         private void Home_Click(object sender, MouseButtonEventArgs e)
@@ -326,6 +372,20 @@ namespace Capstone.AppointmentOptions
             currentModalWindow.WindowStartupLocation = WindowStartupLocation.CenterOwner;
             currentModalWindow.Closed += ModalWindow_Closed;
             currentModalWindow.Show();
+        }
+
+        // Employee Model for Add_Employee table
+        [Table("Add_Employee")]
+        public class EmployeeModel : BaseModel
+        {
+            [PrimaryKey("id", false)]
+            public string Id { get; set; }
+
+            [Column("Employee_Role")]
+            public string EmployeeRole { get; set; }
+
+            [Column("Employee_Nickname")]
+            public string EmployeeNickname { get; set; }
         }
 
         [Table("appointment_sched")]
